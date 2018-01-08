@@ -1,0 +1,239 @@
+.vtx-ui-date-normal{
+    box-sizing: border-box;
+    display: inline-block;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    .vtx-ui-date-calendarpicker{
+        position: relative;
+        display: inline-block;
+        outline: none;
+        font-size: 12px;
+        -webkit-transition: opacity 0.3s;
+        transition: opacity 0.3s;
+        .vtx-ui-date-cleardate{
+            opacity: 0;
+            z-index: 1;
+            position: absolute;
+            right: 7px;
+            background: #fff;
+            top: 50%;
+            font-size: 12px;
+            color: rgba(0, 0, 0, 0.25);
+            width: 14px;
+            height: 12px;
+            margin-top: -6px;
+            cursor: pointer;
+            -webkit-transition: color 0.3s, opacity 0.3s;
+            transition: color 0.3s, opacity 0.3s;
+            cursor: pointer;
+            &:hover{
+                color: rgba(0, 0, 0, 0.43);
+            }
+        }
+        &:hover{
+            & > .vtx-ui-date-cleardate{
+                opacity: 1;
+            }
+            & > .vtx-ui-date-calendarpickerinput{
+                border-color: #49a9ee;
+            }
+            & > .vtx-ui-date-calendarpickerinput[disabled]{
+                border-color: #d9d9d9;
+            }
+        }
+        .vtx-ui-date-calendarpickerinput{
+            font-family: inherit;
+            outline: none;
+            position: relative;
+            display: inline-block;
+            padding: 4px 7px;
+            width: 100%;
+            height: 28px;
+            cursor: text;
+            font-size: 12px;
+            line-height: 1.5;
+            color: rgba(0, 0, 0, 0.65);
+            background-color: #fff;
+            background-image: none;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            -webkit-transition: all .3s;
+            transition: all .3s;
+            &:focus{
+                border-color: #49a9ee;
+                outline: 0;
+                box-shadow: 0 0 0 2px rgba(16, 142, 233, 0.2);
+            }
+            &[disabled] {
+                background-color: #f7f7f7;
+                opacity: 1;
+                cursor: not-allowed;
+                color: rgba(0, 0, 0, 0.25);
+            }
+        }
+        .vtx-ui-date-calendaricon{
+            position: absolute;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-transition: all .3s;
+            transition: all .3s;
+            width: 12px;
+            height: 12px;
+            line-height: 12px;
+            right: 8px;
+            color: rgba(0, 0, 0, 0.43);
+            top: 50%;
+            margin-top: -6px;
+        }
+    }
+    .vtx-ui-date-calendarpickerinput::-webkit-input-placeholder { 
+        color: #d1d1d1; 
+    } 
+    .vtx-ui-date-calendarpickerinput:-moz-placeholder { 
+        color: #d1d1d1; 
+    } 
+    .vtx-ui-date-calendarpickerinput::-moz-placeholder { 
+        color: #d1d1d1; 
+    } 
+    .vtx-ui-date-calendarpickerinput:-ms-input-placeholder { 
+        color: #d1d1d1; 
+    } 
+}
+.vtx-ui-date-error{
+    display: inline-block;
+    input{
+        border-color: red !important;
+    }
+    &:after{
+        content:attr(data-errorMsg);
+        color: red;
+        display: block;
+        font-size: 10px;
+        line-height: 18px;
+    }
+}
+.vtx-ui-date-years{
+    position: relative;
+    outline: none;
+    width: 231px;
+    height: 100%;
+    border: 1px solid #fff;
+    list-style: none;
+    font-size: 12px;
+    text-align: left;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+    background-clip: padding-box;
+    line-height: 1.5;
+    z-index: 1000;
+    .vtx-ui-date-yearstitle{
+        position: relative;
+        cursor: default;
+        height: 34px;
+        line-height: 34px;
+        text-align: center;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        border-bottom: 1px solid #e9e9e9;
+        .vtx-ui-date-arrows{
+            cursor: pointer;
+            position: absolute;
+            top: 0;
+            color: rgba(0, 0, 0, 0.43);
+            font-family: 'Arial', "Hiragino Sans GB", "Microsoft Yahei", "Microsoft Sans Serif", 'sans-serif';
+            padding: 0 5px;
+            font-size: 12px;
+            display: inline-block;
+            line-height: 34px;
+        }
+    }
+    .vtx-ui-date-lists{
+        height: e("calc(100% - 34px)");
+        .vtx-ui-date-list{
+            display: inline-block;
+            width: e("calc(100% / 3)");
+            height: e("calc(100% / 4)");
+            text-align: center;
+            line-height: 53.5px;
+            span{
+                cursor: pointer;
+                display: inline-block;
+                margin: 0 auto;
+                color: rgba(0, 0, 0, 0.65);
+                background: transparent;
+                text-align: center;
+                height: 24px;
+                line-height: 24px;
+                padding: 0 6px;
+                border-radius: 4px;
+                -webkit-transition: background 0.3s ease;
+                transition: background 0.3s ease;
+                &:active{
+                    background-color: #108ee9;
+                    color: #fff;
+                }
+                &:hover{
+                    background-color: #ecf6fd;
+                    color: #49a9ee;
+                }
+            }
+            .vtx-ui-date-selectlist{
+                background-color: #108ee9;
+                color: #fff;
+            }
+            .vtx-ui-date-selectlist_disabled{
+                cursor: not-allowed;
+                color: #bcbcbc !important;
+                background: #f7f7f7 !important;
+            }
+        }
+        div:first-child{
+            span{
+                color: rgba(0, 0, 0, 0.25) !important;
+            }
+        }
+        div:last-child{
+            span{
+                color: rgba(0, 0, 0, 0.25) !important;
+            }
+        }
+    }
+}
+.vtx-ui-date-noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.vtx-ui-date-hidden{
+    width: 231px;
+    animation:hiddenA .3s 0s normal linear;
+    -moz-animation:hiddenA .3s 0s normal linear;
+    -webkit-animation:hiddenA .3s 0s normal linear;
+    -o-animation:hiddenA .3s 0s normal linear;
+}
+.vtx-ui-date-show{
+    width: 231px;
+    height: 250px;
+    animation:showA .3s 0s normal linear;
+    -moz-animation:showA .3s 0s normal linear;
+    -webkit-animation:showA .3s 0s normal linear;
+    -o-animation:showA .3s 0s normal linear;
+}
+@keyframes hiddenA{
+    0%   {opacity: 1;height: 250px;}
+    50%   {opacity: 0;height: 175px;}
+    100% {opacity: 0;height: 100px;}
+}
+@keyframes showA{
+    0%   {opacity: 0;height: 100px;}
+    50%   {opacity: 0;height: 175px;}
+    100% {opacity: 1;height: 250px;}
+}
