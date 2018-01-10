@@ -1,10 +1,11 @@
 {
   "name": "vtx-ui",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "vtx-ui",
   "main": "lib/index.js",
   "scripts": {
-    "build": "rimraf lib && babel src --out-dir lib && node styleProcessor.js"
+    "build": "rimraf lib && babel src --out-dir lib && node styleProcessor.js",
+    "prepublish": "npm run build"
   },
   "files":[
     "lib"
