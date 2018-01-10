@@ -1,0 +1,8 @@
+.vtx-ui-upload-uploadct{
+    overflow: hidden;//upload组件由于float会失去高度
+    .ant-upload-list-item-info{
+        &:before{
+            height: 0 !important;
+        }
+    }
+}

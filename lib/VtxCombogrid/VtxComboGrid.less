@@ -1,0 +1,74 @@
+@panelWidth:500px;
+@titleLenth:70px;
+@colonWidth:10px;
+
+.vtx-ui-combogrid-cbbox{
+    display: inline-block;
+    position: relative;
+    width:100%;
+    input{
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+.vtx-ui-combogrid-formgrid{
+    float: left;
+    // padding-right: 10px;
+    padding-bottom: 6px;
+    width:40%;
+    height: 28px;
+    line-height: 28px;
+    box-sizing: content-box;
+    position: relative;
+    .vtx-ui-combogrid-gridtitle{
+        &:after{
+            content: "：";
+            width:@colonWidth;
+            right:0;
+            top:0;
+            position: absolute;
+            display: block;
+            height: 100%;
+        }
+        position: relative;
+        height: 100%;
+        text-align: right;
+        width: @titleLenth;
+        padding-right: @colonWidth;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+    .vtx-ui-combogrid-gridcontent{
+        position: absolute;
+        height: 100%;
+        left:@titleLenth;
+        right:0;
+        display: inline-block;
+    }
+}
+.vtx-ui-combogrid-buttongrid{
+    position: absolute;
+    width:20%;
+    height: 28px;
+    right: 0;
+    line-height: 28px;
+    box-sizing: content-box;
+}
+
+.vtx-ui-combogrid-form_ct{
+    width: @panelWidth;
+    padding: 5px;
+    &:after{
+        content: ' ';
+        clear:both;
+        visibility: hidden;
+        height: 0;
+        display: block;
+    }
+}
+.vtx-ui-combogrid-grid_ct{
+    width: @panelWidth;
+    height: 300px;
+}
