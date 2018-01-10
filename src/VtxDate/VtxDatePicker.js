@@ -1,7 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
-
+import React from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');

@@ -1,4 +1,4 @@
-import React, {Component,PropTypes} from 'react';
+import React from 'react';
 import './VtxTree.less';
 const styles = {
 	text_ellipsis: 'vtx-ui-tree-text_ellipsis',

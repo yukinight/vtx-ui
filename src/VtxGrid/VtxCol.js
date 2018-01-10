@@ -1,6 +1,5 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
+import React from 'react';
+
 import Col from 'antd/lib/col';
 import 'antd/lib/col/style/css';
 import Tooltip from 'antd/lib/tooltip';
@@ -82,6 +81,4 @@ function VtxCol(props) {
     );
 }
 
-VtxCol.propTypes = {
-};
 export default VtxCol;

@@ -1,4 +1,4 @@
-import React, {Component,PropTypes} from 'react';
+import React from 'react';
 import './VtxTreeSelect.less';
 const styles = {
     error: 'vtx-ui-tree-select-error',

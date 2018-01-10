@@ -1,0 +1,29 @@
+
+html, body, :global(#root) {
+  height: 100%;
+}
+html, body, div, p{
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+      background-color: hsla(0, 0%, 80%, 0.08);
+  }
+  ::-webkit-scrollbar-thumb {
+      border-radius: 3px;
+      -webkit-box-shadow: inset 0 0 0px rgba(0,0,0,.3);
+      background-color: rgba(180, 180, 180, 0.5);
+  }
+}
+*{
+  padding: 0;
+  margin: 0;
+}
+.clear{
+  content: ' ';
+  height: 0;
+  overflow: hidden;
+  display: block;
+  clear: both;
+}
+

@@ -31,5 +31,6 @@ class StateSelect extends React.Component{
     }
 }
 
-
+export const Option = Select.Option;
+export const OptGroup =  Select.OptGroup;
 export default StateSelect;

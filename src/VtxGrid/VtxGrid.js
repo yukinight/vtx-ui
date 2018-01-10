@@ -1,6 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
+import React from 'react';
 
 import VtxRow from './VtxRow.js';
 import VtxCol from './VtxCol.js';

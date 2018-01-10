@@ -1,7 +1,8 @@
-import React, {Component,PropTypes} from 'react';
-import styles from './Map.less';
+import React from 'react';
+import './Map.less';
 import Immutable from 'immutable';
 const {Set} = Immutable;
+
 class Map extends React.Component {
     constructor(props){
         super(props);
@@ -952,11 +953,45 @@ class Map extends React.Component {
     deepEqual(a,b){
         return Immutable.is(Immutable.fromJS(a),Immutable.fromJS(b));
     }
+    searchPoints(searchValue,pageSize=10,pageIndex=0){
+        return new Promise((resolve)=>{
+            let psc = new BMap.LocalSearch(this.state.gis.map,{
+                onSearchComplete:(result)=>{
+                    if(!result){
+                        resolve({
+                            pageIndex,
+                            pageSize,
+                            pois:[]
+                        });
+                    }
+                    else if(result.getPageIndex()!=pageIndex){
+                        psc.gotoPage(pageIndex);
+                    }
+                    else{
+                        let res_arr = [];
+                        for(let i=0,len=result.getCurrentNumPois();i<len;i++){
+                            res_arr.push(result.getPoi(i));
+                        }
+                        resolve({
+                            pageIndex:result.getPageIndex(),
+                            pageSize:result.getCurrentNumPois(),
+                            totalPages:result.getNumPages(),
+                            count:result.getNumPois(),
+                            pois:res_arr
+                        });
+                    }
+                    // console.log(result,result.getNumPages(),result.getPageIndex());                    
+                },
+                pageCapacity:pageSize
+            });
+            psc.search(searchValue);  
+        })
+    }
     render(){
         let t = this;
         let _map = this.props;
         return(
-            <div id={_map.mapId} className={styles.map}></div>
+            <div id={_map.mapId} className={'vtx-map'}></div>
         );
     }
     componentDidMount(){

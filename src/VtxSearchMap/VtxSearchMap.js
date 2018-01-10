@@ -7,6 +7,7 @@ const styles = {
     bottom: 'vtx-ui-searchmap-bottom',
     content: 'vtx-ui-searchmap-content',
     show: 'vtx-ui-searchmap-show',
+    hidden: 'vtx-ui-searchmap-hidden',
     w_l: 'vtx-ui-searchmap-w_l',
     content_left: 'vtx-ui-searchmap-content_left',
     listTitle: 'vtx-ui-searchmap-listtitle',
@@ -17,7 +18,8 @@ const styles = {
     scrollauto: 'vtx-ui-searchmap-scrollauto',
     content_right: 'vtx-ui-searchmap-content_right',
     showLabel: 'vtx-ui-searchmap-showlabel',
-    hiddenLabel: 'vtx-ui-searchmap-hiddenlabel'
+    hiddenLabel: 'vtx-ui-searchmap-hiddenlabel',
+    otherModal: 'vtx-ui-searchmap-othermodal'
 }
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style/css';

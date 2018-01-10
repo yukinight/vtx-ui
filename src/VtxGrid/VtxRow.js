@@ -1,6 +1,4 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
+import React from 'react';
 import Row from 'antd/lib/row';
 import 'antd/lib/row/style/css';
 function VtxRow(props) {
@@ -17,8 +15,5 @@ function VtxRow(props) {
         </Row>
     );
 }
-
-VtxRow.propTypes = {
-};
 
 export default VtxRow;

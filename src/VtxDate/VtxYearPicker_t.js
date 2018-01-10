@@ -1,7 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
 import './VtxYearPicker.less'
 import moment from 'moment';
 import 'moment/locale/zh-cn';
