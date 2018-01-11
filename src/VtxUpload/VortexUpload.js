@@ -6,9 +6,8 @@ import Button from 'antd/lib/button';
 import 'antd/lib/button/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import message from 'antd/lib/message';
-import 'antd/lib/message/style/css';
 import './VortexUpload.less';
+
 const styles = {
     uploadCt: 'vtx-ui-upload-uploadct'
 }

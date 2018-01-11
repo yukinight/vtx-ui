@@ -2,12 +2,13 @@ import React from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
+import DatePicker from 'antd/lib/date-picker';
+import 'antd/lib/date-picker/style/css';
 import './common.less';
+
 const cm_style = {
     error: 'vtx-ui-date-error'
 }
-import DatePicker from 'antd/lib/date-picker';
-import 'antd/lib/date-picker/style/css';
 const {RangePicker} = DatePicker;
 
 function VtxRangePicker(props) {

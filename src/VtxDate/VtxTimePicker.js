@@ -1,16 +1,14 @@
-import React, { Component, PropTypes } from 'react';
-import { connect } from 'dva';
-import { Link } from 'dva/router';
-
+import React from 'react';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
+import TimePicker from 'antd/lib/time-picker';
+import 'antd/lib/time-picker/style/css';
 import './common.less';
+
 const cm_style = {
     error: 'vtx-ui-date-error'
 }
-import TimePicker from 'antd/lib/time-picker';
-import 'antd/lib/time-picker/style/css';
 
 function VtxTimePicker(props) {
     const {

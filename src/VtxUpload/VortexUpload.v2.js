@@ -1,5 +1,12 @@
 import React from 'react';
-import { Upload, Button, Icon,message,Modal } from 'antd';
+import Upload from 'antd/lib/upload';
+import 'antd/lib/upload/style/css';
+import Button from 'antd/lib/button';
+import 'antd/lib/button/style/css';
+import Icon from 'antd/lib/icon';
+import 'antd/lib/icon/style/css';
+import Modal from 'antd/lib/modal';
+import 'antd/lib/modal/style/css';
 
 // 默认上传文件接口
 const defaultUploadURL = 'http://192.168.1.207:18084/cloudFile/common/uploadFile';

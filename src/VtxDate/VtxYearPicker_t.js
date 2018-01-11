@@ -6,6 +6,7 @@ import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
+
 const styles = {
     normal: 'vtx-ui-date-normal',
     calendarpicker: 'vtx-ui-date-calendarpicker',

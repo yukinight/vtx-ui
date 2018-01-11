@@ -10,6 +10,7 @@ import Modal from 'antd/lib/modal';
 import 'antd/lib/modal/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
+
 function VtxModal(props) {
     let ModalProps = {...props};
     let closable = true;
@@ -34,7 +35,7 @@ function VtxModal(props) {
         );
     }
     let wrapClassName = `${styles.normal} ${ModalProps.wrapClassName}`;
-    //在渲染之前 删除有影响的属性
+    
     delete ModalProps.closable;
     delete ModalProps.wrapClassName;
     return (
