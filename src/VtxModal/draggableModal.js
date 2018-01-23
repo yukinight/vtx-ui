@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Modal} from 'antd';
+import Modal from 'antd/lib/modal';
+import 'antd/lib/modal/style/css';
 
 class DraggableModal extends React.Component{
     constructor(props){

@@ -29,6 +29,7 @@ class VortexUpload extends React.Component{
         this.state = {
             previewVisible: false,
             previewImage: '',
+            previewName:'',
             fileList: this.getSynFileList()
         };
     }
@@ -158,6 +159,7 @@ class VortexUpload extends React.Component{
     handlePreview(file){
         this.setState({
           previewImage: file.url || file.thumbUrl,
+          previewName: file.name,
           previewVisible: true,
         });
     }
@@ -188,7 +190,7 @@ class VortexUpload extends React.Component{
             {
                 this.props.listType =='picture-card'?
                 <Modal visible={this.state.previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>
-                    <img alt="example" style={{ width: '100%' }} src={this.state.previewImage} />
+                    <img alt={this.state.previewName} style={{ width: '100%' }} src={this.state.previewImage} />
                 </Modal>:
                 null
             }

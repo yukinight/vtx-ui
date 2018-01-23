@@ -5,6 +5,10 @@ export default {
     
       state: {
         fileList: [{
+          name: 'dfa',
+          id:'fghk',
+          url: 'http://img15.3lian.com/2015/f2/136/d/63.jpg',
+        },{
           name: 'testxxx.png',
           id:'1d0283efd9eb47dfa977b3d57d7de0ff',
           url: 'http://192.168.1.207:18084/cloudFile/common/downloadFile?id=1d0283efd9eb47dfa977b3d57d7de0ff',

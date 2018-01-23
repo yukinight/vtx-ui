@@ -94,21 +94,25 @@ class VtxSearchMap extends React.Component {
                         x:this.state.graphicValue.geometry.x,
                         y:this.state.graphicValue.geometry.y,
                         radius:this.state.graphicValue.geometry.radius,
+                        area: this.state.graphicValue.area
                     }:null);
                     break;
                 case 'polygon':
                     this.props.callback(this.state.graphicValue?{
                         rings:this.state.graphicValue.geometry.rings[0],
+                        area: this.state.graphicValue.area
                     }:null);
                     break;
                 case 'rectangle':
                     this.props.callback(this.state.graphicValue?{
                         rings:this.state.graphicValue.geometry.rings[0],
+                        area: this.state.graphicValue.area
                     }:null);
                     break;
                 case 'polyline':
                     this.props.callback(this.state.graphicValue?{
                         paths:this.state.graphicValue.geometry.paths[0],
+                        length: this.map.state.gis.calculateDistance(this.state.graphicValue.geometry.paths[0])
                     }:null);
                     break;
             }
@@ -498,7 +502,9 @@ class VtxSearchMap extends React.Component {
                 })
             });
                 if(!!this.map && !!this.state.locationPoint[0] && nextProps.mapCenter && !!nextProps.mapCenter[0]){
-                    this.map.getGraphic('locationPoint').mapLayer.setPosition(new BMap.Point(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                    if(this.map.getGraphic('locationPoint')){
+                        this.map.getGraphic('locationPoint').mapLayer.setPosition(new AMap.LngLat(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                    }
                     this.map.setCenter(nextProps.mapCenter);
                 }
             }

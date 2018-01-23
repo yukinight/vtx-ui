@@ -73,7 +73,11 @@ class VtxModalList extends React.Component{
                 return t.cloneComponent(this.props.children);
             }else{
                 let elems = chil.map((item,index)=>{
-                    return t.cloneComponent(item,index);
+                    if(!!item){
+                        return t.cloneComponent(item,index);
+                    }else{
+                        return item;
+                    }
                 });
                 return elems;
             }
@@ -183,7 +187,7 @@ class VtxModalList extends React.Component{
         return (
             <LayoutComponent 
                 key={index} 
-                {...elem.props['data-modalList'].layout}
+                {...((elem.props['data-modalList'] || {}).layout || {})}
             >   
                 {
                     ty == 'default'?
@@ -270,8 +274,8 @@ class VtxModalList extends React.Component{
                     }
                     //有值  做正则判断
                     if(r.value){
-                        let reg = r.mld.regexp || {},required;
-                        if(!!reg.exp && r.value){
+                        let reg = r.mld.regexp || {},required =true;
+                        if(!!reg.exp){
                             if(reg.exp instanceof RegExp){
                                 required = reg.exp.test(r.value);
                             }else if(reg.exp instanceof Function){
