@@ -40,10 +40,12 @@ function VtxModal(props) {
     delete ModalProps.wrapClassName;
     return (
         <Modal 
-            {...ModalProps}
+            width={700}
+            maskClosable={false}
             closable={false}
             title={renderTitle()}
             wrapClassName={wrapClassName}
+            {...ModalProps}
         >
             {
                 ModalProps.children
