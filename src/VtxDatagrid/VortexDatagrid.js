@@ -107,13 +107,13 @@ class VortexDatagrid extends React.Component{
                     let oldRender = newCol.render;
                     newCol.render = function(text, record){
                         if(text===null|| text===undefined)text = '';
-                        return <Tooltip title={text.toString()} placement="topLeft">{oldRender(text, record)}</Tooltip>
+                        return <Tooltip title={oldRender(text, record)} placement="topLeft">{oldRender(text, record)}</Tooltip>
                     }
                 }
                 else{
                     newCol.render = function(text, record){
                         if(text===null|| text===undefined)text = '';
-                        return <Tooltip title={text.toString()} placement="topLeft">{text}</Tooltip>
+                        return <Tooltip title={<span>{text}</span>} placement="topLeft">{text}</Tooltip>
                     }
                 }
             }

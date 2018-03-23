@@ -1,9 +1,19 @@
-var fs = require('fs');  
-var path = require('path');  
-  
+const fs = require('fs');  
+const path = require('path');  
+const program = require('commander');
+ 
+program
+  .version('0.0.1')
+  .option('-p, --path', 'generate folder')
+  .parse(process.argv);
+
+let folderName = 'lib';
+if(program.args.length>0){
+    folderName = program.args[0];
+}
 //解析需要遍历的文件夹，我这以E盘根目录为例  
-var srcFilePath = path.resolve('./src');  
-var libFilePath = path.resolve('./lib'); 
+let srcFilePath = path.resolve('./src');  
+let libFilePath = path.resolve(`./${folderName}`); 
 //调用文件遍历方法  
 fileDisplay(srcFilePath);  
   
@@ -33,7 +43,7 @@ function fileDisplay(srcFilePath){
                             // console.log(filedir); 
                             if(/\.(less|css)$/.test(filename)){
                                 var _src = filedir;
-                                var _dst = filedir.replace('\\src\\','\\lib\\');
+                                var _dst = filedir.replace('\\src\\',`\\${folderName}\\`);
                                 readable=fs.createReadStream(_src);//创建读取流
                                 writable=fs.createWriteStream(_dst);//创建写入流
                                 readable.pipe(writable);

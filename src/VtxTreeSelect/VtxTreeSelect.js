@@ -10,7 +10,9 @@ import TreeSelect from 'antd/lib/tree-select';
 import 'antd/lib/tree-select/style/css';
 import Tooltip from 'antd/lib/tooltip';
 import 'antd/lib/tooltip/style/css';
-const TreeNode = TreeSelect.TreeNode;
+import Tree from 'antd/lib/tree';
+import 'antd/lib/tree/style/css';
+const TreeNode = Tree.TreeNode;
 class VtxTreeSelect extends React.Component{
     constructor(props){
         super(props);

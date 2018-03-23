@@ -73,11 +73,7 @@ class VtxModalList extends React.Component{
                 return t.cloneComponent(this.props.children);
             }else{
                 let elems = chil.map((item,index)=>{
-                    if(!!item){
-                        return t.cloneComponent(item,index);
-                    }else{
-                        return item;
-                    }
+                    return t.cloneComponent(item,index);
                 });
                 return elems;
             }
@@ -123,8 +119,8 @@ class VtxModalList extends React.Component{
             ...(isInherit()?{inherit:true}:{}),
             //失交验重
             ...(
-                typeof(elem.type) == 'function' && 
-                    elem.type.name.toLocaleLowerCase().indexOf('input')?
+                (elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                    (mld.layout || {}).comType == 'input'?
                 {onBlur: (e)=>{
                     if('onBlur' in elem.props &&
                         typeof(elem.props.onBlur) == 'function'){
@@ -140,7 +136,8 @@ class VtxModalList extends React.Component{
                         }).then(({data})=>{
                             t.repeteList[index] = {
                                 ...t.repeteList[index],
-                                isRepete: data.data
+                                isRepete: data.data,
+                                errorMsg: data.msg || ''
                             }
                             t.setState({
                                 //刷新用
@@ -153,9 +150,9 @@ class VtxModalList extends React.Component{
             ),
             //onChange事件 存在时做验证
             ...(
-                typeof(elem.type) == 'function' && 
-                    elem.type.name.toLocaleLowerCase().indexOf('input') > -1 && 
-                    'onChange' in elem.props &&
+                ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                    (mld.layout || {}).comType == 'input') && 
+                        'onChange' in elem.props &&
                     typeof(elem.props.onChange) == 'function'?
                 {onChange: (e)=>{
                     let value = e.target.value,
@@ -176,14 +173,14 @@ class VtxModalList extends React.Component{
             )
         });
         t.repeteList[index] = {
-            isRepete: false,//是否重复
+            isRepete: true,//是否重复
             ...(t.repeteList[index] || {}),//记录 重复验证信息
             ...reg,
             mld,
             type: ty,
             elem: e
         }
-        let {required,errorMsg} = t.verify(reg.value,mld,index);
+        let {required,errorMsg} = t.verify(reg.value,mld,index,reg.repete);
         return (
             <LayoutComponent 
                 key={index} 
@@ -198,6 +195,12 @@ class VtxModalList extends React.Component{
                     >
                         {e}
                         {
+                            ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                                (mld.layout || {}).comType == 'input') && 
+                                    !!(mld.layout || {}).maxNum ?
+                            <div className={'input_hint'}>{`${(elem.props.value || '').length}/${mld.layout.maxNum}`}</div>:''
+                        }
+                        {
                             t.state.repeteLoading.indexOf(index) > -1?
                             <Icon type="loading" className={'vtx-ui-modallist-loading-icon'}/>:''
                         }
@@ -208,7 +211,7 @@ class VtxModalList extends React.Component{
         )
     }
     //数据验证展示
-    verify(value='',mld,index){
+    verify(value='',mld,index,repete=''){
         let t = this,
             isRequired = t.state.isRequired,
             reg = mld.regexp || {};
@@ -225,9 +228,9 @@ class VtxModalList extends React.Component{
             }
         }else{
             //判断是否重复
-            if(t.repeteList[index].isRepete){
+            if(!t.repeteList[index].isRepete && !!repete){
                 required = false;
-                errorMsg = '字段重复';
+                errorMsg = t.repeteList[index].errorMsg?t.repeteList[index].errorMsg:'字段重复';
             }else{
                 if(!!reg.exp && !isRequired && value){
                     if(reg.exp instanceof RegExp){
@@ -248,7 +251,7 @@ class VtxModalList extends React.Component{
     clear(){
         let t = this;
         for (let i in t.repeteList) {
-            t.repeteList[i].isRepete = false;
+            t.repeteList[i].isRepete = true;
         }
         t.setState({
             isRequired: true
@@ -311,10 +314,11 @@ class VtxModalList extends React.Component{
                 return Promise.all(plist).then(values=>{
                     let isRequest = true;
                     for(let i = 0 ; i < values.length; i++){
-                        if(values[i].data.data){
+                        if(!values[i].data.data){
                             t.repeteList[ii[i]] = {
                                 ...t.repeteList[ii[i]],
-                                isRepete: values[i].data.data
+                                isRepete: values[i].data.data,
+                                errorMsg: values[i].data.msg || ''
                             }
                             isRequest = false;
                         }
@@ -342,6 +346,10 @@ class VtxModalList extends React.Component{
                 }
             </div>
         )
+    }
+    componentWillUnmount() {
+        let t = this;
+        t.clear();
     }
 }
 /*

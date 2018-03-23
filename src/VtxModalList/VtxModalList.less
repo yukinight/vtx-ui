@@ -1,134 +1,145 @@
-.vtx-ui-modallist-lists{
-    .vtx-ui-modallist-list_pl,.vtx-ui-modallist-list_p0{
-        display: inline-block;
-        position: relative;
-        vertical-align: top;
-        width: 50%;
-        .vtx-ui-modallist-list-left{
+/*:global{*/
+    .vtx-ui-modallist-lists{
+        .vtx-ui-modallist-list_pl,.vtx-ui-modallist-list_p0{
             display: inline-block;
-            padding-right: 15px;
-            width: 84px;
-            text-align: right;
-            position: absolute;
-            top: 0px;
-            left: 0px;
+            position: relative;
+            vertical-align: top;
+            width: 50%;
+            .vtx-ui-modallist-list-left{
+                display: inline-block;
+                padding-right: 15px;
+                width: 84px;
+                text-align: right;
+                position: absolute;
+                top: 0px;
+                left: 0px;
+                height: 28px;
+                line-height: 28px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                &:after{
+                    content: attr(data-mh);
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                }
+                .vtx-ui-modallist-list-require{
+                    color: #FF0000;
+                    vertical-align: middle;
+                    margin-right: 3px;
+                }
+            }
+        }
+        .vtx-ui-modallist-list_pl{
+            padding-left: 84px;
+        }
+        .vtx-ui-modallist-list_p0{
+            padding-left: 0px;
+        }
+        .vtx-ui-modallist-list-right{
+            display: inline-block;
+            margin-right: 15px;
+            width: 100%;
+            line-height: 28px;
+            padding-bottom: 18px;
+            .vtx-ui-input-normal,
+            .vtx-ui-select-normal{
+                padding-bottom: 0px;
+            }
+        }
+         .vtx-ui-modallist-list-right-text{
+            display: inline-block;
+            margin-bottom: 0px;
             height: 28px;
             line-height: 28px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            &:after{
-                content: attr(data-mh);
-                position: absolute;
-                bottom: 0px;
-                right: 0px;
+            word-break: break-all;
+        }
+        .vtx-ui-modallist-list-title{
+            padding-left: 0px !important;
+            font-size: 14px;
+            border-bottom: 1px dashed #ccc;
+            color: #108EE2;
+            margin-bottom: 8px;
+            position: relative;
+            height: 36px;
+            .vtx-ui-modallist-list-right-text{
+                margin-bottom: 5px;
+                margin-top: 5px;
             }
-            .vtx-ui-modallist-list-require{
-                color: #FF0000;
-                vertical-align: middle;
-                margin-right: 3px;
-            }
+        } 
+        .vtx-ui-modallist-verificat,.vtx-ui-modallist-error{
+            position: relative;
+            width: inherit;
+            line-height: 18px;
         }
-    }
-    .vtx-ui-modallist-list_pl{
-        padding-left: 84px;
-    }
-    .vtx-ui-modallist-list_p0{
-        padding-left: 0px;
-    }
-    .vtx-ui-modallist-list-right{
-        display: inline-block;
-        margin-right: 15px;
-        width: 100%;
-        line-height: 28px;
-        padding-bottom: 18px;
-        .vtx-ui-input-normal,
-        .vtx-ui-select-normal{
-            padding-bottom: 0px;
-        }
-    }
-     .vtx-ui-modallist-list-right-text{
-        display: inline-block;
-        margin-bottom: 0px;
-        height: 28px;
-        line-height: 28px;
-        word-break: break-all;
-    }
-    .vtx-ui-modallist-list-title{
-        padding-left: 0px !important;
-        font-size: 14px;
-        border-bottom: 1px dashed #ccc;
-        color: #108EE2;
-        margin-bottom: 8px;
-        position: relative;
-        height: 36px;
-        .vtx-ui-modallist-list-right-text{
-            margin-bottom: 5px;
-            margin-top: 5px;
-        }
-    } 
-    .vtx-ui-modallist-verificat,.vtx-ui-modallist-error{
-        position: relative;
-        width: inherit;
-        line-height: 18px;
-    }
-    .vtx-ui-modallist-loading-icon{
-        position: absolute;
-        color: #108edf;
-        right: 8px;
-        top: 7px;
-        z-index: 2;
-        font-size: 15px;
-    }
-    .vtx-ui-modallist-error{
-        &:after{
-            content: attr(data-errorMsg);
+        .vtx-ui-modallist-loading-icon,.input_hint{
             position: absolute;
-            left: 2px;
-            bottom: -18px;
-            color: red;
-        }
-        span{
-            .ant-select-selection{
-                border-color: red !important;
-            }
-        }
-        div.ant-select-selection{
-            border-color: red !important;
-        }
-        .ant-calendar-picker-input,.ant-time-picker-input{
-            border-color: red !important;
-        }
-        input{
-            border-color: red !important;
-        }
-        .vtx-ui-modallist-error-icon{
-            position: absolute;
-            color: red;
+            color: #108edf;
             right: 8px;
             top: 7px;
-            z-index: 1;
+            z-index: 2;
             font-size: 15px;
         }
+        .input_hint{
+            top: 0px;
+            line-height: 28px;
+        }
+        .vtx-ui-modallist-error{
+            &:after{
+                content: attr(data-errorMsg);
+                position: absolute;
+                left: 2px;
+                bottom: -18px;
+                color: red;
+            }
+            span{
+                .ant-select-selection{
+                    border-color: red !important;
+                }
+                .ant-input-group{
+                    &>*{
+                        border-color: red !important;
+                    }
+                }
+            }
+            div:global(.ant-select-selection){
+                border-color: red !important;
+            }
+            .ant-calendar-picker-input,.ant-time-picker-input{
+                border-color: red !important;
+            }
+            & > *{
+                border-color: red !important;
+            }
+            .vtx-ui-modallist-error-icon{
+                position: absolute;
+                color: red;
+                right: 8px;
+                top: 7px;
+                z-index: 1;
+                font-size: 15px;
+            }
+        }
+        /*.vtx-ui-modallist-list-title{
+            padding-left: 0px !important;
+            font-size: 16px;
+            color: #108EE2;
+            position: relative;
+            height: 36px;
+            &:before{
+                content: ' ';
+                display: inline-block;
+                width: 100%;
+                border-bottom: 1px dashed #ccc;
+            }
+            .vtx-ui-modallist-list-right-text{
+                position: absolute;
+                top: -2px;
+                left: 3%;
+                padding: 3px 8px;
+                background: #fbfbfb;
+            }
+        }*/
     }
-    /*.vtx-ui-modallist-list-title{
-        padding-left: 0px !important;
-        font-size: 16px;
-        color: #108EE2;
-        position: relative;
-        height: 36px;
-        &:before{
-            content: ' ';
-            display: inline-block;
-            width: 100%;
-            border-bottom: 1px dashed #ccc;
-        }
-        .vtx-ui-modallist-list-right-text{
-            position: absolute;
-            top: -2px;
-            left: 3%;
-            padding: 3px 8px;
-            background: #fbfbfb;
-        }
-    }*/
-}
+/*}*/

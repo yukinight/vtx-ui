@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { Component, PropTypes } from 'react';
+import { connect } from 'dva';
+import { Link } from 'dva/router';
 
 import VtxRow from './VtxRow.js';
 import VtxCol from './VtxCol.js';
@@ -175,6 +177,7 @@ class VtxGrid extends React.Component{
     }
     componentWillReceiveProps(nextProps) {
         let t = this;
+        this.weightiness = 0;
         nextProps.gridweight.map((item,index)=>{
             this.weightiness += item;
         })
