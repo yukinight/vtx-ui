@@ -89,7 +89,7 @@ class VtxYearPicker extends React.Component{
             e.nativeEvent.stopImmediatePropagation();
             //input失去焦点
             e.target.parentNode.childNodes[0].blur();
-            time = time || t.state.nowTime;
+            let tm = time || t.state.nowTime;
             //如不存dom的时候就添加一个,如果已经存在就跳过
             if(!t.state.dom){
                 let d = document.createElement('div');
@@ -100,15 +100,18 @@ class VtxYearPicker extends React.Component{
                 t.state.dom = document.body.appendChild(d);
             }
             const {top,left,bottom,signtype} = t.getLocation(e.target.parentNode.childNodes[0]);
+            if(moment.isMoment(tm)){
+                tm = moment(tm).format('YYYY');
+            }
             let param = {
                 style: styles.show,
-                time: time
+                time: tm
             };
             if('open' in t.props){
                 param.open = t.props.open;
                 if(t.props.open){
                     param.style = styles.show;
-                    param.time = time;
+                    param.time = tm;
                 }else{
                     param.style = styles.hidden;
                 }

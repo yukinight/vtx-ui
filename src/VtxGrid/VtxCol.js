@@ -20,7 +20,7 @@ function VtxCol(props) {
         if(typeof(d.type) === 'function' && d.props.hasOwnProperty('attr') && d.props.attr == 'row'){
             return d;
         }else{
-            if(d.type === 'colon'){
+            if(d.props.type_grid === 'colon'){
                 return(
                     <div className={styles.Lists}>
                         <div className={styles.colon}>{d.props.children[0]}</div>
@@ -32,7 +32,7 @@ function VtxCol(props) {
                 lineHeight: '28px',
                 height: '38px'
             }
-            if(d.type === 'fieldName'){
+            if(d.props.type_grid === 'fieldName'){
                 sty = {
                     ...sty,
                     padding: '5px 0px',
@@ -43,7 +43,7 @@ function VtxCol(props) {
                     cursor: 'default'
                 }
             }
-            if(d.type === 'bt'){
+            if(d.props.type_grid === 'bt'){
                 sty ={
                     ...sty,
                     padding: '5px 0px'
@@ -52,7 +52,7 @@ function VtxCol(props) {
             return (
                 <div style={{...sty}}>
                     {
-                        d.type === 'fieldName'?
+                        d.props.type_grid === 'fieldName'?
                         <Tooltip placement="rightTop" title={d.props.children}>
                             {d}
                         </Tooltip>
@@ -81,4 +81,6 @@ function VtxCol(props) {
     );
 }
 
+
 export default VtxCol;
+

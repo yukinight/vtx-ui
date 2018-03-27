@@ -1,3 +1,7 @@
-export {default as VtxModal} from './VtxModal';
-export {default} from './VtxModal';
-export {default as DraggableModal} from './draggableModal';
+import {default as VtxModal} from './VtxModal';
+import {default as DraggableModal} from './draggableModal';
+
+VtxModal.DraggableModal = DraggableModal;
+
+export default VtxModal;
+export {VtxModal,DraggableModal};

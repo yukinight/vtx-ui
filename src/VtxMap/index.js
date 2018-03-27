@@ -1,4 +1,9 @@
-export {default as VtxMap} from './Map';
-export {default as VtxOptMap} from './optimizingPointMap';
-export {default as VtxZoomMap} from './zoomMap';
-export {default} from './Map';
+import {default as VtxMap} from './Map';
+import {default as VtxOptMap} from './optimizingPointMap';
+import {default as VtxZoomMap} from './zoomMap';
+
+VtxMap.VtxOptMap = VtxOptMap;
+VtxMap.VtxZoomMap = VtxZoomMap;
+
+export default VtxMap;
+export {VtxMap,VtxOptMap,VtxZoomMap};

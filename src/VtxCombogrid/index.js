@@ -1,2 +1,2 @@
 export {default} from './VtxComboGrid';
-export {default as VtxComboGrid} from './VtxComboGrid';
+export {default as VtxCombogrid} from './VtxComboGrid';

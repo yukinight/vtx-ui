@@ -1,3 +1,7 @@
-export {default as VtxGrid} from './VtxGrid';
-export {default as VtxModeGrid} from './VtxModeGrid';
-export {default} from './VtxGrid';
+import {default as VtxGrid} from './VtxGrid';
+import {default as VtxModeGrid} from './VtxModeGrid';
+
+VtxGrid.VtxModeGrid = VtxModeGrid;
+
+export default VtxGrid;
+export {VtxGrid,VtxModeGrid};

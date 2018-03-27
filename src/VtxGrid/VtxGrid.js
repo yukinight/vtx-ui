@@ -104,8 +104,8 @@ class VtxGrid extends React.Component{
             return (
                 <VtxCol key={i} span={6*gwt}>
                     <VtxRow gutter={2} attr='row'>
-                        <VtxCol span={b}><fieldName>{props.titles[i]}</fieldName></VtxCol>
-                        <VtxCol span={c}><colon>：{d}</colon></VtxCol>
+                        <VtxCol span={b}><span type_grid='fieldName'>{props.titles[i]}</span></VtxCol>
+                        <VtxCol span={c}><span type_grid='colon'>：{d}</span></VtxCol>
                     </VtxRow>
                 </VtxCol>
             );
@@ -136,27 +136,27 @@ class VtxGrid extends React.Component{
                                 // t.state.hiddenconfrimButtion?"":
                                 t.props.hiddenconfrimButtion?"":
                                 <VtxCol span={10}>
-                                    <bt>
+                                    <span type_grid={'bt'}>
                                         <Button style={{width:'100%'}} type="primary" onClick={props.confirm}>{props.confirmText || '查询'}</Button>
-                                    </bt>
+                                    </span>
                                 </VtxCol>
                             }
                             {
                                 // t.state.hiddenclearButtion?"":
                                 t.props.hiddenclearButtion?"":
                                 <VtxCol span={10}>
-                                    <bt>
+                                    <span type_grid={'bt'}>
                                         <Button style={{width:'100%'}} onClick={props.clear}>{props.clearText || '清空'}</Button>
-                                    </bt>
+                                    </span>
                                 </VtxCol>
                             }
                             <VtxCol span={4}>
                                 {
                                     // this.weightiness > 4 && !t.state.hiddenMoreButtion?
                                     this.weightiness > 4 && !t.props.hiddenMoreButtion?
-                                    <bt>
+                                    <span type_grid={'bt'}>
                                         <Button type="primary" shape="circle" icon="ellipsis" onClick={()=>t.isShowMore(this.weightiness)}/>
-                                    </bt>:
+                                    </span>:
                                     ''
                                 }
                             </VtxCol>
