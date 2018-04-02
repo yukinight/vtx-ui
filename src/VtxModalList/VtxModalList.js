@@ -86,7 +86,7 @@ class VtxModalList extends React.Component{
      */
     cloneComponent(elem,index){
         let t = this,
-            mld = elem.props['data-modalList'] || {},
+            mld = elem.props['data-modallist'] || {},
             reg = mld.regexp || {};
         let ty = (mld.layout || {}).type || 'default';
         let isInherit = ()=>{
@@ -110,7 +110,7 @@ class VtxModalList extends React.Component{
         }
         let e = React.cloneElement(elem,{
             ...elem.props,
-            'data-modalList': '',
+            'data-modallist': '',
             style:{
                 ...elem.props.style,
                 width: '100%'
@@ -184,7 +184,7 @@ class VtxModalList extends React.Component{
         return (
             <LayoutComponent 
                 key={index} 
-                {...((elem.props['data-modalList'] || {}).layout || {})}
+                {...((elem.props['data-modallist'] || {}).layout || {})}
             >   
                 {
                     ty == 'default'?
@@ -362,7 +362,7 @@ function VerificationComponent(props){
     return (
         <div 
             className={`${required || isLoading?'vtx-ui-modallist-verificat':'vtx-ui-modallist-error'}`}
-            data-errorMsg={errorMsg}
+            data-errormsg={errorMsg}
         >
             {children}
             {

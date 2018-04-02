@@ -24,7 +24,7 @@ class StateSelect extends React.Component{
         return (
             <div 
                 style={{width:this.props.inherit?'inherit':''}}
-                className={validated? styles.normal: styles.error} data-errorMsg={errorMsg}>
+                className={validated? styles.normal: styles.error} data-errormsg={errorMsg}>
                 <Select {...selectProps}/>
             </div>
         )

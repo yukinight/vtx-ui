@@ -49,7 +49,7 @@ class stateInput extends React.Component{
         return (
             <div 
                 style={{width:this.props.inherit?'inherit':''}}
-                className={actValidated? styles.normal: styles.error} data-errorMsg={actErrorMsg}>
+                className={actValidated? styles.normal: styles.error} data-errormsg={actErrorMsg}>
                 <Input {...inputProps}/>
             </div>
         )
