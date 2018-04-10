@@ -10,6 +10,8 @@ class VtxModalList extends React.Component{
     constructor(props){
         super(props);
         this.repeteList = {};
+        this.onlyRecord = {};
+        this.allRecord = 1;
         this.state = {
             //新增时不做验证判断.
             isRequired: props.isRequired || false,
@@ -90,31 +92,35 @@ class VtxModalList extends React.Component{
             reg = mld.regexp || {};
         let ty = (mld.layout || {}).type || 'default';
         let isInherit = ()=>{
-            if(typeof(elem.type) == 'function'){
-                switch(elem.type.name.toLocaleLowerCase()){
-                    case 'stateinput':
-                        return true;
-                    break;
-                    case 'stateselect':
-                        return true;
-                    break;
-                    case 'vtxtreeselect':
-                        return true;
-                    break;
-                    case 'vtxyearpicker':
-                        return true;
-                    break;
-                }
-            }
+            // if(typeof(elem.type) == 'function'){
+            //     switch(elem.type.name.toLocaleLowerCase()){
+            //         case 'stateinput':
+            //             return true;
+            //         break;
+            //         case 'stateselect':
+            //             return true;
+            //         break;
+            //         case 'vtxtreeselect':
+            //             return true;
+            //         break;
+            //         case 'vtxyearpicker':
+            //             return true;
+            //         break;
+            //     }
+            // }
             return false;
         }
+        let isMaxNum = ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                                (mld.layout || {}).comType == 'input') && 
+                                    !!(mld.layout || {}).maxNum;
         let e = React.cloneElement(elem,{
             ...elem.props,
             'data-modallist': '',
             style:{
                 ...elem.props.style,
-                width: '100%'
+                width: '100%',
             },
+            className: `${elem.props.className || ''} ${isMaxNum?(eval(mld.layout.maxNum) >= 100?'maxNum-input55':'maxNum-input45'):''}`,
             //样式小问题解决
             ...(isInherit()?{inherit:true}:{}),
             //失交验重
@@ -129,21 +135,27 @@ class VtxModalList extends React.Component{
                     if(reg.repete && e.target.value){
                         t.setState({
                             repeteLoading: [index]
-                        })
+                        });
+                        let i = t.onlyRecord[index]?t.onlyRecord[index]+1:1;
+                        t.onlyRecord = {
+                            [index]: i
+                        }
                         t.repeteAjax({
                             url: (reg.repete || {}).url || '',
                             body: (reg.repete || {}).key || null
                         }).then(({data})=>{
-                            t.repeteList[index] = {
-                                ...t.repeteList[index],
-                                isRepete: data.data,
-                                errorMsg: data.msg || ''
+                            if(i >= t.onlyRecord[index]){
+                                t.repeteList[index] = {
+                                    ...t.repeteList[index],
+                                    isRepete: data.data,
+                                    errorMsg: data.msg || ''
+                                }
+                                t.setState({
+                                    //刷新用
+                                    isRefresh: +t.state.isRefresh,
+                                    repeteLoading: []
+                                })
                             }
-                            t.setState({
-                                //刷新用
-                                isRefresh: +t.state.isRefresh,
-                                repeteLoading: []
-                            })
                         })
                     }
                 }}:{}
@@ -195,10 +207,8 @@ class VtxModalList extends React.Component{
                     >
                         {e}
                         {
-                            ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
-                                (mld.layout || {}).comType == 'input') && 
-                                    !!(mld.layout || {}).maxNum ?
-                            <div className={'input_hint'}>{`${(elem.props.value || '').length}/${mld.layout.maxNum}`}</div>:''
+                            (!required || t.state.repeteLoading.indexOf(index) > -1)?'':
+                            (isMaxNum?<div className={'input_hint'}>{`${(elem.props.value || '').length}/${mld.layout.maxNum}`}</div>:'')
                         }
                         {
                             t.state.repeteLoading.indexOf(index) > -1?
@@ -311,24 +321,28 @@ class VtxModalList extends React.Component{
                         ii.push(i);
                     }
                 }
+                let ind = t.allRecord?t.allRecord+1:1;
+                t.allRecord = ind;
                 return Promise.all(plist).then(values=>{
-                    let isRequest = true;
-                    for(let i = 0 ; i < values.length; i++){
-                        if(!values[i].data.data){
-                            t.repeteList[ii[i]] = {
-                                ...t.repeteList[ii[i]],
-                                isRepete: values[i].data.data,
-                                errorMsg: values[i].data.msg || ''
+                    if(ind >= t.allRecord){
+                        let isRequest = true;
+                        for(let i = 0 ; i < values.length; i++){
+                            if(!values[i].data.data){
+                                t.repeteList[ii[i]] = {
+                                    ...t.repeteList[ii[i]],
+                                    isRepete: values[i].data.data,
+                                    errorMsg: values[i].data.msg || ''
+                                }
+                                isRequest = false;
                             }
-                            isRequest = false;
                         }
-                    }
-                    return new Promise((resolve,reject)=>{
-                        t.setState({
-                            isRefresh: +t.state.isRefresh
+                        return new Promise((resolve,reject)=>{
+                            t.setState({
+                                isRefresh: +t.state.isRefresh
+                            })
+                            resolve(isRequest);
                         })
-                        resolve(isRequest);
-                    })
+                    }
                 })
             }else{
                 return new Promise((resolve,reject)=>{

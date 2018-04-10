@@ -16,6 +16,7 @@ import 'antd/lib/message/style/css';
         uploadURL,必填
         postData,选填
         fileKey,选填
+        accept,选填
         close(),选填
         afterUpload(data),选填
  */
@@ -27,6 +28,7 @@ class VtxImport extends React.Component{
         this.iframe = null;
         this.useFormData = window.FormData? true : false;
         this.fileKey = props.fileKey || 'file';
+        this.accept = props.accept || 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv';
         // console.log('useFormData',this.useFormData);
         this.uploadURL = props.uploadURL || 'http://localhost:8989/';
         this.state = {
@@ -116,7 +118,7 @@ class VtxImport extends React.Component{
         return (
             <Modal {...modalProps}>
                 <form encType="multipart/form-data" method="post" target="tmp" action={postUrl} ref={(dom)=>{if(dom)this.form = dom;}}>
-                    <input type='file' name={this.fileKey} ref={(dom)=>{if(dom)this.fileInput = dom;}}/>
+                    <input type='file' name={this.fileKey} accept={this.accept} ref={(dom)=>{if(dom)this.fileInput = dom;}}/>
                 </form>
                 <iframe name='tmp' style={{display:'none'}} ref={(dom)=>{if(dom)this.iframe = dom;}}>
                 </iframe>

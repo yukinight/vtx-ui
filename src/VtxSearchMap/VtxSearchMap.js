@@ -170,7 +170,9 @@ class VtxSearchMap extends React.Component {
         //获取当前中心点经纬度
         let lglt = this.map.getMapExtent();
         //map组件问题,手动操作图元
-        this.map.getGraphic('locationPoint').mapLayer.setPosition(new BMap.Point(lglt.nowCenter.lng,lglt.nowCenter.lat));
+        if(this.map.getGraphic('locationPoint')){
+            this.map.getGraphic('locationPoint').mapLayer.setPosition(new BMap.Point(lglt.nowCenter.lng,lglt.nowCenter.lat));
+        }
         //将数据存入state,callback返回
         let {locationPoint} = this.state;
         locationPoint = locationPoint.map((item,index)=>{
@@ -403,6 +405,9 @@ class VtxSearchMap extends React.Component {
                                     isDraw:true,
                                     graphicValue:null
                                 });
+                                if('editDraw' in this.props && typeof(this.props.editDraw) == 'function'){
+                                    this.props.editDraw();
+                                }
                             }} icon={'edit'}>重新绘制</Button>:null
                         }
                         <Button onClick={this.setFitView.bind(this)} icon={'sync'}>返回全局地图</Button>
@@ -477,12 +482,16 @@ class VtxSearchMap extends React.Component {
     componentDidMount(){
         //绘制定位点(以当前的中心点位参照=>初始化好后才有ref可以获取中心点)
         if (this.props.modal1Visible) {
-           this.drawLocationPoint();   
+            if(this.map){
+                this.drawLocationPoint();   
+            }
         }
     }
     componentDidUpdate(prevProps, prevState) {//重新渲染结束
         if (this.props.modal1Visible && !this.state.locationPoint[0]) {
-           this.drawLocationPoint();   
+            if(this.map){
+                this.drawLocationPoint();   
+            }
         }
     }
     componentWillReceiveProps(nextProps){
