@@ -22,6 +22,9 @@ class VtxModalList extends React.Component{
     componentWillReceiveProps(nextProps) {//已加载组件，收到新的参数时调用
         let t = this;
         if(t.props.visible != nextProps.visible){
+            for (let i in t.repeteList) {
+                t.repeteList[i].isRepete = true;
+            }
             t.setState({
                 isRequired : nextProps.isRequired
             });
@@ -61,9 +64,7 @@ class VtxModalList extends React.Component{
         });
         return ajaxPropmise.then(data => ({data}))
         .catch(err=>{
-            return new Promise((resolve,reject)=>{
-                resolve({result:1,data:false});
-            })
+            return {result:1,data:false};
         });
     }
     //处理props.children
@@ -193,6 +194,7 @@ class VtxModalList extends React.Component{
             elem: e
         }
         let {required,errorMsg} = t.verify(reg.value,mld,index,reg.repete);
+        
         return (
             <LayoutComponent 
                 key={index} 
@@ -336,18 +338,15 @@ class VtxModalList extends React.Component{
                                 isRequest = false;
                             }
                         }
-                        return new Promise((resolve,reject)=>{
-                            t.setState({
-                                isRefresh: +t.state.isRefresh
-                            })
-                            resolve(isRequest);
+                        
+                        t.setState({
+                            isRefresh: +t.state.isRefresh
                         })
+                        return isRequest;
                     }
                 })
             }else{
-                return new Promise((resolve,reject)=>{
-                    resolve(false);
-                })
+                return false;
             }
         })
     }
