@@ -24,7 +24,7 @@ $ import {VtxImport} from 'vtx-ui';
 $ import {VtxUpload,VtxUploadModal,VtxUpload2} from 'vtx-ui';
 # 页面头部查询组件
 $ import {VtxGrid,VtxModeGrid} from 'vtx-ui';
-# 地图组件
+# 地图组件(地图组件的ref函数现在改为getMapInstance)
 $ import {VtxMap,VtxOptMap,VtxZoomMap} from 'vtx-ui';
 # 表单组件
 $ import {VtxInput,VtxSelect,Option,OptGroup} from 'vtx-ui';
@@ -60,7 +60,7 @@ $ const {VtxUploadModal,VtxUpload2} = VtxUpload;
 # 页面头部查询组件
 $ import {VtxGrid} from 'vtx-ui';
 $ const {VtxModeGrid} = VtxGrid;
-# 地图组件
+# 地图组件(地图组件的ref函数现在改为getMapInstance)
 $ import {VtxMap} from 'vtx-ui';
 $ const {VtxOptMap,VtxZoomMap} = VtxMap;
 # 表单组件

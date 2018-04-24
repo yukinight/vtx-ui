@@ -67,8 +67,8 @@ class OptimizingPointMap extends React.Component{
                 if(p){
                     this.map = p;
                 }
-                if(typeof(this.props.ref) ==="function"){
-                    this.props.ref(p);
+                if(typeof(this.props.getMapInstance) ==="function"){
+                    this.props.getMapInstance(p);
                 }
             }
         }
