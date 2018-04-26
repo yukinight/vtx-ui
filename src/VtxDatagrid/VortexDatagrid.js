@@ -95,8 +95,8 @@ class VortexDatagrid extends React.Component{
             // 配置按钮操作列
             if(col.renderButtons){
                 delete newCol.renderButtons;
-                newCol.render = function(text, record){
-                    return t.generateButtons(col.renderButtons,record);
+                newCol.render = function(text, record, index){
+                    return t.generateButtons(col.renderButtons,record,text,index);
                 }
             }
             // 不允许换行列的处理
@@ -145,11 +145,13 @@ class VortexDatagrid extends React.Component{
             })
         })
     }
-    generateButtons(btList, rowData){
+    generateButtons(btList, rowData, text, index){
+        let btnList = typeof btList === "function" ?
+            btList(text, rowData,index) : btList;
         return (
             <span>
                 {
-                    btList.map((bt,bt_index)=>{
+	                btnList.map((bt,bt_index)=>{
                         switch(bt.name){
                             /*case '编辑': return (
                                 <span key={bt_index}>
@@ -193,7 +195,7 @@ class VortexDatagrid extends React.Component{
     getNewProps(){
         let t = this;
         let deletedTitles = t.state.columnsVisibility.filter((item)=>!item.visible).map(item=>item.title);
-        
+
         let newProps = {
             ...t.props,
             columns: t.columnHandler().filter((item)=>{
@@ -245,7 +247,7 @@ class VortexDatagrid extends React.Component{
             <div id={t.id}  className={containerClasses.join(' ')} >
                 <Table {...t.getNewProps()} className={styles.data_tb} />
                 {
-                    t.props.hideColumn ? 
+                    t.props.hideColumn ?
                     <Popover placement="bottomRight" title={'隐藏显示列'} content={
                         <div className={styles.titleSelectionContainer}>
                             {
