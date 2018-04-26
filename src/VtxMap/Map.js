@@ -2,6 +2,7 @@ import React from 'react';
 import AMap from './AMap/AMap';
 import BMap from './BMap/Map';
 import TMap from './TMap/TMap';
+import './Map.less';
 
 class Map extends React.Component {
     constructor(props){

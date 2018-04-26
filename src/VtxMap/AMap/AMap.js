@@ -1877,6 +1877,12 @@ class VortexAMap extends React.Component{
     }
     componentWillUnmount(){
         let t = this;
+        //关闭moveTo定时
+        for(let i in t.GM.allParam){
+            if(t.GM.allParam.type == 'point'){
+                t.GM.getGraphic[i].stopMove();
+            }
+        }
         this.state.gis.destroy();
         this.state.gis = null;
     }

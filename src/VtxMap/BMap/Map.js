@@ -383,9 +383,9 @@ class Map extends React.Component{
                 }
                 let icon = new BMap.Icon(
                     './resources/images/touming.png',
-                    new BMap.Size(100,30)
+                    new BMap.Size(cg.width,cg.height)
                 );
-                icon.setImageSize(new BMap.Size(100,30));
+                icon.setImageSize(new BMap.Size(cg.width,cg.height));
                 markerOption = {...markerOption,icon};
                 marker = new BMap.Marker(position,markerOption);
 
