@@ -21,18 +21,10 @@
     }
 }
 
-.vtx-ui-datagrid-nowrap{
-    table{
-        table-layout: fixed;
-        width:100%;
-    }
-}
-
 .vtx-ui-datagrid-ct{
     position: relative;
     table{
         table-layout: fixed;
-        width:100%;
     }
     .ant-table-header,.ant-table-body{
         &::-webkit-scrollbar {
@@ -47,14 +39,14 @@
         }
     }
     .ant-table-header{
-        padding-bottom: 15px !important;
-        overflow-x: auto !important;
+        padding-bottom: 10px !important;
+        overflow-x: scroll !important;
+        margin-bottom: -17px !important;
         th{
             white-space: normal;
         }
     }
 }
-
 
 .vtx-ui-datagrid-nowrapoverflow{
     text-overflow: ellipsis;
