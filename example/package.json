@@ -5,7 +5,7 @@
     "build": "cross-env ESLINT=none roadhog build",
     "buildV": "cross-env ESLINT=none roadhog build && node version.control.js",
     "buildD": "cross-env NO_COMPRESS=none ESLINT=none roadhog build",
-    "lint": "eslint --ext .js src test",
+    "lint": "eslint --ext .js src test"
   },
   "engines": {
     "install-node": "6.9.2"
