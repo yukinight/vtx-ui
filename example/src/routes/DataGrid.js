@@ -1,6 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
 import { Table, Icon, Popconfirm, Input,message, Tooltip } from 'antd';
 import styles from './DataGrid.less';
 import {VtxDatagrid} from 'vtx-ui';

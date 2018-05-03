@@ -175,29 +175,22 @@ class MapTest extends React.Component{
                 }}/>
                 <span onClick={()=>{
                     this.map.searchPoints(inputVal).then((data)=>{
-                        if(data.pois.length==0){
+                        console.log(data)
+                        if(data.length==0){
                             console.warn('没有搜索结果');
                             return;
                         }
-                        let list = data.pois.map((r)=>({
-                            id: r.uid,
-                            longitude: r.point.lng,
-                            latitude: r.point.lat,
-                            canShowLabel: true,
-                            config: {
-                                labelContent: r.title,
-                                labelPixelY: 27
-                            },
-                            other: 'search'
-                        }))
                         this.props.dispatch({type:'map/updateState',payload:{
-                            mapPoints:list
+                            mapPoints:data
                         }})
-                        this.map.state.gis.setFitview(list.map((item)=>item.id));
+                        this.props.dispatch({type:'map/changeFitview',payload:{
+                            type:{fitView:data.map((item)=>item.id),type:'all'}
+                        }})
+                        // t.map.setVisiblePoints(list.map((item)=>item.id));
                     })
                 }}>查询点位&nbsp;</span>
                 <VtxMap 
-                    ref={(map)=>{if(map)this.map = map}}
+                    getMapInstance={(map)=>{if(map)this.map = map}}
                     mapId={'map1'} 
                     mapPoints={mapPoints} //地图覆盖物 点
                     mapLines={mapLines} //地图覆盖物 线

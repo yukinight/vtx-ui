@@ -5,7 +5,7 @@ module.exports = function(webpackConfig, env) {
 // adding plugins to your configuration
     webpackConfig.plugins.push( 
         new CSSSplitWebpackPlugin({
-            size: 1000,
+            size: 2000,
             imports:true
         })
     )

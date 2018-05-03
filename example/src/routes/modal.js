@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
 import styles from './modal.less';
 
 import {VtxModal} from 'vtx-ui';

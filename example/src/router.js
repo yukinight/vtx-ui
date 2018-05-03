@@ -16,18 +16,18 @@ import Upload from './routes/upload';
 function RouterConfig({ history }) {
   return (
     <Router history={history}>
-      <Route path="/" component={IndexPage} />
-      <Route path="/tree" component={Tree} />
-      <Route path="/datagrid" component={DataGrid} />
-      <Route path="/map" component={VMap} />   
-      <Route path="/optmap" component={OMap} />   
-      <Route path="/searchmap" component={SMap} />  
-      <Route path="/date" component={DatePk} />  
-      <Route path="/treeselect" component={TreeSelect} />  
-      <Route path="/grid" component={VtxGrid} />  
-      <Route path="/combogrid" component={ComboGrid} />  
-      <Route path="/modal" component={VtxModal} />  
-      <Route path="/upload" component={Upload} />  
+        <Route path="/" component={IndexPage} />
+        <Route path="/tree" component={Tree} />
+        <Route path="/datagrid" component={DataGrid} />
+        <Route path="/map" component={VMap} />   
+        <Route path="/optmap" component={OMap} />   
+        <Route path="/searchmap" component={SMap} />  
+        <Route path="/date" component={DatePk} />  
+        <Route path="/treeselect" component={TreeSelect} />  
+        <Route path="/grid" component={VtxGrid} />  
+        <Route path="/combogrid" component={ComboGrid} />  
+        <Route path="/modal" component={VtxModal} />  
+        <Route path="/upload" component={Upload} />  
     </Router>
   );
 }

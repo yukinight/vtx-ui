@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
 import styles from './date.less';
 import moment from 'moment';
 import {Button} from 'antd';
-import {VtxDatePicker,VtxMonthPicker,VtxYearPicker,VtxRangePicker,VtxTimePicker} from 'vtx-ui';
+import {VtxDate} from 'vtx-ui';
+const {VtxDatePicker,VtxMonthPicker,VtxYearPicker,VtxRangePicker,VtxTimePicker} = VtxDate;
+
 function IndexPage({datepicker,dispatch}) {
     const {date1,date2,date3,dateM,dateY,openY,date6,date7,date8,dateT1,dateT2,dateT3,openT} = datepicker;
     function change1(date,dateString) {

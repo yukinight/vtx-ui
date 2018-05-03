@@ -45,6 +45,7 @@ class VtxSearchMap extends React.Component {
     constructor(props){
         super(props);
         this.map = null;//Map组件的ref对象
+        this.mapLoaded = false;
         this.apid = [];//所有点id,除编辑点外
         this.state={
             //列表和地图宽度切换的动画需要
@@ -196,7 +197,7 @@ class VtxSearchMap extends React.Component {
     searchList(){
         //因为antd组件问题,这边使用手动关键位,控制方法执行
         let t = this;
-        var local = new BMap.LocalSearch(this.map.state.gis.map, {
+        var local = new BMap.LocalSearch(this.map.state.gis, {
             onSearchComplete(results){
                 if(local.getStatus() === 0){
                     let lsp = [],lsm = [];
@@ -450,7 +451,7 @@ class VtxSearchMap extends React.Component {
                         {/*右侧地图*/}
                         <div className={styles.content_right}>
                             <VtxMap 
-                                ref={(map)=>{if(map)this.map = map}}
+                                getMapInstance={(map)=>{if(map)this.map = map}}
                                 mapId={`searchMap${new Date().getTime()}`}
                                 setCenter={setCenter}
                                 mapCenter={mapCenter}
@@ -483,18 +484,22 @@ class VtxSearchMap extends React.Component {
         //绘制定位点(以当前的中心点位参照=>初始化好后才有ref可以获取中心点)
         if (this.props.modal1Visible) {
             if(this.map){
-                this.drawLocationPoint();   
+                this.map.loadMapComplete.then(()=>{
+                    this.drawLocationPoint();
+                    this.mapLoaded = true;
+                });
             }
         }
     }
     componentDidUpdate(prevProps, prevState) {//重新渲染结束
         if (this.props.modal1Visible && !this.state.locationPoint[0]) {
-            if(this.map){
+            if(this.map && this.mapLoaded){
                 this.drawLocationPoint();   
             }
         }
     }
     componentWillReceiveProps(nextProps){
+        if(this.mapLoaded)return;
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter,

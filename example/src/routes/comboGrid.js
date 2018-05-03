@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'dva';
-import { Link } from 'dva/router';
-import {VtxComboGrid} from 'vtx-ui';
+import {VtxCombogrid} from 'vtx-ui';
 
 function IndexPage(props) {
     const {dispatch,grid1,comboVal} = props;
@@ -82,8 +81,7 @@ function IndexPage(props) {
   
     return (
         <div>
-            {/* <VtxComboGrid  {...cbProps2} /> */}
-            <VtxComboGrid {...cbProps3} />
+            <VtxCombogrid {...cbProps3} />
         </div>
     );
 }

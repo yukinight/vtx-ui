@@ -1,0 +1,24 @@
+{
+  "entry": "src/index.js",
+  "extraBabelPlugins": [
+    ["import", {"libraryName": "antd", "libraryDirectory": "lib", "style": "css" }, "antd"],
+    ["import", {"libraryName": "vtx-ui", "camel2DashComponentName": false}, "vtx-ui"],
+    ["module-resolver", {
+      "alias": {
+        "dva": "dva-react-router-3"
+      }
+    }]
+  ],
+  "env": {
+    "development": {
+      "extraBabelPlugins": [
+        "dva-hmr"
+      ]
+    },
+    "production": {
+      "extraBabelPlugins": [
+        "transform-remove-console"
+      ]
+    }
+  }
+}

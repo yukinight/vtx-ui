@@ -6,6 +6,7 @@ class OptimizingPointMap extends React.Component{
     constructor(props){
         super(props);
         this.map = null;
+        this.mapLoaded = false;
         this.MPP = new mapPointsProcessor(props.gridSpacing || 40);
         this.state= {
             filterPoints:[]
@@ -33,10 +34,13 @@ class OptimizingPointMap extends React.Component{
         
     }
     componentDidMount(){
-        this.resetPoints(this.props);
+        this.map.loadMapComplete.then(()=>{
+            this.resetPoints(this.props);
+            this.mapLoaded = true;
+        })
     }
     componentWillReceiveProps(nextProps){
-        if(!this.deepEqual(this.props.reservedPoints, nextProps.reservedPoints) || !this.deepEqual(this.props.mapPoints, nextProps.mapPoints)){
+        if(this.mapLoaded && !this.deepEqual(this.props.reservedPoints, nextProps.reservedPoints) || !this.deepEqual(this.props.mapPoints, nextProps.mapPoints)){
             // 外部点数据改变，更新内部点数据
             this.resetPoints(nextProps);
         }
@@ -63,7 +67,7 @@ class OptimizingPointMap extends React.Component{
             zoomEnd:this.zoomEnd.bind(this),
             moveEnd:this.moveEnd.bind(this),
             mapPoints:this.state.filterPoints,
-            ref:(p)=>{
+            getMapInstance:(p)=>{
                 if(p){
                     this.map = p;
                 }

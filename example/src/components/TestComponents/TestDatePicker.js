@@ -2,7 +2,7 @@ import React from 'react';
 import { DatePicker,TimePicker,Button } from 'antd';
 import moment from 'moment';
 
-function TestDatePicker(props) {
+export function TestDatePicker(props) {
     function onChange(){
         
     }
@@ -11,7 +11,7 @@ function TestDatePicker(props) {
     );
 }
 
-function TestDateTimePicker(props) {
+export function TestDateTimePicker(props) {
     function onChange(){
         
     }
@@ -19,7 +19,7 @@ function TestDateTimePicker(props) {
         <DatePicker showTime style={{ width: '100%' }} format="YYYY-MM-DD HH:mm:ss" onChange={onChange} />
     );
 }
-function TestTimePicker(props) {
+export function TestTimePicker(props) {
     function onChange(){
         
     }
@@ -37,4 +37,3 @@ function TestTimePicker(props) {
     );
 }
 
-export default {TestDatePicker,TestDateTimePicker,TestTimePicker};

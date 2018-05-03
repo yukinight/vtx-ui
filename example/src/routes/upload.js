@@ -1,8 +1,11 @@
 import React from 'react';
 import { connect } from 'dva';
 import styles from './upload.less';
-import {VtxUpload,VtxUpload2,VtxUploadModal,VtxExport,VtxExport2,VtxImport} from 'vtx-ui';
+import {VtxUpload,VtxExport,VtxImport} from 'vtx-ui';
 import { message, Tag, Button } from 'antd';
+
+const {VtxUploadModal,VtxUpload2} = VtxUpload;
+const {VtxExport2} = VtxExport;
 
 function IndexPage(props) {
   const {fileList, dispatch, showUploadModal,fileListVersion} = props;

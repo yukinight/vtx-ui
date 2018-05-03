@@ -1,8 +1,9 @@
 import React from 'react';
 import {connect} from 'dva';
-import {VtxOptMap} from 'vtx-ui';
+import {VtxMap} from 'vtx-ui';
 import style from './zoomMap.less';
 
+const {VtxOptMap,VtxZoomMap} = VtxMap;
 const Map = (props)=>{
     const {dispatch, optMap} = props;
     console.log('初始化点数：'+optMap.mapPoints.length);
