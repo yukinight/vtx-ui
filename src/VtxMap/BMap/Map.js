@@ -378,7 +378,8 @@ class Map extends React.Component{
                  用Label来实现,无法再添加label(高德有判断,实现不同)*/
                  //覆盖物参数
                 let markerOption = {
-                    offset: new BMap.Size(0,0),
+                    offset: new BMap.Size(cg.markerContentX + cg.width/2,
+                                            cg.markerContentY + cg.height/2),
                     icon: null
                 }
                 let icon = new BMap.Icon(
@@ -391,7 +392,7 @@ class Map extends React.Component{
 
                 //覆盖物参数
                 let markerLOption = {
-                    offset: new BMap.Size(cg.markerContentX + cg.width/2, cg.markerContentY + cg.height/2)
+                    offset: new BMap.Size(0,0)
                 };
                 let markerL = new BMap.Label(item.markerContent,markerLOption);
                 markerL.setStyle({
@@ -511,7 +512,8 @@ class Map extends React.Component{
                     cg = {...cg,...item.config};
                 }
                 if(item.markerContent){
-                    gc.setOffset(new BMap.Size(0,0));
+                    gc.setOffset(new BMap.Size(cg.markerContentX + cg.width/2,
+                                            cg.markerContentY + cg.height/2));
                     let icon = new BMap.Icon(
                         './resources/images/touming.png',
                         new BMap.Size(cg.width,cg.height)
@@ -520,11 +522,11 @@ class Map extends React.Component{
                     gc.setIcon(icon);
                     if(!!gc.getLabel()){
                         gc.getLabel().setContent(item.markerContent);
-                        gc.getLabel().setOffset(new BMap.Size(cg.markerContentX + cg.width/2, cg.markerContentY + cg.height/2));
+                        gc.getLabel().setOffset(new BMap.Size(0,0));
                     }else{
                         //覆盖物参数
                         let markerLOption = {
-                            offset: new BMap.Size(cg.markerContentX + cg.width/2, cg.markerContentY + cg.height/2)
+                            offset: new BMap.Size(0,0)
                         };
                         let markerL = new BMap.Label(item.markerContent,markerLOption);
                         markerL.setStyle({
