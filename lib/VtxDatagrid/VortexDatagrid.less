@@ -23,8 +23,11 @@
 
 .vtx-ui-datagrid-ct{
     position: relative;
-    table{
-        table-layout: fixed;
+    .ant-table-scroll{
+        table{
+            table-layout: fixed;
+            width: 100%;
+        }
     }
     .ant-table-header,.ant-table-body{
         &::-webkit-scrollbar {
