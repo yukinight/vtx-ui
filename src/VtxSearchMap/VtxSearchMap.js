@@ -65,6 +65,7 @@ class VtxSearchMap extends React.Component {
             drawGraphID:'drawnGraph',
             /*地图Api参数*/
             mapCenter: props.mapCenter || '',
+            mapType: props.mapType || 'bmap',
             setCenter: false,
             mapVisiblePoints: {
                 fitView: [],
@@ -88,7 +89,12 @@ class VtxSearchMap extends React.Component {
             switch (this.state.graphicType){
                 case 'point':
                     let {locationPoint} = this.state;
-                    this.props.callback([locationPoint[0].longitude,locationPoint[0].latitude]);
+                    if(this.map.getGraphic('locationPoint')){
+                        let p = this.map.getGraphic(locationPoint[0].id).geometry;
+                        this.props.callback([p.x,p.y]);
+                    }else{
+                        return [];
+                    }
                     break;
                 case 'circle':
                     this.props.callback(this.state.graphicValue?{
@@ -137,7 +143,7 @@ class VtxSearchMap extends React.Component {
                 latitude: lglt.nowCenter.lat,
                 url: '/resources/images/defaultMarker.png',
                 config: {
-                    zIndex: 101
+                    zIndex: 1000
                 }
             }],
         },()=>{
@@ -151,31 +157,12 @@ class VtxSearchMap extends React.Component {
             })
         })
     }
-    //点位点拖动后的回调
-    editGraphicChange(obj){
-        //拖动后,保存当前拖动后定位点的位置信息,用于callback回调返回
-        let {locationPoint} = this.state;
-        locationPoint = locationPoint.map((item,index)=>{
-            return {
-                ...item,
-                longitude: obj.geometry.x,
-                latitude: obj.geometry.y
-            }
-        });
-        this.setState({
-            locationPoint: locationPoint
-        });
-    }
     //校正定位的点位位置到当前的中心点
     correction(){
+        let t = this;
         //获取当前中心点经纬度
         let lglt = this.map.getMapExtent();
-        //map组件问题,手动操作图元
-        if(this.map.getGraphic('locationPoint')){
-            this.map.getGraphic('locationPoint').mapLayer.setPosition(new BMap.Point(lglt.nowCenter.lng,lglt.nowCenter.lat));
-        }
-        //将数据存入state,callback返回
-        let {locationPoint} = this.state;
+        let {locationPoint} = t.state;
         locationPoint = locationPoint.map((item,index)=>{
             return {
                 ...item,
@@ -183,9 +170,7 @@ class VtxSearchMap extends React.Component {
                 latitude: lglt.nowCenter.lat
             }
         });
-        this.setState({
-            locationPoint: locationPoint
-        });
+        this.map.updatePoint(locationPoint);
     }
     //搜索关键字切换
     changeValue(e){
@@ -197,45 +182,35 @@ class VtxSearchMap extends React.Component {
     searchList(){
         //因为antd组件问题,这边使用手动关键位,控制方法执行
         let t = this;
-        var local = new BMap.LocalSearch(this.map.state.gis, {
-            onSearchComplete(results){
-                if(local.getStatus() === 0){
-                    let lsp = [],lsm = [];
-                    t.apid = [];
-                    for (let i = 0; i < results.getCurrentNumPois(); i ++){
-                        let r = results.getPoi(i);
-                        lsp.push({
-                            id: r.uid,
-                            longitude: r.point.lng,
-                            latitude: r.point.lat,
-                            url: '/resources/images/defaultMarker_selected.png',
-                            canShowLabel: true,
-                            labelClass: styles.hiddenLabel,
-                            config: {
-                                labelContent: r.title,
-                                labelPixelY: 27
-                            },
-                            other: 'search'
-                        });
-                        lsm.push({
-                            id: r.uid,
-                            title: r.title,
-                            isSelect: false
-                        });
-                        t.apid.push(r.uid);
-                    }
-                    t.setState({
-                        listPoint: lsp,
-                        listMess: lsm,
-                        isShowList: true
+        let searchPoints = t.map.searchPoints(this.state.searchValue);
+        searchPoints.then((results)=>{
+            if(results.length > 0){
+                let lsp = [],lsm = [];
+                t.apid = [];
+                for (let i = 0; i < results.length; i ++){
+                    let r = results[i];
+                    lsp.push({
+                        ...results[i],
+                        url: '/resources/images/defaultMarker_selected.png',
+                        labelClass: styles.hiddenLabel,
                     });
-                    t.setFitView();
-                }else{
-                    warning();
+                    lsm.push({
+                        id: r.id,
+                        title: r.config.labelContent,
+                        isSelect: false
+                    });
+                    t.apid.push(r.id);
                 }
+                t.setState({
+                    listPoint: lsp,
+                    listMess: lsm,
+                    isShowList: true
+                });
+                t.setFitView();
+            }else{
+                warning();
             }
-        });
-        local.search(this.state.searchValue);
+        })
     }
     //返回最佳位置(zoom,center)
     setFitView(){
@@ -334,7 +309,7 @@ class VtxSearchMap extends React.Component {
             listPoint,listMess,
             /*地图参数*/
             mapZoomLevel,setZoomLevel,
-            mapCenter,setCenter,
+            mapCenter,setCenter,mapType,
             mapVisiblePoints,setVisiblePoints,
             isDoEdit,editGraphicId,
             /*modal参数*/
@@ -452,6 +427,7 @@ class VtxSearchMap extends React.Component {
                         <div className={styles.content_right}>
                             <VtxMap 
                                 getMapInstance={(map)=>{if(map)this.map = map}}
+                                mapType={mapType}
                                 mapId={`searchMap${new Date().getTime()}`}
                                 setCenter={setCenter}
                                 mapCenter={mapCenter}
@@ -465,7 +441,7 @@ class VtxSearchMap extends React.Component {
                                 setVisiblePoints={setVisiblePoints}
                                 isDoEdit={isDoEdit}
                                 editGraphicId={editGraphicId}
-                                editGraphicChange={this.editGraphicChange.bind(this)}
+                                editGraphicChange={()=>{}}
                                 clickGraphic={this.clickGraphic.bind(this)}
                                 {...drawProps}
                             />
@@ -503,6 +479,7 @@ class VtxSearchMap extends React.Component {
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter,
+           mapType: nextProps.mapType
         });
         setTimeout(()=>{
             //实现2+次进入时,清理数据

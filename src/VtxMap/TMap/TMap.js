@@ -587,7 +587,7 @@ class TMap extends React.Component{
                     let labelClass = item.labelClass || 'label-content';
                     marker.label = new T.Label({
                         text: `<div class='${labelClass}'>${cg.labelContent}</div>`,
-                        offset: new T.Point((cg.labelPixelX - (cg.width/2)),-cg.labelPixelY + (cg.markerContentY + cg.height/2))
+                        offset: new T.Point((cg.labelPixelX - (cg.width/2)),cg.labelPixelY + (cg.markerContentY + cg.height/2))
                     })
                     marker.showLabel();
                 }
@@ -689,7 +689,7 @@ class TMap extends React.Component{
                             this.state.gis.removeOverLay(gc.label);
                         }
                         cg.labelPixelX= item.config.labelPixelX?item.config.labelPixelX - (cg.width/2):gc.getLabel().options.offset.x;
-                        cg.labelPixelY= item.config.labelPixelY?-item.config.labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
+                        cg.labelPixelY= item.config.labelPixelY?item.config.labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
                         cg.labelContent= item.config.labelContent || gc.getLabel().options.text;
                         let labelClass = item.labelClass || 'label-content';
                         //更新label
@@ -1802,10 +1802,39 @@ class TMap extends React.Component{
        
         return {deletedDataIDs,addedData,updatedData,replacedData};
     }
+    searchPoints(searchValue,pageSize=10,pageIndex=1){
+        let t = this;
+        return new Promise((resolve)=>{
+            let searchConfig = {
+                pageCapacity: pageSize*pageIndex,   //每页显示的数量
+                //接收数据的回调函数
+                onSearchComplete: (result)=>{
+                    let list = result.pois.map((r)=>{
+                        return {
+                            id: r.hotPointID,
+                            longitude: r.lonlat.split(' ')[0],
+                            latitude: r.lonlat.split(' ')[1],
+                            canShowLabel: true,
+                            config: {
+                                labelContent: r.name,
+                                labelPixelY: 27
+                            },
+                            other: 'search'
+                        }
+                    })
+                    resolve(list);
+                } 
+            };
+            //创建搜索对象
+            let localsearch = new T.LocalSearch(t.state.gis, searchConfig);
+            localsearch.search(searchValue);
+        });
+
+    }
     render(){
         let t = this;
         return (
-            <div id={t.props.mapId} style={{width:'100%',height:'100%'}}></div>
+            <div id={t.props.mapId} style={{width:'100%',height:'100%',zIndex: '1'}}></div>
         );
     }
     componentDidMount(){
