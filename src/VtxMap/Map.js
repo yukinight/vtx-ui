@@ -4,7 +4,7 @@ import BMap from './BMap/Map';
 import TMap from './TMap/TMap';
 import './Map.less';
 
-class Map extends React.Component {
+class VtxMap extends React.Component {
     constructor(props){
         super(props);
     }
@@ -29,4 +29,4 @@ class Map extends React.Component {
     }
 }
 
-export default Map;
+export default VtxMap;

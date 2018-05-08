@@ -17,7 +17,7 @@ const gisMapConstant = {
     bigger: 6,//定义点的尺寸为很大，宽高为20px*20px
     huge: 7,//定义点的尺寸为超大，宽高为30px*30px
 }
-class Map extends React.Component{
+class BMap extends React.Component{
     constructor(props){
         super(props);
         this.GM = new graphicManage();//初始化 图元管理方法
@@ -2375,4 +2375,4 @@ class Map extends React.Component{
     }
 }
 
-export default Map;
+export default BMap;
