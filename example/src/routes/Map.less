@@ -1,12 +1,28 @@
-.map{
-	position: absolute;
-	top: 3%;
-	left: 10%;
-	width: 80%;
-	height: 80%;
-	span{
-		cursor: pointer;
-		display: inline-block;
-		margin-bottom: 10px;
+.normal{
+	.action,.map{
+		width: 80%;
+		margin-left: 10%;
 	}
-}
+	.action{
+		min-height: 200px;
+		div{
+			display: inline-block;;
+			margin-right: 15px;
+			line-height: 28px;
+			font-size: 14px;
+			cursor: pointer;
+			-webkit-touch-callout: none; /* iOS Safari */
+			-webkit-user-select: none; /* Chrome/Safari/Opera */
+			-khtml-user-select: none; /* Konqueror */
+			-moz-user-select: none; /* Firefox */
+			-ms-user-select: none; /* Internet Explorer/Edge */
+			user-select: none; /* Non-prefixed version, currently not supported by any browser */
+			&:active{
+				color: #108edf;
+			}
+		}
+	}
+	.map{
+		height: 600px;
+	}
+  }

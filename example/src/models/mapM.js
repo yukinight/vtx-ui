@@ -1,28 +1,39 @@
 import { hashHistory } from 'dva/router';
 
 export default {
-    namespace: 'map',
+
+    namespace: 'bmap',
+
     state: {
-        text: '111111',
+        visible: false,
         mapPoints: [{
+            id: 'car1',
+            longitude:116.385827,
+            latitude:39.913232,
+            config: {
+                isAnimation: true,
+                autoRotation: true
+            }
+        },{
             id:'p00',
             longitude:116.468021,
             latitude:39.890092,
-            markerContent: '<div>1111<div>'
+            markerContent: '<div>1111<div>',
+            config: {
+                isAnimation: true,
+            }
         },{
             id:'p01',
             longitude:117.468021,
             latitude:39.890092,
             canShowLabel: true,
+            url: './resources/images/03.png',
             config: {
                 labelContent: '1dfasdf',
                 isAnimation: true,
+                zIndex: 1000,
                 // BAnimationType: 0
             }
-        },{
-            id: 'car1',
-            longitude:116.385827,
-            latitude:39.913232
         }],
         mapLines: [{
             id: 'l1',
@@ -53,74 +64,130 @@ export default {
             latitude:38.890092,
             radius: 10000,
         },],
-        mapCenter: [117.468021,38.890092],
+        heatmap: {
+            data: [
+                {"lng":121.173004,"lat":30.280188,"count":80},
+                {"lng":120.473004,"lat":31.480188,"count":34},
+                {"lng":122.373004,"lat":28.280188,"count":19},
+                {"lng":123.173004,"lat":30.255088,"count":42},
+                {"lng":119.173004,"lat":28.280188,"count":32},
+                {"lng":117.173004,"lat":29.280188,"count":98},
+                {"lng":120.223004,"lat":31.280188,"count":53},
+                {"lng":120.453004,"lat":29.280188,"count":25},
+                {"lng":118.173004,"lat":32.280188,"count":10}
+            ],
+            //lng 经度
+            //lat 纬度
+            //count 权重值
+            config: {
+                radius: 50,
+                //热力图半径,默认20
+                visible: true,
+                //控制热力图显隐,默认true 
+                max: 100,
+                //最大权重值 默认100
+                gradient: {
+                    0:'rgb(102,255, 0)',
+                    .5:'rgb(255,170,0)',
+                    1:'rgb(255,51,255)'
+                },
+                //渐变区间 (ui没有定就不要设置该字段)
+                opacity: 0.5,
+                //透明度
+            }
+        },
+        mapCenter: [116.404,39.915],
         setCenter: false,
         mapVisiblePoints:{fitView:'all',type:'all'},
         setVisiblePoints: false,
         mapCluster: [],
         setCluster: false,
-        mapZoomLevel: 10,
         setZoomLevel: false,
+        mapZoomLevel: '',
         isRangingTool: false,
-        editGraphicId: '',
+        isOpenTrafficInfo: false,
+        areaRestriction: [[115.377628,38.082111],[118.909909,39.50744]],
+        isSetAreaRestriction: false,
+        isClearAreaRestriction: false,
         isDoEdit: false,
         isEndEdit: false,
-        boundaryName: ['苏州'],
-        customizedBoundary:[],
+        editGraphicId: '',
         mapDraw: {},
         isDraw: false,
+        isCloseDraw: false,
+        boundaryName: [],
         isClearAll: false,
         mapRemove: [],
         isRemove: false,
-        isCloseDraw: false,
-        isSetAreaRestriction: false,
-        areaRestriction: [[115.377628,38.082111],[118.909909,39.50744]],
-        isClearAreaRestriction: false,
-        inputVal:''
+        inputVal:'',
+        mapPointCollection: [{
+            id: 1,
+            points: [
+                {lng:121,lat:30.23,other: 131},
+                {lng:122,lat:30.3,other: 132},
+                {lng:122.1,lat:30.3,other: 133},
+                {lng:122.4,lat:30.2,other: 134},
+                {lng:121.,lat:30.1,other: 135},
+            ]
+        }],
+        isclearAllPointCollection: false
     },
-    subscriptions:{
+    subscriptions: {
         setup({ dispatch, history }) {
-            history.listen(location => {
-            })
-        }
+            history.listen(({pathname}) => {
+                // for (let i = 0 ; i < 1000;i++) {
+                //     dispatch({type: 'addLine'});
+                // }
+            });
+        },
     },
-    effects:{
+
+    effects: {
+        //设置中心点
         *changeCenter({payload},{select,put,call}){
             yield put({
-                type: 'isshowCenter',
+                type: 'updateState',
                 payload: {
                     setCenter: true
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isshowCenter',
+                type: 'updateState',
                 payload: {
                     setCenter: false
                 }
             })
         },
-        *changeFitview({payload},{select,put,call}){
+        //设置最优视野
+        *changeFitview({payload = {}},{select,put,call}){
             const {type} = payload;
             yield put({
-                type: 'isshowFitview',
+                type: 'updateState',
                 payload: {
-                    mapVisiblePoints: type || {fitView:'circle',type:'all'},
+                    mapVisiblePoints: type || {fitView:'all',type:'all'},
+                    // mapVisiblePoints: type || {fitView:'point',type:'all'},
                     setVisiblePoints: true
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isshowFitview',
+                type: 'updateState',
                 payload: {
                     setVisiblePoints: false
                 }
             })
         },
+        //添加点并设置最优视野
+        *addPointAddFitview({payload},{select,put,call}){
+            yield put({type: 'addPoint'});
+            yield put({type: 'changeFitview',payload:{type:{fitView:'point',type:'all'}}});
+        },
+        //设置点位聚合
         *cluster({payload},{select,put,call}){
-            let {mapPoints} = yield select(({map})=>map);
+            let {mapPoints} = yield select(({bmap})=>bmap);
             yield put({
-                type: 'isSetCluster',
+                type: 'updateState',
                 payload: {
                     mapCluster: mapPoints.map((item,index)=>{
                         return item.id;
@@ -130,51 +197,88 @@ export default {
             });
             yield call(delay,1);
             yield put({
-                type: 'isSetCluster',
+                type: 'updateState',
                 payload: {
                     setCluster: false
                 }
             })
         },
-        *addPointAddFitview({payload},{select,put,call}){
-            yield put({type: 'addPoint'});
-            yield put({type: 'changeFitview',payload:{type:{fitView:'point',type:'center'}}});
-        },
-        *changeZoom({payload},{select,put,call}){
-            let {mapZoomLevel} = yield select(({map})=>map);
+        //设置zoom等级
+        *setZoomLevel({ payload }, { call, put , select}){
+            let mapZoomLevel = Math.random() * 20;
+            if(mapZoomLevel > 18){
+                mapZoomLevel = 18;
+            }else if(mapZoomLevel < 3){
+                mapZoomLevel = 3;
+            }
             yield put({
-                type: 'issetZoomLevel',
+                type: 'updateState',
                 payload: {
-                    mapZoomLevel: mapZoomLevel>9?mapZoomLevel-1:mapZoomLevel+1,
-                    setZoomLevel: true
+                    setZoomLevel: true,
+                    mapZoomLevel: mapZoomLevel
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'issetZoomLevel',
+                type: 'updateState',
                 payload: {
                     setZoomLevel: false
                 }
             })
         },
+        //开启测距
         *editRangingTool({payload},{select,put,call}){
             yield put({
-                type: 'isRangingTool',
+                type: 'updateState',
                 payload: {
                     isRangingTool: true
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isRangingTool',
+                type: 'updateState',
                 payload: {
                     isRangingTool: false
                 }
             })
         },
+        //开启(切换)区域限制
+        *changeAreaRestriction({payload},{select,put,call}){
+            yield put({
+                type: 'updateState',
+                payload: {
+                    areaRestriction:[[120.377628,38.082111],[115.909909,37.50744]],
+                    isSetAreaRestriction: true
+                }
+            });
+            yield call(delay,1);
+            yield put({
+                type: 'updateState',
+                payload: {
+                    isSetAreaRestriction: false
+                }
+            })
+        },
+        //关闭区域限制
+        *clearAreaRestriction({payload},{select,put,call}){
+            yield put({
+                type: 'updateState',
+                payload: {
+                    isClearAreaRestriction: true
+                }
+            });
+            yield call(delay,1);
+            yield put({
+                type: 'updateState',
+                payload: {
+                    isClearAreaRestriction: false
+                }
+            })
+        },
+        //开启编辑
         *editGraphic({payload},{select,put,call}){
             yield put({
-                type: 'iseditGraphic',
+                type: 'updateState',
                 payload: {
                     editGraphicId: payload.type,
                     isDoEdit: true
@@ -182,134 +286,171 @@ export default {
             });
             yield call(delay,1);
             yield put({
-                type: 'iseditGraphic',
+                type: 'updateState',
                 payload: {
                     isDoEdit: false
                 }
             });
         },
+        //关闭编辑
         *endEditGraphic({payload},{select,put,call}){
             yield put({
-                type: 'iseditGraphic',
+                type: 'updateState',
                 payload: {
                     isEndEdit: true
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'iseditGraphic',
+                type: 'updateState',
                 payload: {
                     isEndEdit: false
                 }
             });
         },
+        //绘制点
         *drawPoint({payload},{select,put,call}){
-            let mapDraw = {
-                geometryType: 'point',
-                parameter: {},
-                data: {id: 'point' + new Date().getTime()}
-            };
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
-                    mapDraw,
-                    isDraw: true
+                    isDraw: true,
+                    mapDraw: {
+                        geometryType: 'point',
+                        data: {
+                            id: `draw${new Date().getTime()}`
+                        },
+                        parameter: {}
+                    }
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
                     isDraw: false
                 }
             })
         },
+        //绘制线
         *drawPolyline({payload},{select,put,call}){
-            let mapDraw = {
-                geometryType: 'polyline',
-                parameter: {},
-                data: {id: 'polyline-test'}
-            };
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
-                    mapDraw,
-                    isDraw: true
+                    isDraw: true,
+                    mapDraw: {
+                        geometryType: 'polyline',
+                        data: {
+                            id: `draw${new Date().getTime()}`
+                        },
+                        parameter: {
+                            color: '#ff000f',
+                            pellucidity: 0.3,
+                            lineWidth: 8,
+                            lineType: 'dashed'
+                        }
+                    }
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
                     isDraw: false
                 }
             })
-        }, 
+        },
+        //绘制面
         *drawPolygon({payload},{select,put,call}){
-            let mapDraw = {
-                geometryType: 'polygon',
-                parameter: {},
-                data: {id: 'polygon' + new Date().getTime()}
-            };
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
-                    mapDraw,
-                    isDraw: true
+                    isDraw: true,
+                    mapDraw: {
+                        geometryType: 'polygon',
+                        data: {
+                            id: `draw${new Date().getTime()}`
+                        },
+                        parameter: {
+                            color: '#fff',
+                            lineColor: '#333',
+                            lineOpacity: 0.5,
+                            pellucidity: 0.7,
+                            lineWidth: 10,
+                            lineType: 'dashed'
+                        }
+                    }
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
                     isDraw: false
                 }
             })
-        }, 
+        },
+        //绘制圆
         *drawCircle({payload},{select,put,call}){
-            let mapDraw = {
-                geometryType: 'circle',
-                parameter: {},
-                data: {id: 'circle' + new Date().getTime()}
-            };
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
-                    mapDraw,
-                    isDraw: true
+                    isDraw: true,
+                    mapDraw: {
+                        geometryType: 'circle',
+                        data: {
+                            id: `draw${new Date().getTime()}`
+                        },
+                        parameter: {
+                            color: '#fff',
+                            lineColor: '#333',
+                            lineOpacity: 0.5,
+                            pellucidity: 0.7,
+                            lineWidth: 10,
+                            lineType: 'dashed'
+                        }
+                    }
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
                     isDraw: false
                 }
             })
         },
+        //绘制矩形
         *drawRectangle({payload},{select,put,call}){
-            let mapDraw = {
-                geometryType: 'rectangle',
-                parameter: {},
-                data: {id: 'rectangle'}
-            };
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
-                    mapDraw,
-                    isDraw: true
+                    isDraw: true,
+                    mapDraw: {
+                        geometryType: 'rectangle',
+                        data: {
+                            id: `drawrectangle`
+                        },
+                        parameter: {
+                            color: '#fff',
+                            lineColor: '#333',
+                            lineOpacity: 0.5,
+                            pellucidity: 0.7,
+                            lineWidth: 10
+                        }
+                    }
                 }
             });
             yield call(delay,1);
             yield put({
-                type: 'isDrawing',
+                type: 'updateState',
                 payload: {
                     isDraw: false
                 }
             })
         },
+        //关闭绘制
         *closeDraw({payload},{select,put,call}){
-             yield put({
+            yield put({
                 type: 'updateState',
                 payload: {
                     isCloseDraw: true
@@ -321,8 +462,9 @@ export default {
                 payload: {
                     isCloseDraw: false
                 }
-            })
+            });
         },
+        //清空图元
         *clearAll({payload},{select,put,call}){
             yield put({
                 type:'updateState',
@@ -343,13 +485,11 @@ export default {
                 }
             });
         },
-        *removeGraphic({payload},{select,put,call}){
+        //删除图元(绘制的图元)
+        *removeDrawGraphic({payload},{select,put,call}){
             let mapRemove = [{
-                id: 'rectangle',
-                type: 'draw'      
-            },{
-                id: 'p00',
-                type: 'point'
+                type: 'draw',
+                id: 'drawrectangle'
             }];
             yield put({
                 type: 'updateState',
@@ -366,202 +506,250 @@ export default {
                 }
             })
         },
-        *changeAreaRestriction({payload},{select,put,call}){
+        //删除图元(非绘制的图元)
+        *removeGraphic({payload},{select,put,call}){
+            let mapRemove = [{
+                type: 'point',
+                id: 'p00'
+            }];
             yield put({
                 type: 'updateState',
                 payload: {
-                    areaRestriction:[[120.377628,38.082111],[115.909909,37.50744]],
-                    isSetAreaRestriction: true
+                    mapRemove,
+                    isRemove: true
                 }
             });
             yield call(delay,1);
             yield put({
                 type: 'updateState',
                 payload: {
-                    isSetAreaRestriction: false
+                    isRemove: false
                 }
             })
         },
-        *clearAreaRestriction({payload},{select,put,call}){
+        //清空海量点
+        *clearMapPointCollection({payload},{select,put,call}){
             yield put({
                 type: 'updateState',
                 payload: {
-                    isClearAreaRestriction: true
+                    mapPointCollection:[],//清空成空数组就行
+                    isclearAllPointCollection: true
                 }
             });
             yield call(delay,1);
             yield put({
                 type: 'updateState',
                 payload: {
-                    isClearAreaRestriction: false
+                    isclearAllPointCollection: false
                 }
             })
         }
     },
-    reducers:{
-        updateState(state,action){
-            return {...state,...action.payload};
+
+    reducers: {
+        updateState(state, action) {
+            return { ...state, ...action.payload };
         },
         /*点*/
         addPoint(state,action){
-            let {mapPoints} = state;
-            mapPoints = [...mapPoints,{
-                id:'10',
-                longitude:116.468021,
-                latitude:38.890092,
-            },{
-                id:'11',
-                longitude:117.468021,
-                latitude:37.890092,
-                config: {width:50,height:12}
-            }];
-            return {...state,mapPoints};
+            let mps = [...state.mapPoints];
+            mps.push({
+                id:'p'+Math.random(),
+                longitude:117+Math.random(),
+                latitude:39+Math.random(),
+                canShowLabel: true,
+                config: {
+                    labelContent: Math.floor(Math.random()*10000),
+                    isAnimation: true,
+                    zIndex: 1000
+                    // BAnimationType: 0
+                }
+            });
+            return {...state,mapPoints: mps};
         },
         updatePoint(state,action){
-            let {mapPoints} = state;
-            mapPoints = mapPoints.map((item,index)=>{
-                let obj = {
+            let mps = [...state.mapPoints];
+            mps = mps.map((item,index)=>{
+                return {
                     ...item,
-                    longitude: item.longitude +1,
-                    latitude: item.latitude +1,
+                    longitude:item.longitude + eval((Math.random()>0.5?'-':'+')+Math.random()*5),
+                    latitude:item.latitude + eval((Math.random()>0.5?'-':'+')+Math.random()*5),
+                    config: {
+                        ...item.config,
+                        labelContent: '1111'
+                    }
                 }
-                return obj;
             })
-            return {...state,mapPoints};
+            return {...state,mapPoints: mps};
         },
         deletePoint(state,action){
-            let {mapPoints} = state;
-            let dp = [...mapPoints];
-            dp.splice(0,1);
-            return {...state,mapPoints:dp};
+            let mps = [...state.mapPoints];
+            mps.splice(0,1);
+            return {...state,mapPoints: mps};
         },
         /*线*/
         addLine(state,action){
-            let {mapLines} = state;
-            mapLines = mapLines.concat([{
-                id:'l3',
-                paths: [[118.468021,37.890092],[119.468021,39.890092]],
-                config: {lineWidth:4,color:'blue'}
-            },{
-                id:'l4',
-                paths: [[117.468021,38.890092],[119.468021,36.890092]],
-                config: {lineWidth:4,color:'yellow'}
-            }]);
-            return {...state,mapLines};
+            let ms = [...state.mapLines];
+            let len = Math.floor(Math.random() * 10) + 1;
+            let paths = [];
+            for (var i = 0; i <= len; i++) {
+                paths.push([
+                    Math.random()*50 + 90,
+                    Math.random()*30 + 10
+                ])
+            }
+            ms.push({
+                id: `line1${new Date().getTime()+Math.random()}`,
+                paths: paths,
+            })
+            return {...state,mapLines: ms};
         },
         updateLine(state,action){
             let {mapLines} = state;
-            mapLines = mapLines.map((item,index)=>{
-                if(index === 0){
-                    return  {
-                        ...item,
-                        config:{
-                            ...item.config,
-                            lineWidth:4,
-                            color:'red'
-                        }
+            let ms = mapLines.map((item,index)=>{
+                return {
+                    ...item,
+                    config:{
+                        color: getColor(),
+                        lineWidth: Math.random()*10,
+                        pellucidity: Math.random(),
+                        lineType: Math.random() > 0.5?'solid': 'dashed',
+                        isHidden: Math.random() > 0.9
                     }
                 }
-                return item;
             });
-            return {...state,mapLines};
+            return {...state,mapLines: ms};
         },
         deleteLine(state,action){
             let {mapLines} = state;
-            let ml = [...mapLines];
-            ml.splice(0,2);
-            return {...state,mapLines:ml};
+            let ms = [...mapLines];
+            ms.splice(0,1);
+            return {...state,mapLines: ms};
         },
         /*面*/
         addPolygon(state,action){
             let {mapPolygons} = state;
-            mapPolygons = mapPolygons.concat([{
-                id: 'm3',
-                rings: [[117.468021,37.890092],[116.468021,37.890092],[120.468021,39.890092]]
-            },{
-                id: 'm4',
-                rings: [[119.468021,38.890092],[116.468021,39.890092],[114.468021,37.890092]]
-            }]);
-            return {...state,mapPolygons};
+            let ms = [...mapPolygons];
+            let len = Math.floor(Math.random() * 10) + 2;
+            let rings = [];
+            for (var i = 0; i <= len; i++) {
+                rings.push([
+                    Math.random()*50 + 80,
+                    Math.random()*30 + 10
+                ])
+            }
+            ms.push({
+                id: `pg${new Date().getTime()}`,
+                rings
+            })
+            return {...state,mapPolygons: ms};
         },
         updatePolygon(state,action){
             let {mapPolygons} = state;
-            mapPolygons = mapPolygons.map((item,index)=>{
-                if(index == 0){
-                    return{
-                        ...item,
-                        config:{
-                            ...item.config,
-                            color: 'blue'
-                        }
+            let ms = [...mapPolygons];
+            ms = ms.map((item,index)=>{
+                return {
+                    ...item,
+                    config: {
+                        ...item.config,
+                        color: getColor(),
+                        lineColor: getColor(),
+                        lineType: Math.random() > 0.5?'solid': 'dashed',
+                        lineWidth: Math.random()*5,
+                        lineOpacity: Math.random()*10,
+                        pellucidity: Math.random()
                     }
                 }
-                return item;
             });
-            return {...state,mapPolygons};
+            return {...state,mapPolygons: ms};
         },
         deletePolygon(state,action){
             let {mapPolygons} = state;
-            let mp = [...mapPolygons];
-            mp.splice(0,1);
-            return {...state,mapPolygons:mp};
+            let ms = [...mapPolygons];
+            ms.splice(0,1);
+            return {...state,mapPolygons: ms};
         },
         /*圆*/
         addCircle(state,action){
             let {mapCircles} = state;
-            mapCircles = mapCircles.concat([{
-                id: 'c3',
-                longitude:118.468021,
-                latitude:38.890092,
-                radius: 10000,
-            },{
-                id: 'c4',
-                longitude:119.468021,
-                latitude:39.890092,
-                radius: 10000,
-            }]);
-            return {...state,mapCircles};
+            let cs = [...mapCircles];
+            cs.push({
+                id: `circle$${new Date().getTime()}`,
+                longitude: Math.random()*50 + 80, 
+                latitude: Math.random()*30 + 10,
+                radius: 1000000 * Math.random()
+            })
+            return {...state,mapCircles: cs};
         },
         updateCircle(state,action){
             let {mapCircles} = state;
-            mapCircles = mapCircles.map((item,index)=>{
-                if(index == 0){
-                    return{
-                        ...item,
-                        config:{
-                            ...item.config,
-                            color: 'blue'
-                        }
+            let cs = [...mapCircles];
+            cs = cs.map((item,index)=>{
+                return {
+                    ...item,
+                    config: {
+                        ...item.config,
+                        color: getColor(),
+                        lineColor: getColor(),
+                        lineType: Math.random() > 0.5?'solid': 'dashed',
+                        lineWidth: Math.random()*5,
+                        lineOpacity: Math.random()*10,
+                        pellucidity: Math.random()
                     }
                 }
-                return item;
-            })
-            return {...state,mapCircles};
+            });
+            return {...state,mapCircles: cs};
         },
         deleteCircle(state,action){
             let {mapCircles} = state;
-            let mc = [...mapCircles];
-            mc.splice(0,1);
-            return {...state,mapCircles:mc};
+            let cs = [...mapCircles];
+            cs.splice(0,1);
+            return {...state,mapCircles: cs};
         },
-        isshowCenter(state,action){
-            return {...state,...action.payload};
+        /*海量点*/
+        addMapPointCollection(state,action){
+            let mps = [...state.mapPointCollection];
+            let lens = Math.floor(Math.random()*2000);
+            let pts = [];
+            for(let i = 0 ; i < lens; i++){
+                pts.push({
+                    lng: 117+Math.random(),
+                    lat: 39+Math.random()
+                });
+            }
+            let op = {
+                id: `mps${new Date().getTime()+Math.random()}`,
+                points: pts,
+                shape: Math.random() > 0.5?'square':'rhombus'
+            }
+            mps.push(op);
+            return {...state,mapPointCollection: mps};
         },
-        isshowFitview(state,action){
-            return {...state,...action.payload};
+        updateMapPointCollection(state,action){
+            let mps = [...state.mapPointCollection];
+            mps = mps.map((item,index)=>{
+                return {
+                    ...item,
+                    color: getColor(),
+                    shape: Math.random() > 0.5?'square':'rhombus'
+                }
+            });
+            return {...state,mapPointCollection: mps};
         },
-        isSetCluster(state,action){
-            return {...state,...action.payload};
+        deleteMapPointCollection(state,action){
+            let mps = [...state.mapPointCollection];
+            mps.splice(0,1);
+            return {...state,mapPointCollection: mps};
         },
-        issetZoomLevel(state,action){
-            return {...state,...action.payload};
+        // clearMapPointCollection
+        /*路况 开-关*/
+        openTraffic(state,action){
+            return{...state,isOpenTrafficInfo: true};
         },
-        isRangingTool(state,action){
-            return {...state,...action.payload};
+        hideTraffic(state,action){
+            return{...state,isOpenTrafficInfo: false};
         },
-        iseditGraphic(state,action){
-            return {...state,...action.payload};
-        },
+        /*编辑*/
         editPoint(state,action){
             let {mapPoints} =state;
             const {id,longitude,latitude} = action.payload;
@@ -619,23 +807,74 @@ export default {
             });
             return {...state,mapCircles};
         },
+        //新增边界线(百度数据)
         addBoundary(state,action){
-            let {boundaryName} =state;
-            boundaryName = [...boundaryName,'无锡'];
-            return {...state,boundaryName};
+            let bn = [...state.boundaryName];
+            let ctnms = ['无锡','苏州','北京','上海'];
+            ctnms.map((item,index)=>{
+                if(bn.indexOf(item) == -1){
+                    bn.push(item);
+                }
+            })
+            return {...state,boundaryName: bn};
         },
+        //删除边界线(百度数据)
         removeBoundary(state,action){
-            // let {boundaryName} =state;
-            // let bN = [...boundaryName];
-            // bN.splice(0,1);
             return {...state,boundaryName:[]};
         },
-        isDrawing(state,action){
-            return {...state,...action.payload};
+        //显示热力图
+        showHeatMap(state,action){
+            return {...state, heatmap: {
+                ...state.heatmap,
+                config: {
+                    ...state.heatmap.config,
+                    visible: true
+                }
+            }}
+        },
+        //隐藏热力图
+        hideHeatMap(state,action){
+            return {...state, heatmap: {
+                ...state.heatmap,
+                config: {
+                    ...state.heatmap.config,
+                    visible: false
+                }
+            }}
+        }
+    },
+};
+//生成随机颜色 16进制
+function getColor() {
+    let c = '#';
+    for(let i = 0 ; i < 6; i++){
+        let a = Math.floor(Math.random()*16);
+        switch(a){
+            case 10:
+                c = c + 'a';
+            break;
+            case 11:
+                c = c + 'b';
+            break;
+            case 12:
+                c = c + 'c';
+            break;
+            case 13:
+                c = c + 'd';
+            break;
+            case 14:
+                c = c + 'e';
+            break;
+            case 15:
+                c = c + 'f';
+            break;
+            default:
+                c = c + a;
+            break;
         }
     }
-}
-
+    return c;
+};
 //延迟
 function delay(timeout){
   var pro = new Promise(function(resolve,reject){
