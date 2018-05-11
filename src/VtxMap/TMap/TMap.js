@@ -1781,9 +1781,8 @@ class TMap extends React.Component{
     calculateDistance(ps){
         let t = this,totalDistance = 0;
         if (ps.length < 0) {return false;}
-        if(ps.length == 2){return t.calculatePointsDistance(ps[0],ps[1])};
         for(let i= 0 ; i< ps.length ; i++){
-            if(i < ps.length-2){
+            if(i < ps.length-1){
                 totalDistance += ps[i].distanceTo(ps[i+1]);
             }
         }
