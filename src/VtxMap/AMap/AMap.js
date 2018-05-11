@@ -1822,6 +1822,18 @@ class VortexAMap extends React.Component{
         let lnglat = new AMap.LngLat(f[0],f[1]);
         return Math.round(lnglat.distance(s));
     }
+    //计算多个点的距离(常用于线计算)
+    calculateDistance(ps){
+        let t = this,totalDistance = 0;
+        if (ps.length < 0) {return false;}
+        if(ps.length == 2){return t.calculatePointsDistance(ps[0],ps[1])};
+        for(let i= 0 ; i< ps.length ; i++){
+            if(i < ps.length-2){
+                totalDistance += t.calculatePointsDistance(ps[i],ps[i+1]);
+            }
+        }
+        return Math.round(totalDistance*100)/100;
+    }
     //数据解析(分析,新增,更新,删除对应的数据)
     dataMatch(oldData,newData,type){
         let onlyOldData = Set(oldData).subtract(Set(newData)).toJS();
