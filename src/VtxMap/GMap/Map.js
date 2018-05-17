@@ -19,7 +19,7 @@ class ArcgisMap extends React.Component{
         this.loadTimer = null;//初始化地图 load时延缓数据处理
         this.animTimer = {};//点位跳动动画 定时集合
         this.animCount = {};//点位跳动动画 定时计数
-        this.moveToTimer = {};//moveTo时间对象
+        this.moveToTimer = null;//moveTo时间对象
         this.drawToolbar = null;//绘制对象
         this.drawParam = {};//缓存 绘制的数据
         this.editToolbar = null;//编辑对象
@@ -35,6 +35,7 @@ class ArcgisMap extends React.Component{
         this.clusterPt = [];//地图中聚合点集合
         this.morepoints = [];//海量点集合
         this.areaRestriction = null;//区域限制数据
+        this.movePoints = [];
         //是否绘制测距
         this.rangingTool = {
             isRanging: false,//是否开启状态
@@ -844,7 +845,7 @@ class ArcgisMap extends React.Component{
                     //设置label的数据,用于label加点到地图
                     label = {
                         html: $(
-                            `<div style='margin-left: 0;z-index: 1;'>
+                            `<div style='margin-left: 0;z-index: ${cg.zIndex || 0};'>
                                 <div class='${labelClass}'>${cg.labelContent}</div>
                             </div>`
                         ),
@@ -1029,6 +1030,7 @@ class ArcgisMap extends React.Component{
             }
         });
         t.state.gis.graphics.refresh(); 
+        t.moveAnimation();
     }
     //添加线
     addLine(mapLines,type){
@@ -1969,6 +1971,12 @@ class ArcgisMap extends React.Component{
         }else{
             return false;
         }
+        for(let i = 0 ; i < t.movePoints.length ; i++){
+            if(t.movePoints[i].id == id){
+                t.movePoints.splice(i,1);
+                continue;
+            }
+        }
         let ids = [];
         switch(type){
             case 'point':
@@ -1994,6 +2002,7 @@ class ArcgisMap extends React.Component{
         //清空热力图
         t.heatmap.clear();
         t.heatmap = null;
+        t.movePoints = [];
         //循环所有id删除
         let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
         //拷贝数组,避免原数组操作,影响循环
@@ -3054,34 +3063,26 @@ class ArcgisMap extends React.Component{
             clearInterval(t.animTimer[id]);
         }
     }
-    //点位移动动画效果
-    moveTo(id,lnglat,delay,autoRotation){
-        delay = delay || 3;
-        let t = this,timer = 10;
-        delay = eval(delay)*1000;
-        let count = delay/timer,
-            gc = this.GM.getGraphic(id),
-            ct = 0;
-        let s = gc.geometry,e = new esri.geometry.Point(lnglat[0],lnglat[1]);
-        if(t.equalsPoint(s,e)){
-            return false;
-        }else{
-            let ddeg = 0;
-            //计算角度,旋转
-            if(autoRotation){
-                //自己实现旋转
-                ddeg = t.rotateDeg(gc.geometry,lnglat);
+    moveAnimation(){
+        let t = this;
+        if(t.moveToTimer){
+            clearInterval(t.moveToTimer);
+        }
+        t.moveToTimer = setInterval(()=>{
+            for(let i = 0;i < t.movePoints.length; i++){
+                t.movePoints[i].waitTime += 10;
+                t.movePoints[i].deleteTime -= 10;
             }
-            //拆分延迟移动定位
-            let rx = (e.x - s.x)/count, ry = (e.y - s.y)/count;
-            if(t.moveToTimer[id]){
-                clearInterval(t.moveToTimer[id]);
-            }
-            t.moveToTimer[id] = setInterval(()=>{
+            t.movePoints.sort((x,y)=>{
+                return y.waitTime -x.waitTime;
+            });
+            let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
+            for(let i = 0;i < nowMovePoints.length; i++){
+                let {id,rx,ry,waitTime,deleteTime,ddeg} = nowMovePoints[i];
+                let gc = t.GM.getGraphic(id);
                 if(!gc || !gc._graphicsLayer){
-                    clearInterval(t.moveToTimer[id]);
+                    clearInterval(t.moveToTimer);
                 }else{
-                    ct += 1;
                     let gg = gc.geometry;
                     let tx = gg.x + rx,ty = gg.y + ry;
                     let lglt = new esri.geometry.Point(tx,ty);
@@ -3102,11 +3103,57 @@ class ArcgisMap extends React.Component{
                         });
                     }
                     t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
-                    if(ct >= count){
-                        clearInterval(t.moveToTimer[id]);
+                    t.movePoints[i].waitTime = 0;
+                    if(deleteTime === 0){
+                        deleteIndex.push(i);
                     }
                 }
-            },timer);
+            }
+            deleteIndex.sort((a,b)=>{return b-a});
+            for(let i = 0 ; i < deleteIndex.length ; i++){
+                t.movePoints.splice(deleteIndex[i],1);
+            }
+            if(nowMovePoints.length == 0){
+                clearInterval(t.moveToTimer);
+            }
+        },10);
+    }
+    //点位移动动画效果
+    moveTo(id,lnglat,delay,autoRotation){
+        delay = delay || 3;
+        let t = this,timer = 10;
+        delay = eval(delay)*1000;
+        let count = delay/timer,
+            gc = this.GM.getGraphic(id);
+        let s = gc.geometry,e = new esri.geometry.Point(lnglat[0],lnglat[1]);
+        if(t.equalsPoint(s,e)){
+            return false;
+        }else{
+            let ddeg = 0;
+            //计算角度,旋转
+            if(autoRotation){
+                //自己实现旋转
+                ddeg = t.rotateDeg(gc.geometry,lnglat);
+            }
+            //拆分延迟移动定位
+            let rx = (e.x - s.x)/count, ry = (e.y - s.y)/count;
+            let isHave = false;
+            for(let i = 0 ; i < t.movePoints.length ;i++){
+                if(t.movePoints[i].id == id){
+                    t.movePoints.splice(i,1,{
+                        id,rx,ry,ddeg,
+                        waitTime: 0,
+                        deleteTime: delay
+                    })
+                }
+            }
+            if(!isHave){
+                t.movePoints.push({
+                    id,rx,ry,ddeg,
+                    waitTime: 0,
+                    deleteTime: delay
+                });
+            }
         }
     }
     //点位角度旋转(以指向东(右)为0°)
@@ -3432,10 +3479,8 @@ class ArcgisMap extends React.Component{
     componentWillUnmount() {
         //关闭moveTo定时
         let t = this;
-        for(let i in t.moveToTimer){
-            if(t.moveToTimer[i]){
-                clearInterval(t.moveToTimer[i]);
-            }
+        if(t.moveToTimer){
+            clearInterval(t.moveToTimer);
         }
         //关闭animation定时
         for(let j in t.animTimer){

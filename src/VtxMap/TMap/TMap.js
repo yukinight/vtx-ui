@@ -20,7 +20,8 @@ class TMap extends React.Component{
         this.rectangleTool = null;//绘制矩形对象
         this.circleTool = null;//绘制圆对象
         this.isEditId = null;//记录当前编辑的id,过滤移入移出事件
-        this.moveToTimer = {};//moveTo时间对象
+        this.moveToTimer = null;//moveTo时间对象
+        this.movePoints = [];//move点的对象集合
         this.state={
             gis: null,//地图对象
             mapId: props.mapId,
@@ -522,7 +523,7 @@ class TMap extends React.Component{
                 height: 33,
                 labelContent: '',
                 labelPixelX: 0,
-                labelPixelY: -33,
+                labelPixelY: 33,
                 markerContentX: -16.5,
                 markerContentY: -33,
                 zIndex: 100,
@@ -537,6 +538,9 @@ class TMap extends React.Component{
             if(!item.longitude || !item.latitude){
                 console.error(`点 经纬度 数据错误`);
                 return false;
+            }
+            if(item.markerContent){
+                cg = {...cg,markerContentX: 0,markerContentY: 0,width:100,height:30};
             }
             //初始化默认数据
             if(item.config){
@@ -723,7 +727,8 @@ class TMap extends React.Component{
                 console.error(`更新的点id不存在!`);
                 return false;
             }
-        })
+        });
+        t.moveAnimation();
     }
     //添加线
     addLine(mapLines){
@@ -1691,14 +1696,59 @@ class TMap extends React.Component{
             });
         }
     }
+    moveAnimation(){
+        let t = this;
+        if(t.moveToTimer){
+                clearInterval(t.moveToTimer);
+            }
+            t.moveToTimer = setInterval(()=>{
+                for(let i = 0;i < t.movePoints.length; i++){
+                    t.movePoints[i].waitTime += 10;
+                    t.movePoints[i].deleteTime -= 10;
+                }
+                t.movePoints.sort((x,y)=>{
+                    return y.waitTime -x.waitTime;
+                });
+                let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
+                for(let i = 0;i < nowMovePoints.length; i++){
+                    let {id,rx,ry,waitTime,deleteTime,ddeg} = nowMovePoints[i];
+                    let gc = t.GM.getGraphic(id);
+                    if(!gc){
+                        clearInterval(t.moveToTimer[id]);
+                    }else{
+                        let gg = gc.getLngLat();
+                        let tx = gg.lng + rx,ty = gg.lat + ry;
+                        let lglt = new T.LngLat(tx,ty);
+                        gc.setLngLat(lglt);
+                        t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
+                        //旋转角度
+                        gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${ddeg}deg)`;
+                        gc.getElement().style['-ms-transform'] = ` rotate(${ddeg}deg)`;
+                        if(gc.label){
+                            gc.showLabel();
+                        }
+                        t.movePoints[i].waitTime = 0;
+                        if(deleteTime === 0){
+                            deleteIndex.push(i);
+                        }
+                    }
+                }
+                deleteIndex.sort((a,b)=>{return b-a});
+                for(let i = 0 ; i < deleteIndex.length ; i++){
+                    t.movePoints.splice(deleteIndex[i],1);
+                }
+                if(nowMovePoints.length == 0){
+                    clearInterval(t.moveToTimer);
+                }
+            },10);
+    }
     /*公共方法*/
     moveTo(id,lnglat,delay,autoRotation){
             delay = delay || 3;
         let t = this,timer = 10;
         delay = eval(delay)*1000;
         let count = delay/timer,
-            gc = this.GM.getGraphic(id),
-            ct = 0;
+            gc = this.GM.getGraphic(id);
         let s = gc.getLngLat(),e = new T.LngLat(lnglat[0],lnglat[1]);
         if(s.equals(e)){
             return false;
@@ -1711,30 +1761,23 @@ class TMap extends React.Component{
             }
             //拆分延迟移动定位
             let rx = (e.lng - s.lng)/count, ry = (e.lat - s.lat)/count;
-            if(t.moveToTimer[id]){
-                clearInterval(t.moveToTimer[id]);
-            }
-            t.moveToTimer[id] = setInterval(()=>{
-                if(!gc){
-                    clearInterval(t.moveToTimer[id]);
-                }else{
-                    ct += 1;
-                    let gg = gc.getLngLat();
-                    let tx = gg.lng + rx,ty = gg.lat + ry;
-                    let lglt = new T.LngLat(tx,ty);
-                    gc.setLngLat(lglt);
-                    t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
-                    //旋转角度
-                    gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${ddeg}deg)`;
-                    gc.getElement().style['-ms-transform'] = ` rotate(${ddeg}deg)`;
-                    if(gc.label){
-                        gc.showLabel();
-                    }
-                    if(ct >= count){
-                        clearInterval(t.moveToTimer[id]);
-                    }
+            let isHave = false;
+            for(let i = 0 ; i < t.movePoints.length ;i++){
+                if(t.movePoints[i].id == id){
+                    t.movePoints.splice(i,1,{
+                        id,rx,ry,ddeg,
+                        waitTime: 0,
+                        deleteTime: delay
+                    })
                 }
-            },timer);
+            }
+            if(!isHave){
+                t.movePoints.push({
+                    id,rx,ry,ddeg,
+                    waitTime: 0,
+                    deleteTime: delay
+                });
+            }
         }
     }
     //点位角度旋转(以指向东(右)为0°)
@@ -2060,10 +2103,8 @@ class TMap extends React.Component{
     componentWillUnmount() {
         //关闭moveTo定时
         let t = this;
-        for(let i in t.moveToTimer){
-            if(t.moveToTimer[i]){
-                clearInterval(t.moveToTimer[i]);
-            }
+        if(t.moveToTimer){
+            clearInterval(t.moveToTimer);
         }
     }
 }

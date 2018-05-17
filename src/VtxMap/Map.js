@@ -2,6 +2,7 @@ import React from 'react';
 import AMap from './AMap/AMap';
 import BMap from './BMap/Map';
 import TMap from './TMap/TMap';
+import GMap from './GMap/Map';
 import './Map.less';
 
 class VtxMap extends React.Component {
@@ -23,6 +24,8 @@ class VtxMap extends React.Component {
                 return (<AMap {...newProps}></AMap>);
             case 'tmap':
                 return (<TMap {...newProps}></TMap>);
+            case 'gmap':
+                return (<GMap {...newProps}></GMap>);
             default:
                 return (<BMap {...newProps}></BMap>);
         }

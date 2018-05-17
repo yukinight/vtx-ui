@@ -24,6 +24,7 @@ class VtxTree extends React.Component {
 	constructor(props){
 		super(props);
 		this.askeys = [];
+		this.allKeys = [];
 		this.state = {
 			isExpandAll: props.isExpandAll || 'other',
 			autoExpandParent: ('autoExpandParent' in props?props.autoExpandParent : true),
@@ -78,6 +79,21 @@ class VtxTree extends React.Component {
 		let isChecked = e.node.props.checked;
 		let treeNode;
 		let leafNode = [];
+		let isCheckAll = true;
+		for(let i = 0 ; i < t.allKeys.length; i++){
+			if(t.allKeys[i] !== t.props.data[0].key){
+				if((t.props.checkedKeys || []).indexOf(t.allKeys[i]) === -1){
+					isCheckAll = false;
+				}
+			}
+		}
+		if(t.allKeys.length <= checkedKeys.length){
+			if(!isCheckAll){
+				checkedKeys = t.allKeys;
+			}else{
+				checkedKeys = [];
+			}
+		}
 		//遍历获取所有选中叶子节点 和 当前点击的节点
 		let getNodes = (item,index)=>{
 			if(item.key === key){
@@ -261,6 +277,7 @@ class VtxTree extends React.Component {
 	render(){
 		let t = this;
 		let _tree = t.props;
+		t.allKeys = [];
 		//antd-tree树参数
 		let TreeProps = {
 			multiple: _tree.multiple || false, //true可以点击多个节点
@@ -410,6 +427,11 @@ class VtxTree extends React.Component {
         				{_title}
 	      			</Tooltip>
 		      	);
+		      	if(!(_tree.isShowSearchInput 
+					&& this.askeys.indexOf(item.key) === -1
+						&& t.state.inputValue.length > 0)){
+					  t.allKeys.push(item.key);
+				}
 				let TreeNodeProps = {
 					// disabled: item.disabled || (_tree.disabledAll?true:false),
 					disableCheckbox:  item.disableCheckbox || (_tree.disableCheckboxAll?true:false),

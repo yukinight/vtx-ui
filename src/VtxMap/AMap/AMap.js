@@ -2127,6 +2127,15 @@ class VortexAMap extends React.Component{
             t.clearAreaRestriction();
         }
     }
+    componentWillUnmount() {
+        //关闭moveTo定时
+        let t = this;
+        for(let i in t.GM.allParam){
+            if(t.GM.allParam.type == 'point'){
+                t.GM.getGraphic[i].stopMove();
+            }
+        }
+    }
 }
 
 export default VortexAMap;
