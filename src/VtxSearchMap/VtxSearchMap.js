@@ -369,9 +369,14 @@ class VtxSearchMap extends React.Component {
                     {/*地图操作分类*/}
                     <div className={styles.top}>
                         {/*搜索多点选择*/}
-                        <Input {...InputProps}/>
-                        <Button type="primary" onClick={this.searchList.bind(this)} icon={'search'}>查询</Button>
-                        <Button onClick={this.clearList.bind(this)} icon={'close'}>清空</Button>
+                        {
+                            mapType == 'gmap'?'':
+                            [
+                                <Input key='1' {...InputProps}/>,
+                                <Button key='2' type="primary" onClick={this.searchList.bind(this)} icon={'search'}>查询</Button>,
+                                <Button key='3' onClick={this.clearList.bind(this)} icon={'close'}>清空</Button>
+                            ]
+                        }
                         {
                             this.state.graphicType=='point'?<Button  onClick={this.correction.bind(this)} icon={'environment-o'}>校正</Button>:null
                         }
@@ -386,7 +391,10 @@ class VtxSearchMap extends React.Component {
                                 }
                             }} icon={'edit'}>重新绘制</Button>:null
                         }
-                        <Button onClick={this.setFitView.bind(this)} icon={'sync'}>返回全局地图</Button>
+                        {
+                            mapType == 'gmap'?'':
+                            <Button onClick={this.setFitView.bind(this)} icon={'sync'}>返回全局地图</Button>
+                        }
                         {
                             isShowOther?
                                 <div className={styles.otherModal}>
@@ -397,32 +405,35 @@ class VtxSearchMap extends React.Component {
                             :''
                         }
                     </div>
-                    <div className={styles.content}>
+                    <div className={styles.content} style={{paddingLeft:(mapType == 'gmap'?'0px':'25px')}}>
                         {/*左侧列表*/}
-                        <div className={`${styles.content_left} ${isShowList?styles.w_l:''}`}>
-                            <div className={`${isShowList?styles.show:styles.hidden}`}>
-                                <div className={styles.listTitle}>
-                                    <div className={styles.title}>查询结果</div>
-                                    <div onClick={()=>this.showOrhidden(false)} className={styles.btn}><Icon type="double-left" /></div>
+                        {
+                            mapType == 'gmap'?'':
+                            <div className={`${styles.content_left} ${isShowList?styles.w_l:''}`}>
+                                <div className={`${isShowList?styles.show:styles.hidden}`}>
+                                    <div className={styles.listTitle}>
+                                        <div className={styles.title}>查询结果</div>
+                                        <div onClick={()=>this.showOrhidden(false)} className={styles.btn}><Icon type="double-left" /></div>
+                                    </div>
+                                    <div className={styles.scrollauto}>
+                                        {
+                                            listMess.map((item,index)=>{
+                                                return (
+                                                    <div 
+                                                        key={index} 
+                                                        onClick={()=>this.chooseAddress(item.id)}
+                                                        className={`${styles.lists} ${item.isSelect?styles.select:''}`}
+                                                    >{item.title}</div>
+                                                );
+                                            })
+                                        }
+                                    </div>
                                 </div>
-                                <div className={styles.scrollauto}>
-                                    {
-                                        listMess.map((item,index)=>{
-                                            return (
-                                                <div 
-                                                    key={index} 
-                                                    onClick={()=>this.chooseAddress(item.id)}
-                                                    className={`${styles.lists} ${item.isSelect?styles.select:''}`}
-                                                >{item.title}</div>
-                                            );
-                                        })
-                                    }
+                                <div onClick={()=>this.showOrhidden(true)} className={`${styles.btn} ${!isShowList?styles.show:styles.hidden}`}>
+                                    <Icon type="double-right" />
                                 </div>
                             </div>
-                            <div onClick={()=>this.showOrhidden(true)} className={`${styles.btn} ${!isShowList?styles.show:styles.hidden}`}>
-                                <Icon type="double-right" />
-                            </div>
-                        </div>
+                        }
                         {/*右侧地图*/}
                         <div className={styles.content_right}>
                             <VtxMap 
