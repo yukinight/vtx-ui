@@ -8,6 +8,7 @@ class TMap extends React.Component{
         super(props);
         //初始化 图元管理方法
         this.GM = new graphicManage();
+        this.pointCollectionId = 'vtx_gmap_html_pointCollection';//海量点canvas点位容器id class管理
         this.isNotClickMap = false;//阻止点击事件冒泡到地图
         this.isZoom = false;//阻止 zoom事件后触发的移动事件
         this.mapLeft = 0;//地图offset的Left值
@@ -22,6 +23,8 @@ class TMap extends React.Component{
         this.isEditId = null;//记录当前编辑的id,过滤移入移出事件
         this.moveToTimer = null;//moveTo时间对象
         this.movePoints = [];//move点的对象集合
+        this.morepoints = [];//海量点集合
+        this.heatmap = null;//热力图对象
         this.state={
             gis: null,//地图对象
             mapId: props.mapId,
@@ -53,7 +56,20 @@ class TMap extends React.Component{
             }
             else{
                 $.getScript('http://api.tianditu.com/getscript?v=4.0',()=>{
-                    resolve(window.T);
+                    let Heatmap = new Promise((resolve,reject)=>{
+                        //对象问题  和arcgis使用不同的热力图
+                        $.getScript('./resources/js/mapPlugin/Theatmap.js',()=>{
+                            resolve();
+                        });
+                    });
+                    let PointCollection = new Promise((resolve,reject)=>{
+                        $.getScript('./resources/js/mapPlugin/GPointCollection.js',()=>{
+                            resolve();
+                        });
+                    });
+                    Promise.all([Heatmap,PointCollection]).then(()=>{
+                        resolve(window.T);
+                    })
                 })
             }
         });
@@ -64,9 +80,9 @@ class TMap extends React.Component{
             mapPoints,mapLines,mapPolygons,mapCircles,
             setVisiblePoints,mapVisiblePoints,
             mapCenter,mapZoomLevel,
-            mapCluster,
+            mapCluster,mapPointCollection,
             showControl,boundaryName,
-            areaRestriction
+            areaRestriction,heatMapData
         } = t.props;
         //创建地图
         t.createMap();
@@ -89,6 +105,14 @@ class TMap extends React.Component{
         /*设置指定图元展示*/
         if(mapVisiblePoints){
             t.setVisiblePoints(mapVisiblePoints);
+        }
+        // 画热力图
+        if(heatMapData){
+            t.heatMapOverlay(heatMapData);
+        }
+        //添加海量点
+        if(mapPointCollection instanceof Array){
+            t.addPointCollection(mapPointCollection);
         }
         //设置比例尺
         if(mapZoomLevel){
@@ -144,17 +168,27 @@ class TMap extends React.Component{
             minZoom: minZoom || 1,
             maxZoom: maxZoom || 18
         });
-        t.state.gis.addEventListener('load',(e)=>{
-            console.log('load',e);
-        })
+        //海量点图元容器
+        t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
+        let pointCollectionDiv = document.createElement('div');
+        pointCollectionDiv.id = t.pointCollectionId;
+        pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
+        pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
+        t.state.gis.getPanes().mapPane.children[0].before(pointCollectionDiv);
     }
     //清空地图所有图元
     clearAll (){
         let t = this;
+        //清空热力图
+        if(t.heatmap){
+            t.heatmap.clear();
+        }
+        t.heatmap = null;
         //先清除所有标记
         if(t.clusterMarkers){
             t.clusterObj.removeMarkers(t.clusterMarkers);
         }
+        t.clearAllPointCollection();
         //清空点
         t.state.gis.getOverlays().map((item,index)=>{
             t.state.gis.removeOverLay(item);
@@ -192,7 +226,6 @@ class TMap extends React.Component{
         let t =this;
         let bounds = new T.LngLatBounds(new T.LngLat(sw_ne[0][0],sw_ne[0][1]),new T.LngLat(sw_ne[1][0],sw_ne[1][1]))
         t.state.gis.setMaxBounds(bounds);
-
     }
     clearAreaRestriction(){
         this.state.gis.setMaxBounds(null);
@@ -1138,6 +1171,114 @@ class TMap extends React.Component{
             }
         });
     }
+    //添加海量点
+    addPointCollection(data = []) {
+        let t = this;
+        data.map((item,index)=>{
+            let d = item || {};
+            let points = (d.points || []).map((d,i)=>{
+                let p = new T.LngLat(d.lng,d.lat);
+                    p = t.state.gis.lngLatToContainerPoint(p);
+                return [p.x,p.y];
+            });
+            let options = {
+                size: d.size,
+                shape: d.shape,
+                color: d.color,
+                width: t.state.gis.getSize().x,
+                height: t.state.gis.getSize().y,
+                mapId: t.props.mapId
+            };
+            //和arcgis使用同一个海量点
+            let VotexpointCollection = new GMapLib.PointCollection(points,options);
+            t.morepoints.push({
+                id: d.id,
+                value: VotexpointCollection
+            });
+            VotexpointCollection.draw();
+        });
+    }
+    //更新海量点
+    updatePointCollection(data = []) {
+        let t = this;
+        data.map((ds,ind)=>{
+            t.morepoints.map((item,index)=>{
+                if(item.id == ds.id){
+                    let points = (ds.points || []).map((d,i)=>{
+                        let p = new T.LngLat(d.lng,d.lat);
+                            p = t.state.gis.lngLatToContainerPoint(p);
+                        return [p.x,p.y];
+                    });
+                    let options = {
+                        size: ds.size,
+                        shape: ds.shape,
+                        color: ds.color,
+                        width: t.state.gis.getSize().x,
+                        height: t.state.gis.getSize().y
+                    };
+                    item.value.reDraw(points,options);
+                }
+            })
+        })
+    }
+    //清空单个海量点
+    clearPointCollection(ids) {
+        let t = this;
+        ids.map((id,ind)=>{
+            t.morepoints.map(function (item,index) {
+                if(id == item.id){
+                    item.value.clear();
+                }
+            });
+        });
+    }
+    //清空海量点
+    clearAllPointCollection() {
+        let t = this;
+        t.morepoints.map(function (item,index) {
+            item.value.clear();
+        });
+    }
+    //热力图
+    heatMapOverlay(d = {}){
+        let t = this;
+        let cg = {
+            radius: 20,
+            max: 100,
+            visible: true,
+            opacity: 1
+        };
+        if(d.config){
+            cg = {...cg,...d.config};
+        }
+        if(!t.heatmap){
+            t.heatmap = new TMapLib.HeatmapOverlay({
+                visible: cg.visible
+            });
+            t.heatmap.initialize(t.state.gis,t.pointCollectionId);
+        }
+        let option = {
+            radius: cg.radius,
+            //百度是1-100,高德是0-1
+            opacity: eval(cg.opacity) * 100,
+            visible: cg.visible
+        }
+        if(cg.gradient){
+            option.gradient = cg.gradient;
+        }
+        t.heatmap.setOptions(option);
+        t.heatmap.setDataSet({
+            max: cg.max,
+            data: d.data
+        });
+        if(cg.visible){
+            t.isHideHeatMap = false;
+            t.heatmap.show();
+        }else{
+            t.isHideHeatMap = true;
+            t.heatmap.hide();
+        }
+    }
     /*
         参数
         geometryType:point/polyline/polygon/circle/rectangle  默认point
@@ -1513,9 +1654,6 @@ class TMap extends React.Component{
     //删除图元
     removeGraphic(id,type){
         let t = this;
-        if(t.moveToTimer[id]){
-            clearInterval(t.moveToTimer[id]);
-        }
         if(!!this.GM.getGraphic(id)){
             //清除聚合点 避免异常
             if(t.clusterObj){
@@ -1532,6 +1670,12 @@ class TMap extends React.Component{
             this.GM.removeGraphicParam(id);
         }else{
             return false;
+        }
+        for(let i = 0 ; i < t.movePoints.length ; i++){
+            if(t.movePoints[i].id == id){
+                t.movePoints.splice(i,1);
+                continue;
+            }
         }
         //清除 state中id的缓存
         let ids = [];
@@ -1640,6 +1784,15 @@ class TMap extends React.Component{
         let t = this;
         if(typeof(t.props.moveEnd) ==="function"){
             t.state.gis.addEventListener('moveend', function(e) {
+                //重画海量点
+                let xylist = t.state.gis.getPanes().mapPane.style.transform.substr(12).split(',');
+                $(`#${t.pointCollectionId}`).css({
+                    top: `${-eval(xylist[1].replace('px',''))}px`,
+                    left: `${-eval(xylist[0].replace('px',''))}px`
+                })
+                if(t.morepoints.length > 0){
+                    t.updatePointCollection(t.props.mapPointCollection);
+                }
                 if(t.isZoom){
                     t.isZoom = false;
                 }else{
@@ -1656,6 +1809,10 @@ class TMap extends React.Component{
         let t =this;
         if(typeof(t.props.zoomStart) ==="function"){
             t.state.gis.addEventListener('zoomstart', function(e) {
+                if(t.heatmap && !t.isHideHeatMap){
+                    t.heatmap.hide();
+                }
+                $(`#${t.pointCollectionId}`).css({display: 'none'});
                 t.isZoom = true;
                 let obj = t.getMapExtent();
                 obj.e = e;
@@ -1668,6 +1825,16 @@ class TMap extends React.Component{
         let t =this;
         if(typeof(t.props.zoomEnd) ==="function"){
             t.state.gis.addEventListener('zoomend', function(e) {
+                //重画热力图
+                if(t.heatmap && !t.isHideHeatMap){
+                    t.heatmap.show();
+                    t.heatmap.draw();
+                }
+                //重画海量点
+                $(`#${t.pointCollectionId}`).css({display: 'inline-block'});
+                if(t.morepoints.length > 0){
+                    t.updatePointCollection(t.props.mapPointCollection);
+                }
                 //避免zoom切换后,chrome的旋转角度被替换
                 for(let i in t.GM.allParam){
                     if(t.GM.allParam[i].geometryType == 'point' && t.GM.allParam[i].deg){
@@ -1744,7 +1911,7 @@ class TMap extends React.Component{
     }
     /*公共方法*/
     moveTo(id,lnglat,delay,autoRotation){
-            delay = delay || 3;
+        delay = delay || 3;
         let t = this,timer = 10;
         delay = eval(delay)*1000;
         let count = delay/timer,
@@ -1898,7 +2065,7 @@ class TMap extends React.Component{
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-            isOpenTrafficInfo,boundaryName,
+            isOpenTrafficInfo,boundaryName,heatMapData,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
             setZoomLevel,mapZoomLevel,
@@ -1907,12 +2074,23 @@ class TMap extends React.Component{
             isRemove,mapRemove,
             mapDraw,isDraw,isCloseDraw,
             editGraphicId,isDoEdit,isEndEdit,
+            mapPointCollection,isclearAllPointCollection,
             isClearAll,
             isSetAreaRestriction,areaRestriction,isClearAreaRestriction
         } = nextProps;
 
         // 等待地图加载
         if(!t.state.mapCreated)return;
+        /*添加海量点*/
+        if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
+            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
+            t.clearPointCollection(deletedDataIDs);
+            t.addPointCollection(addedData);
+            t.updatePointCollection(updatedData);
+        }
+        if(isclearAllPointCollection){
+            t.clearAllPointCollection();
+        }
 
         /*点数据处理
             pointData[2]相同的点,执行刷新
@@ -2013,6 +2191,10 @@ class TMap extends React.Component{
         //     t.removeBaiduBoundary(removedBoundaryName);
         //     t.addBaiduBoundary(addedBoundaryName);
         // }
+        // 获取热力图
+        if(heatMapData && !t.deepEqual(heatMapData,t.props.heatMapData)){
+            t.heatMapOverlay(heatMapData);
+        }
         //图元编辑调用
         if(isDoEdit){
             t.doEdit(editGraphicId);

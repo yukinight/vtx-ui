@@ -8,7 +8,7 @@ const gisMapConstant = {
     star: 1,//星形
     square: 4,//方形
     rhombus: 5,//菱形
-    waterrdrop: 2,//水滴状，该类型无size和color属性
+    waterdrop: 2,//水滴状，该类型无size和color属性
     tiny: 1, //定义点的尺寸为超小，宽高为2px*2px
     smaller: 2,//定义点的尺寸为很小，宽高为4px*4px
     small: 3,//定义点的尺寸为小，宽高为8px*8px
@@ -1124,9 +1124,6 @@ class BaiduMap extends React.Component{
             }
             // 初始化PointCollection
             let VotexpointCollection = new BMap.PointCollection(points, options);  
-            let vortexObj ={
-                mapLayer: VotexpointCollection
-            }
             t.state.gis.addOverlay(VotexpointCollection);  // 添加Overlay
             t.morepoints.push({
                 id: d.id,
@@ -1518,6 +1515,12 @@ class BaiduMap extends React.Component{
             t.GM.removeGraphic(id);
         }else{
             return false;
+        }
+        for(let i = 0 ; i < t.movePoints.length ; i++){
+            if(t.movePoints[i].id == id){
+                t.movePoints.splice(i,1);
+                continue;
+            }
         }
         let ids = [];
         switch(type){

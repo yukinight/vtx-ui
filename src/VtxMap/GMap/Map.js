@@ -157,6 +157,9 @@ class ArcgisMap extends React.Component{
             if(areaRestriction && !!areaRestriction[0] && !!areaRestriction[1]){
                 t.setAreaRestriction(areaRestriction);
             }
+            t.setState({
+                mapCreated:true
+            })
         }
         //事件监听
         let event = ()=>{
@@ -594,11 +597,11 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_gc`).css({'z-index': 1});
             //添加自定义图元 图层
             $(`#${t.props.mapId}_layers`).append(
-                `<div class=${t.htmlPointsId} id=${t.htmlPointsId} ></div>`
+                `<div id=${t.htmlPointsId} class='vtx_gmap_html_points' ></div>`
             );
             //海量点图元容器
             $(`#${t.props.mapId}_layers`).append(
-                `<div class=${t.pointCollectionId} id=${t.pointCollectionId} ></div>`
+                `<div id=${t.pointCollectionId} class='vtx_gmap_html_pointCollection' ></div>`
             );
             //隐藏比例尺控制 (便于后期控制显示)
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
@@ -611,11 +614,11 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_gc`).css({'z-index': 1});
             //添加自定义图元 图层
             $(`#${t.props.mapId}_layers`).append(
-                `<div class=${t.htmlPointsId} id=${t.htmlPointsId} ></div>`
+                `<div id=${t.htmlPointsId} class='vtx_gmap_html_points' ></div>`
             );
             //海量点图元容器
             $(`#${t.props.mapId}_layers`).append(
-                `<div class=${t.pointCollectionId} id=${t.pointCollectionId} ></div>`
+                `<div id=${t.pointCollectionId} class='vtx_gmap_html_pointCollection' ></div>`
             );
             //隐藏比例尺控制 (便于后期控制显示)
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
@@ -651,6 +654,8 @@ class ArcgisMap extends React.Component{
             ...options
         });
         t.addMapLayers(mapServer);
+        t.htmlPointsId = `${mapId}_${t.htmlPointsId}`;
+        t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
     }
     //处理图层
     addMapLayers(mapServer = {}){
@@ -1526,7 +1531,8 @@ class ArcgisMap extends React.Component{
                 shape: d.shape,
                 color: d.color,
                 width: t.state.gis.width,
-                height: t.state.gis.height
+                height: t.state.gis.height,
+                mapId: t.props.mapId
             };
             let VotexpointCollection = new GMapLib.PointCollection(points,options);
             t.morepoints.push({
@@ -1534,9 +1540,6 @@ class ArcgisMap extends React.Component{
                 value: VotexpointCollection
             });
             VotexpointCollection.draw();
-            VotexpointCollection.cvs.addEventListener('click',(e)=>{
-                console.log(1111);
-            })
         })
     }
     //更新海量点
@@ -1596,7 +1599,7 @@ class ArcgisMap extends React.Component{
             t.heatmap = new GMapLib.HeatmapOverlay({
                 visible: cg.visible
             });
-            t.heatmap.initialize(t.state.gis);
+            t.heatmap.initialize(t.state.gis,t.props.mapId);
         }
         let option = {
             radius: cg.radius,
@@ -2000,9 +2003,12 @@ class ArcgisMap extends React.Component{
     clearAll(){
         let t = this;
         //清空热力图
-        t.heatmap.clear();
+        if(t.heatmap){
+            t.heatmap.clear();
+        }
         t.heatmap = null;
         t.movePoints = [];
+        t.clearAllPointCollection();
         //循环所有id删除
         let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
         //拷贝数组,避免原数组操作,影响循环
@@ -3247,6 +3253,8 @@ class ArcgisMap extends React.Component{
                 isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
                 isClearAll
             } = nextProps;
+            // 等待地图加载
+            if(!t.state.mapCreated)return;
             /*添加海量点*/
             if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
