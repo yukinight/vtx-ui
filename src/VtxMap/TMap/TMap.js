@@ -25,6 +25,8 @@ class TMap extends React.Component{
         this.movePoints = [];//move点的对象集合
         this.morepoints = [];//海量点集合
         this.heatmap = null;//热力图对象
+        this.animTimer = {};//点位跳动动画
+        this.animCount = {};//点位跳动动画 位置记录
         this.state={
             gis: null,//地图对象
             mapId: props.mapId,
@@ -633,6 +635,12 @@ class TMap extends React.Component{
                     marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
                 }
             }
+            //点跳动动画
+            if(!item.markerContent && cg.BAnimationType == 0){
+                t.pointAnimation(item.id,marker);
+            }else{
+                t.pointAnimation(item.id,null);
+            }
             marker.addEventListener( 'click', (e)=>{
                 t.clickGraphic(item.id,e);
             });
@@ -710,7 +718,8 @@ class TMap extends React.Component{
                         //暂时不设置旋转角度,后期维护设置吧
                         deg: item.config.deg,
                         zIndex: item.config.zIndex || gc.options.zIndexOffset,
-                        labelClass: item.config.labelContent || 'label-content'
+                        labelClass: item.config.labelContent || 'label-content',
+                        BAnimationType: item.config.BAnimationType
                     };
                     if(!item.config.isAnimation){
                         //修改经纬度
@@ -738,6 +747,12 @@ class TMap extends React.Component{
                     }
                     //设置点的标记添加顺序
                     gc.setZIndexOffset(cg.zIndex);
+                }
+                //点跳动动画
+                if(!item.markerContent && cg.BAnimationType == 0){
+                    t.pointAnimation(item.id,gc);
+                }else{
+                    t.pointAnimation(item.id,null);
                 }
                 //动画效果会延迟执行经纬度的切换
                 if(item.config.isAnimation){
@@ -1863,6 +1878,40 @@ class TMap extends React.Component{
             });
         }
     }
+    //点的跳动动画
+    pointAnimation(id,marker){
+        let t = this;
+        //null时关闭跳动
+        if(!!marker){
+            if(t.animTimer[id]){
+                clearInterval(t.animTimer[id]);
+            }
+            t.animTimer[id] = setInterval(()=>{
+                //点被隐藏时,没有执行,定时不关
+                if(marker.getIcon()){
+                    let shape = {...marker.getIcon().getIconAnchor()};
+                    //初始数据  点位有变动,重新刷新数据
+                    if(!t.animCount[id] || shape.y != t.animCount[id].now){
+                        t.animCount[id] = {
+                            start: shape.y,
+                            now: shape.y,
+                            notation: -1
+                        };
+                    }
+                    if(t.animCount[id].now - t.animCount[id].start == 20){
+                        t.animCount[id].notation = -1;
+                    }
+                    if(t.animCount[id].now - t.animCount[id].start == 0){
+                        t.animCount[id].notation = 1;
+                    }
+                    shape.y = t.animCount[id].now = (t.animCount[id].now + (t.animCount[id].notation)*2);
+                    marker.getIcon().setIconAnchor(shape);
+                }
+            },35);
+        }else{
+            clearInterval(t.animTimer[id]);
+        }
+    }
     moveAnimation(){
         let t = this;
         if(t.moveToTimer){
@@ -2287,6 +2336,12 @@ class TMap extends React.Component{
         let t = this;
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
+        }
+        //关闭animation定时
+        for(let j in t.animTimer){
+            if(t.animTimer[j]){
+                clearInterval(t.animTimer[j]);
+            }
         }
     }
 }

@@ -3045,24 +3045,25 @@ class ArcgisMap extends React.Component{
             }
             t.animTimer[id] = setInterval(()=>{
                 //点被隐藏时,没有执行,定时不关
-                if(marker._shape){
-                    let shape = marker._shape.getShape();
+                if(marker.symbol){
+                    let shape = {...marker.symbol};
                     //初始数据  点位有变动,重新刷新数据
-                    if(!t.animCount[id] || shape.y != t.animCount[id].now){
+                    if(!t.animCount[id] || shape.yoffset != t.animCount[id].now){
                         t.animCount[id] = {
-                            start: shape.y,
-                            now: shape.y,
+                            start: shape.yoffset,
+                            now: shape.yoffset,
                             notation: -1
                         };
                     }
-                    if(t.animCount[id].start - t.animCount[id].now == 20){
-                        t.animCount[id].notation = 1;
-                    }
-                    if(t.animCount[id].start - t.animCount[id].now == 0){
+                    if(t.animCount[id].now - t.animCount[id].start == 20){
                         t.animCount[id].notation = -1;
                     }
-                    shape.y = t.animCount[id].now = (t.animCount[id].now + (t.animCount[id].notation)*2);
-                    marker._shape.setShape(shape);
+                    if(t.animCount[id].now - t.animCount[id].start == 0){
+                        t.animCount[id].notation = 1;
+                    }
+                    shape.yoffset = t.animCount[id].now = (t.animCount[id].now + (t.animCount[id].notation)*2);
+                    marker.symbol.setOffset(shape.xoffset,shape.yoffset);
+                    t.state.gis.graphics.refresh();
                 }
             },35);
         }else{
@@ -3492,8 +3493,8 @@ class ArcgisMap extends React.Component{
         }
         //关闭animation定时
         for(let j in t.animTimer){
-            if(t.animTimer[i]){
-                clearInterval(t.animTimer[i]);
+            if(t.animTimer[j]){
+                clearInterval(t.animTimer[j]);
             }
         }
     }
