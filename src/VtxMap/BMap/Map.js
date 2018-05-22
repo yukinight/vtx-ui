@@ -8,7 +8,7 @@ const gisMapConstant = {
     star: 1,//星形
     square: 4,//方形
     rhombus: 5,//菱形
-    waterrdrop: 2,//水滴状，该类型无size和color属性
+    waterdrop: 2,//水滴状，该类型无size和color属性
     tiny: 1, //定义点的尺寸为超小，宽高为2px*2px
     smaller: 2,//定义点的尺寸为很小，宽高为4px*4px
     small: 3,//定义点的尺寸为小，宽高为8px*8px
@@ -29,9 +29,10 @@ class BaiduMap extends React.Component{
         this.editGraphicChange = null;//编辑方法回调
         this.editTimeout = null;//圆编辑回调延迟时间对象
         this._boundary = null;//获取行政区域数据的对象
-        this.moveToTimer = {};//moveTo时间对象
+        this.moveToTimer = null;//moveTo时间对象
         this.heatmap = null;//热力图对象
         this.morepoints = [];//海量点数组
+        this.movePoints = [];//移动点的动画集合
         this.state = {
             gis: null,//地图对象
             mapId: props.mapId,
@@ -616,6 +617,7 @@ class BaiduMap extends React.Component{
                 return false;
             }
         });
+        t.moveAnimation();
         //删除改变了加载方式的点
         dpoints.map((item,index)=>{
             t.removeGraphic(item,'point');
@@ -1122,9 +1124,6 @@ class BaiduMap extends React.Component{
             }
             // 初始化PointCollection
             let VotexpointCollection = new BMap.PointCollection(points, options);  
-            let vortexObj ={
-                mapLayer: VotexpointCollection
-            }
             t.state.gis.addOverlay(VotexpointCollection);  // 添加Overlay
             t.morepoints.push({
                 id: d.id,
@@ -1517,6 +1516,12 @@ class BaiduMap extends React.Component{
         }else{
             return false;
         }
+        for(let i = 0 ; i < t.movePoints.length ; i++){
+            if(t.movePoints[i].id == id){
+                t.movePoints.splice(i,1);
+                continue;
+            }
+        }
         let ids = [];
         switch(type){
             case 'point':
@@ -1904,13 +1909,50 @@ class BaiduMap extends React.Component{
         );
     }
     /*公共方法*/
+    moveAnimation(){
+        let t = this;
+        if(t.moveToTimer){
+            clearInterval(t.moveToTimer);
+        }
+        t.moveToTimer = setInterval(()=>{
+            for(let i = 0;i < t.movePoints.length; i++){
+                t.movePoints[i].waitTime += 10;
+                t.movePoints[i].deleteTime -= 10;
+            }
+            t.movePoints.sort((x,y)=>{
+                return y.waitTime -x.waitTime;
+            });
+            let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
+            for(let i = 0;i < nowMovePoints.length; i++){
+                let {id,rx,ry,waitTime,deleteTime} = nowMovePoints[i];
+                let gc = t.GM.getGraphic(id);
+                if(!gc){
+                    clearInterval(t.moveToTimer);
+                }else{
+                    let gg = gc.getPosition();
+                    let tx = gg.lng + rx,ty = gg.lat + ry;
+                    gc.setPosition(new BMap.Point(tx,ty));
+                    t.movePoints[i].waitTime = 0;
+                    if(deleteTime === 0){
+                        deleteIndex.push(i);
+                    }
+                }
+            }
+            deleteIndex.sort((a,b)=>{return b-a});
+            for(let i = 0 ; i < deleteIndex.length ; i++){
+                t.movePoints.splice(deleteIndex[i],1);
+            }
+            if(nowMovePoints.length == 0){
+                clearInterval(t.moveToTimer);
+            }
+        },10);
+    }
     moveTo(id,lnglat,delay,autoRotation){
             delay = delay || 3;
         let t = this,timer = 10,
             gc = t.GM.getGraphic(id);
         delay = eval(delay)*1000;
-        let count = delay/timer,
-            ct = 0;
+        let count = delay/timer;
         let s = gc.getPosition(),e = new BMap.Point(lnglat[0],lnglat[1]);
         if(s.equals(e)){
             return false;
@@ -1922,22 +1964,23 @@ class BaiduMap extends React.Component{
             }
             //拆分延迟移动定位
             let rx = (e.lng - s.lng)/count, ry = (e.lat - s.lat)/count;
-            if(t.moveToTimer[id]){
-                clearInterval(t.moveToTimer[id]);
-            }
-            t.moveToTimer[id] = setInterval(()=>{
-                if(!gc){
-                    clearInterval(t.moveToTimer[id]);
-                }else{
-                    ct += 1;
-                    let gg = gc.getPosition();
-                    let tx = gg.lng + rx,ty = gg.lat + ry;
-                    gc.setPosition(new BMap.Point(tx,ty));
-                    if(ct >= count){
-                        clearInterval(t.moveToTimer[id]);
-                    }
+            let isHave = false;
+            for(let i = 0 ; i < t.movePoints.length ;i++){
+                if(t.movePoints[i].id == id){
+                    t.movePoints.splice(i,1,{
+                        id,rx,ry,
+                        waitTime: 0,
+                        deleteTime: delay
+                    })
                 }
-            },timer);
+            }
+            if(!isHave){
+                t.movePoints.push({
+                    id,rx,ry,
+                    waitTime: 0,
+                    deleteTime: delay
+                });
+            }
         }
         
     }
@@ -2046,7 +2089,7 @@ class BaiduMap extends React.Component{
         let t = this,totalDistance = 0;
         if (ps.length < 0) {return false;}
         for(let i= 0 ; i< ps.length ; i++){
-            if(i < ps.length-2){
+            if(i < ps.length-1){
                 totalDistance += t.calculatePointsDistance(ps[i],ps[i+1]);
             }
         }
@@ -2367,10 +2410,8 @@ class BaiduMap extends React.Component{
         let t = this;
         t.state.gis.clearOverlays();
         t.state.gis = null;
-        for(let i in t.moveToTimer){
-            if(t.moveToTimer[i]){
-                clearInterval(t.moveToTimer[i]);
-            }
+        if(t.moveToTimer){
+            clearInterval(t.moveToTimer);
         }
     }
 }

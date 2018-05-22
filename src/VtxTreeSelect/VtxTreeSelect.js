@@ -153,7 +153,7 @@ class VtxTreeSelect extends React.Component{
             treeNodeFilterProp: 'name',
             placeholder: treeSelect.placeholder || '',
             searchPlaceholder: treeSelect.searchPlaceholder || '',
-            getPopupContainer: ()=>document.getElementById(this.id)
+            // getPopupContainer: ()=>document.getElementById(this.id)
         }
         //动态加载树数据
         if('onLoadData' in treeSelect){

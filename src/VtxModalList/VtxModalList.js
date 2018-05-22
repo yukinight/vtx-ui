@@ -168,20 +168,20 @@ class VtxModalList extends React.Component{
                         'onChange' in elem.props &&
                     typeof(elem.props.onChange) == 'function'?
                 {onChange: (e)=>{
-                    let value = e.target.value,
-                        required = true;
-                    if(!!reg.exp){
-                        if(reg.exp instanceof RegExp){
-                            required = reg.exp.test(value);
-                        }else if(reg.exp instanceof Function){
-                            required = reg.exp(value);
-                        }else{
-                            console.error('参数reg: 格式不是验证方法或正则表达式!');
-                        }
-                    }
-                    if(required || value === ''){
+                    // let value = e.target.value,
+                        // required = true;
+                    // if(!!reg.exp){
+                    //     if(reg.exp instanceof RegExp){
+                    //         required = reg.exp.test(value);
+                    //     }else if(reg.exp instanceof Function){
+                    //         required = reg.exp(value);
+                    //     }else{
+                    //         console.error('参数reg: 格式不是验证方法或正则表达式!');
+                    //     }
+                    // }
+                    // if(required || value === ''){
                         elem.props.onChange(e);
-                    }
+                    // }
                 }}:{}
             )
         });
