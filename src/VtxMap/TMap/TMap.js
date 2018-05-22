@@ -331,7 +331,8 @@ class TMap extends React.Component{
             },
             zoom: t.getZoomLevel()
         }
-        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],gis.getBounds().getNorthEast());
+        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],[
+            gis.getBounds().getNorthEast().getLng(),gis.getBounds().getNorthEast().getLat()]);
         return obj;
     }
     //聚合地图图元(arg为空时聚合全部点)
@@ -2034,8 +2035,9 @@ class TMap extends React.Component{
     }
     //计算2点间距离 单位m 精确到个位
     calculatePointsDistance(f,s){
-        let lnglat = new T.LngLat(f[0],f[1]);
-        return Math.round(lnglat.distanceTo(s));
+        let lnglat1 = new T.LngLat(f[0],f[1]);
+        let lnglat2 = new T.LngLat(s[0],s[1]);
+        return Math.round(lnglat1.distanceTo(lnglat2));
     }
     calculateDistance(ps){
         let t = this,totalDistance = 0;

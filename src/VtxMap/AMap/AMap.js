@@ -483,7 +483,8 @@ class VortexAMap extends React.Component{
             },
             zoom: t.getZoomLevel()
         }
-        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],gis.getBounds().getNorthEast());
+        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],[
+            gis.getBounds().getNorthEast().getLng(),gis.getBounds().getNorthEast().getLat()]);
         return obj;
     }
     //聚合地图图元(arg为空时聚合全部点)
@@ -909,7 +910,8 @@ class VortexAMap extends React.Component{
                 if(!item.config.isAnimation){
                     gc.setPosition(new AMap.LngLat(item.longitude,item.latitude));
                 }else{
-                    let distance = t.calculatePointsDistance([item.longitude,item.latitude],gc.getPosition());
+                    let distance = t.calculatePointsDistance([item.longitude,item.latitude],[
+                        gc.getPosition().getLng(),gc.getPosition().getLat()]);
                     let delay = item.config.animationDelay || 3;
                     let speed = distance/delay*3600/1000;
                     if(cg.autoRotation){
@@ -1882,8 +1884,9 @@ class VortexAMap extends React.Component{
     }
     //计算2点间距离 单位m 精确到个位
     calculatePointsDistance(f,s){
-        let lnglat = new AMap.LngLat(f[0],f[1]);
-        return Math.round(lnglat.distance(s));
+        let lnglat1 = new AMap.LngLat(f[0],f[1]);
+        let lnglat2 = new AMap.LngLat(s[0],s[1]);
+        return Math.round(lnglat1.distance(lnglat2));
     }
     //计算多个点的距离(常用于线计算)
     calculateDistance(ps){
