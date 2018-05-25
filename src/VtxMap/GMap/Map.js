@@ -3111,7 +3111,7 @@ class ArcgisMap extends React.Component{
                     }
                     t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
                     t.movePoints[i].waitTime = 0;
-                    if(deleteTime === 0){
+                    if(deleteTime <= 0){
                         deleteIndex.push(i);
                     }
                 }

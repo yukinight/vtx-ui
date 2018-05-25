@@ -1916,48 +1916,48 @@ class TMap extends React.Component{
     moveAnimation(){
         let t = this;
         if(t.moveToTimer){
-                clearInterval(t.moveToTimer);
+            clearInterval(t.moveToTimer);
+        }
+        t.moveToTimer = setInterval(()=>{
+            for(let i = 0;i < t.movePoints.length; i++){
+                t.movePoints[i].waitTime += 10;
+                t.movePoints[i].deleteTime -= 10;
             }
-            t.moveToTimer = setInterval(()=>{
-                for(let i = 0;i < t.movePoints.length; i++){
-                    t.movePoints[i].waitTime += 10;
-                    t.movePoints[i].deleteTime -= 10;
-                }
-                t.movePoints.sort((x,y)=>{
-                    return y.waitTime -x.waitTime;
-                });
-                let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
-                for(let i = 0;i < nowMovePoints.length; i++){
-                    let {id,rx,ry,waitTime,deleteTime,ddeg} = nowMovePoints[i];
-                    let gc = t.GM.getGraphic(id);
-                    if(!gc){
-                        clearInterval(t.moveToTimer[id]);
-                    }else{
-                        let gg = gc.getLngLat();
-                        let tx = gg.lng + rx,ty = gg.lat + ry;
-                        let lglt = new T.LngLat(tx,ty);
-                        gc.setLngLat(lglt);
-                        t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
-                        //旋转角度
-                        gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${ddeg}deg)`;
-                        gc.getElement().style['-ms-transform'] = ` rotate(${ddeg}deg)`;
-                        if(gc.label){
-                            gc.showLabel();
-                        }
-                        t.movePoints[i].waitTime = 0;
-                        if(deleteTime === 0){
-                            deleteIndex.push(i);
-                        }
+            t.movePoints.sort((x,y)=>{
+                return y.waitTime -x.waitTime;
+            });
+            let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
+            for(let i = 0;i < nowMovePoints.length; i++){
+                let {id,rx,ry,waitTime,deleteTime,ddeg} = nowMovePoints[i];
+                let gc = t.GM.getGraphic(id);
+                if(!gc){
+                    clearInterval(t.moveToTimer[id]);
+                }else{
+                    let gg = gc.getLngLat();
+                    let tx = gg.lng + rx,ty = gg.lat + ry;
+                    let lglt = new T.LngLat(tx,ty);
+                    gc.setLngLat(lglt);
+                    t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
+                    //旋转角度
+                    gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${ddeg}deg)`;
+                    gc.getElement().style['-ms-transform'] = ` rotate(${ddeg}deg)`;
+                    if(gc.label){
+                        gc.showLabel();
+                    }
+                    t.movePoints[i].waitTime = 0;
+                    if(deleteTime <= 0){
+                        deleteIndex.push(i);
                     }
                 }
-                deleteIndex.sort((a,b)=>{return b-a});
-                for(let i = 0 ; i < deleteIndex.length ; i++){
-                    t.movePoints.splice(deleteIndex[i],1);
-                }
-                if(nowMovePoints.length == 0){
-                    clearInterval(t.moveToTimer);
-                }
-            },10);
+            }
+            deleteIndex.sort((a,b)=>{return b-a});
+            for(let i = 0 ; i < deleteIndex.length ; i++){
+                t.movePoints.splice(deleteIndex[i],1);
+            }
+            if(nowMovePoints.length == 0){
+                clearInterval(t.moveToTimer);
+            }
+        },10);
     }
     /*公共方法*/
     moveTo(id,lnglat,delay,autoRotation){

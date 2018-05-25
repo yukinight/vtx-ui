@@ -1933,7 +1933,7 @@ class BaiduMap extends React.Component{
                     let tx = gg.lng + rx,ty = gg.lat + ry;
                     gc.setPosition(new BMap.Point(tx,ty));
                     t.movePoints[i].waitTime = 0;
-                    if(deleteTime === 0){
+                    if(deleteTime <= 0){
                         deleteIndex.push(i);
                     }
                 }
