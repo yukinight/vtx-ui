@@ -1,6 +1,9 @@
 import React from 'react';
 import './VtxTree.less';
 const styles = {
+	normal: 'vtx-ui-tree-normal',
+	searchInput: 'vtx-ui-tree-searchInput',
+	treeBody: 'vtx-ui-tree-treeBody',
 	text_ellipsis: 'vtx-ui-tree-text_ellipsis',
 	dis_n: 'vtx-ui-tree-dis_n',
 	treeNode: 'vtx-ui-tree-treenode',
@@ -455,21 +458,32 @@ class VtxTree extends React.Component {
 			});
 			return render;
 		} 
+		let isFixed =  _tree.isFixed == undefined?true:_tree.isFixed;
 		return(
-			<div>
-				{
-					!_tree.isShowSearchInput?''
-					:(!!_tree.searchInput && 'render' in _tree.searchInput)
-						?_tree.searchInput.render(t.onChange.bind(t),t.onSubmit.bind(t))
-						:<Search  placeholder="搜索" onChange={t.onChange.bind(t)} onSearch={t.onSubmit.bind(t)}/>
-				}
-				{
-					_tree.data.length?
-					<Tree {...TreeProps}>{loop(_tree.data)}</Tree>:
-					<Spin tip="加载中...">
-						<div style={{width:'100%',height: '50px'}}></div>
-					</Spin>
-				}
+			<div className={styles.normal} 
+				style={{paddingTop: _tree.isShowSearchInput && isFixed?'30px':'0px'}}
+			>
+				<div className={styles.searchInput}
+					style={{
+						position: isFixed?'absolute':'relative'
+					}}
+				>
+					{
+						!_tree.isShowSearchInput?''
+						:(!!_tree.searchInput && 'render' in _tree.searchInput)
+							?_tree.searchInput.render(t.onChange.bind(t),t.onSubmit.bind(t))
+							:<Search  placeholder="搜索" onChange={t.onChange.bind(t)} onSearch={t.onSubmit.bind(t)}/>
+					}
+				</div>
+				<div className={styles.treeBody}>
+					{
+						_tree.data.length?
+						<Tree {...TreeProps}>{loop(_tree.data)}</Tree>:
+						<Spin tip="加载中...">
+							<div style={{width:'100%',height: '50px'}}></div>
+						</Spin>
+					}
+				</div>
 			</div>
 		);
 	}
