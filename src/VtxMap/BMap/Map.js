@@ -1971,7 +1971,8 @@ class BaiduMap extends React.Component{
                         id,rx,ry,
                         waitTime: 0,
                         deleteTime: delay
-                    })
+                    });
+                    isHave = true;
                 }
             }
             if(!isHave){

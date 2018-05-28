@@ -1985,7 +1985,8 @@ class TMap extends React.Component{
                         id,rx,ry,ddeg,
                         waitTime: 0,
                         deleteTime: delay
-                    })
+                    });
+                    isHave = true;
                 }
             }
             if(!isHave){
