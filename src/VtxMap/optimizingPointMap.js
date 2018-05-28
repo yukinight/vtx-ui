@@ -14,23 +14,30 @@ class OptimizingPointMap extends React.Component{
     }
     
     resetPoints(props, eType){
-        let mcfg = this.map.getMapExtent();
-
-        const param = {
-            mapHeight:mcfg.mapSize.height,
-            mapWidth:mcfg.mapSize.width,
-            minLat:mcfg.southWest.lat,
-            maxLat:mcfg.northEast.lat,
-            minLng:mcfg.southWest.lng,
-            maxLng:mcfg.northEast.lng,
-            eType,
-            allPoints:props.mapPoints,
-            reservedPoints:props.reservedPoints
+        const t = this;
+        // 延时优化，只处理最后一次操作
+        if(t.resetDelay){
+            clearTimeout(t.resetDelay);
         }
-
-        this.setState({
-            filterPoints:this.MPP.pointFilter(param)
-        })
+        t.resetDelay = setTimeout(()=>{
+            let mcfg = t.map.getMapExtent();
+            const param = {
+                mapHeight:mcfg.mapSize.height,
+                mapWidth:mcfg.mapSize.width,
+                minLat:mcfg.southWest.lat,
+                maxLat:mcfg.northEast.lat,
+                minLng:mcfg.southWest.lng,
+                maxLng:mcfg.northEast.lng,
+                eType,
+                allPoints:props.mapPoints,
+                reservedPoints:props.reservedPoints
+            }
+            t.setState({
+                filterPoints:t.MPP.pointFilter(param)
+            },()=>{
+                t.resetDelay = null;
+            })  
+        },100);
         
     }
     componentDidMount(){
@@ -40,7 +47,7 @@ class OptimizingPointMap extends React.Component{
         })
     }
     componentWillReceiveProps(nextProps){
-        if(this.mapLoaded && !this.deepEqual(this.props.reservedPoints, nextProps.reservedPoints) || !this.deepEqual(this.props.mapPoints, nextProps.mapPoints)){
+        if(this.mapLoaded && (!this.deepEqual(this.props.reservedPoints, nextProps.reservedPoints) || !this.deepEqual(this.props.mapPoints, nextProps.mapPoints))){
             // 外部点数据改变，更新内部点数据
             this.resetPoints(nextProps);
         }
