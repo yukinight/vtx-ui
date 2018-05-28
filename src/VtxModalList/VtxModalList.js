@@ -92,6 +92,16 @@ class VtxModalList extends React.Component{
             mld = elem.props['data-modallist'] || {},
             reg = mld.regexp || {};
         let ty = (mld.layout || {}).type || 'default';
+        if(ty == 'ctext'){
+            return (
+                <LayoutComponent 
+                    key={index} 
+                    {...((elem.props['data-modallist'] || {}).layout || {})}
+                >   
+                    <div>{reg.value}</div>
+                </LayoutComponent>
+            )
+        }
         let isInherit = ()=>{
             // if(typeof(elem.type) == 'function'){
             //     switch(elem.type.name.toLocaleLowerCase()){
@@ -452,7 +462,7 @@ function LayoutComponent(props) {
                 :''
             }
             {
-                type == 'text' || type == 'title'?
+                type == 'text' || type == 'ctext' || type == 'title'?
                 <span className={`vtx-ui-modallist-list-right-text`}>
                     {children}
                 </span>:''
