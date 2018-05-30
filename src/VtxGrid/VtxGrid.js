@@ -137,7 +137,7 @@ class VtxGrid extends React.Component{
                                 t.props.hiddenconfrimButtion?"":
                                 <VtxCol span={10}>
                                     <span data-type={'bt'}>
-                                        <Button style={{width:'100%'}} type="primary" onClick={props.confirm}>{props.confirmText || '查询'}</Button>
+                                        <Button icon='search' style={{width:'100%'}} type="primary" onClick={props.confirm}>{props.confirmText || '查询'}</Button>
                                     </span>
                                 </VtxCol>
                             }
