@@ -1302,17 +1302,17 @@ class TMap extends React.Component{
         data //初始化数据   默认{id:'add'}
     */
     draw (obj) {
-        var t = this;
+        var t = this,drawParam = {};
         //初始化参数
-        obj.geometryType = obj.geometryType || 'point';
-        obj.parameter = obj.parameter || {};
-        obj.data = obj.data || {};
-        obj.data.id = obj.data.id || `draw${new Date().getTime()}`;
+        drawParam.geometryType = obj.geometryType || 'point';
+        drawParam.parameter = obj.parameter || {};
+        drawParam.data = obj.data || {};
+        drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
-        let len = t.state.drawIds[obj.geometryType].indexOf(obj.data.id);
+        let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
         if(len > -1){
             //如果id存在 删除存在的图元,清除drawId中的id数据
-            switch(obj.geometryType){
+            switch(drawParam.geometryType){
                 case 'point':
                     this.markerTool.clear();
                 break;
@@ -1329,39 +1329,39 @@ class TMap extends React.Component{
                     this.rectangleTool.clear();
                 break;
             }
-            t.state.drawIds[obj.geometryType].splice(len,1);
+            t.state.drawIds[drawParam.geometryType].splice(len,1);
         }
         let param = {};
         let paramgcr = {};
         window.map = this.state.gis;
-        if(obj.geometryType == 'polygon' || obj.geometryType == 'circle' || obj.geometryType == 'rectangle'){
-            paramgcr.fillColor = obj.parameter.color;
-            paramgcr.color = obj.parameter.lineColor;
-            paramgcr.opacity = obj.parameter.lineOpacity;
-            paramgcr.weight = obj.parameter.lineWidth;
-            paramgcr.fillOpacity = obj.parameter.pellucidity;
+        if(drawParam.geometryType == 'polygon' || drawParam.geometryType == 'circle' || drawParam.geometryType == 'rectangle'){
+            paramgcr.fillColor = drawParam.parameter.color;
+            paramgcr.color = drawParam.parameter.lineColor;
+            paramgcr.opacity = drawParam.parameter.lineOpacity;
+            paramgcr.weight = drawParam.parameter.lineWidth;
+            paramgcr.fillOpacity = drawParam.parameter.pellucidity;
             paramgcr.extData = {
-                id: obj.data.id,
+                id: drawParam.data.id,
                 attributes: {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     config: {
-                        color: obj.parameter.color,
-                        lineColor: obj.parameter.lineColor,
-                        lineOpacity: obj.parameter.lineOpacity,
-                        pellucidity: obj.parameter.pellucidity,
-                        lineWidth: obj.parameter.lineWidth
+                        color: drawParam.parameter.color,
+                        lineColor: drawParam.parameter.lineColor,
+                        lineOpacity: drawParam.parameter.lineOpacity,
+                        pellucidity: drawParam.parameter.pellucidity,
+                        lineWidth: drawParam.parameter.lineWidth
                     }
                 },
-                type: obj.geometryType
+                type: drawParam.geometryType
             };
         }
-        switch(obj.geometryType){
+        switch(drawParam.geometryType){
             case 'point':
                 param.icon = new T.Icon({
-                    iconUrl: obj.parameter.url || './resources/images/defaultMarker.png',
-                    iconSize: new T.Point(obj.parameter.width || 33,obj.parameter.height || 33),
-                    iconAnchor: new T.Point(obj.parameter.width?obj.parameter.width/2:16.5,
-                            obj.parameter.height?obj.parameter.height:33)
+                    iconUrl: drawParam.parameter.url || './resources/images/defaultMarker.png',
+                    iconSize: new T.Point(drawParam.parameter.width || 33,drawParam.parameter.height || 33),
+                    iconAnchor: new T.Point(drawParam.parameter.width?drawParam.parameter.width/2:16.5,
+                            drawParam.parameter.height?drawParam.parameter.height:33)
                 });
                 param.follow = false;
                 if(this.markerTool)this.markerTool.close();
@@ -1369,11 +1369,11 @@ class TMap extends React.Component{
                 this.markerTool.open();
                 this.markerTool.addEventListener('mouseup',(ob)=>{
                     let { type, target, currentLnglat,currentMarker, allMarkers } = ob;
-                    t.GM.setGraphic(obj.data.id,currentMarker);
+                    t.GM.setGraphic(drawParam.data.id,currentMarker);
                     let backobj = {
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         attributes: {
-                            id: obj.data.id,
+                            id: drawParam.data.id,
                             url: currentMarker.getIcon().options.iconUrl,
                             config: {
                                 width: currentMarker.getIcon().options.iconSize.x,
@@ -1394,21 +1394,21 @@ class TMap extends React.Component{
                 });
             break;
             case 'polyline':
-                param.color = obj.parameter.color;
-                param.opacity = obj.parameter.pellucidity;
-                param.weight = obj.parameter.lineWidth;
+                param.color = drawParam.parameter.color;
+                param.opacity = drawParam.parameter.pellucidity;
+                param.weight = drawParam.parameter.lineWidth;
                 if(this.polylineTool)this.polylineTool.close();
                 this.polylineTool = new T.PolylineTool(this.state.gis, param);
                 this.polylineTool.open();
                 this.polylineTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentDistance,currentPolyline,allPolylines} = ob;
-                    t.GM.setGraphic(obj.data.id,currentPolyline);
+                    t.GM.setGraphic(drawParam.data.id,currentPolyline);
                     let backobj ={
                         geometryType: 'polyline',
                         distance: currentDistance,
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         attributes: {
-                            id: obj.data.id,
+                            id: drawParam.data.id,
                             config: {
                                 color: currentPolyline.getColor(),
                                 pellucidity: currentPolyline.getOpacity(),
@@ -1434,12 +1434,12 @@ class TMap extends React.Component{
                 this.polygonTool.open();
                 this.polygonTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentArea,currentPolygon,allPolygons} = ob;
-                    t.GM.setGraphic(obj.data.id,currentPolygon);
+                    t.GM.setGraphic(drawParam.data.id,currentPolygon);
                     let backobj = {
                         geometryType: 'polygon',
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         attributes: {
-                            id: obj.data.id,
+                            id: drawParam.data.id,
                             config: {
                                 color: currentPolygon.getFillColor(),
                                 lineColor: currentPolygon.getColor(),
@@ -1470,13 +1470,13 @@ class TMap extends React.Component{
                 this.circleTool.open();
                 this.circleTool.addEventListener('drawend',(ob)=>{
                     let {type,target,currentCenter,currentRadius,currentCircle,allCircles} = ob;
-                    t.GM.setGraphic(obj.data.id,currentCircle);
+                    t.GM.setGraphic(drawParam.data.id,currentCircle);
                     let area = Math.PI * Math.pow(currentRadius,2);
                     let backobj = {
                         geometryType: 'circle',
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         attributes: {
-                            id: obj.data.id,
+                            id: drawParam.data.id,
                             config: { 
                                 color: currentCircle.getFillColor(),
                                 lineColor: currentCircle.getColor(),
@@ -1506,7 +1506,7 @@ class TMap extends React.Component{
                 this.rectangleTool.open();
                 this.rectangleTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentBounds,currentRectangle,allRectangles} = ob;
-                    t.GM.setGraphic(obj.data.id,currentRectangle);
+                    t.GM.setGraphic(drawParam.data.id,currentRectangle);
                     let currentLnglats = [
                         currentBounds.getNorthEast(),
                         currentBounds.getSouthWest()
@@ -1520,9 +1520,9 @@ class TMap extends React.Component{
                         );
                     let backobj = {
                         geometryType: 'rectangle',
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         attributes: {
-                            id: obj.data.id,
+                            id: drawParam.data.id,
                             config: {
                                 color: currentRectangle.getFillColor(),
                                 lineColor: currentRectangle.getColor(),
@@ -1549,7 +1549,7 @@ class TMap extends React.Component{
             break;
         }
         //保存绘制图元的id便于后期比对
-        t.state.drawIds[obj.geometryType].push(obj.data.id);
+        t.state.drawIds[drawParam.geometryType].push(drawParam.data.id);
     }
     //关闭绘制图元
     closeDraw(){
@@ -2064,6 +2064,30 @@ class TMap extends React.Component{
        
         return {deletedDataIDs,addedData,updatedData,replacedData};
     }
+    //处理需要增加图元的数据(避免意外问题)
+    dealAdd(ary,ids){
+        let ads = [], otherupds = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                otherupds.push(ary[i]);
+            }else{
+                ads.push(ary[i]);
+            }
+        }
+        return {ads,otherupds};
+    }
+    //处理需要更新图元的数据(避免意外问题)
+    dealUpdate(ary,ids){
+        let upds = [], otherads = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                upds.push(ary[i]);
+            }else{
+                otherads.push(ary[i]);
+            }
+        }
+        return {upds,otherads};
+    }
     searchPoints(searchValue,pageSize=10,pageIndex=1){
         let t = this;
         return new Promise((resolve)=>{
@@ -2113,7 +2137,8 @@ class TMap extends React.Component{
     componentWillReceiveProps(nextProps,prevProps) {//已加载组件，收到新的参数时调用
         let t = this;
         //点/线旧数据
-        let {pointIds,lineIds,polygonIds,circleIds} = t.state;
+        let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
+        let {point,polyline,polygon,circle,rectangle} = drawIds;
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
@@ -2158,14 +2183,16 @@ class TMap extends React.Component{
                 newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'point');
             }
             //增加
-            t.addPoint(addedData);
+            t.addPoint([...ads,...otherads]);
             //更新
-            t.updatePoint(updatedData);
+            t.updatePoint([...upds,...otherupds]);
         }
         /*
             线数据处理
@@ -2179,12 +2206,16 @@ class TMap extends React.Component{
                 newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'line');
             }
-            t.updateLine(updatedData);
-            t.addLine(addedData);           
+            //增加
+            t.addLine([...ads,...otherads]);
+            //更新
+            t.updateLine([...upds,...otherupds]);          
         }
         //画其他特例线专用
         if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
@@ -2208,12 +2239,16 @@ class TMap extends React.Component{
                 newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'polygon');
             }
-            t.updatePolygon(updatedData)
-            t.addPolygon(addedData);
+            //增加
+            t.addPolygon([...ads,...otherads]);
+            //更新
+            t.updatePolygon([...upds,...otherupds]);
         }
         /*
             圆数据处理
@@ -2227,12 +2262,16 @@ class TMap extends React.Component{
                 newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'circle');
             }
-            t.updateCircle(updatedData)
-            t.addCircle(addedData);
+            //增加
+            t.addCircle([...ads,...otherads]);
+            //更新
+            t.updateCircle([...upds,...otherupds]);
         }
         // //绘制边界线
         // if(boundaryName instanceof Array && !t.deepEqual(boundaryName,t.props.boundaryName)){

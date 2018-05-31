@@ -1637,63 +1637,63 @@ class BaiduMap extends React.Component{
     }
     //绘制图元
     draw(obj){
-        let t = this;
+        let t = this,drawParam = {};
         //先关闭(防止连点)
         t._drawmanager.close();
         //初始化参数
-        obj.geometryType = obj.geometryType || 'point';
-        obj.parameter = obj.parameter || {};
-        obj.data = obj.data || {};
-        obj.data.id = obj.data.id || `draw${new Date().getTime()}`;
+        drawParam.geometryType = obj.geometryType || 'point';
+        drawParam.parameter = obj.parameter || {};
+        drawParam.data = obj.data || {};
+        drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
-        let len = t.state.drawIds[obj.geometryType].indexOf(obj.data.id);
+        let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
         if(len > -1){
             //如果id存在 删除存在的图元,清除drawId中的id数据
-            t.removeGraphic(obj.data.id);
-            t.state.drawIds[obj.geometryType].splice(len,1);
+            t.removeGraphic(drawParam.data.id);
+            t.state.drawIds[drawParam.geometryType].splice(len,1);
         }
         let param = {};
         let paramgcr = {};
-        if(obj.geometryType == 'polygon' || obj.geometryType == 'circle' || obj.geometryType == 'rectangle'){
-            paramgcr.fillColor = obj.parameter.color;
-            paramgcr.strokeColor = obj.parameter.lineColor;
-            paramgcr.strokeOpacity = obj.parameter.lineOpacity;
-            paramgcr.strokeWeight = obj.parameter.lineWidth;
-            paramgcr.fillOpacity = obj.parameter.pellucidity;
-            paramgcr.strokeStyle =  obj.parameter.lineType;
+        if(drawParam.geometryType == 'polygon' || drawParam.geometryType == 'circle' || drawParam.geometryType == 'rectangle'){
+            paramgcr.fillColor = drawParam.parameter.color;
+            paramgcr.strokeColor = drawParam.parameter.lineColor;
+            paramgcr.strokeOpacity = drawParam.parameter.lineOpacity;
+            paramgcr.strokeWeight = drawParam.parameter.lineWidth;
+            paramgcr.fillOpacity = drawParam.parameter.pellucidity;
+            paramgcr.strokeStyle =  drawParam.parameter.lineType;
             paramgcr.extData = {
-                id: obj.data.id,
+                id: drawParam.data.id,
                 attributes: {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     config: {
-                        color: obj.parameter.color,
-                        lineColor: obj.parameter.lineColor,
-                        lineOpacity: obj.parameter.lineOpacity,
-                        pellucidity: obj.parameter.pellucidity,
-                        lineWidth: obj.parameter.lineWidth
+                        color: drawParam.parameter.color,
+                        lineColor: drawParam.parameter.lineColor,
+                        lineOpacity: drawParam.parameter.lineOpacity,
+                        pellucidity: drawParam.parameter.pellucidity,
+                        lineWidth: drawParam.parameter.lineWidth
                     }
                 },
-                type: obj.geometryType
+                type: drawParam.geometryType
             };
         }
-        switch(obj.geometryType){
+        switch(drawParam.geometryType){
             case 'point':
-                param.offset = new BMap.Size((obj.parameter.markerContentX || -15) + (obj.parameter.width || 30)/2,
-                                            (obj.parameter.markerContentY || -30) + (obj.parameter.height || 30)/2);
+                param.offset = new BMap.Size((drawParam.parameter.markerContentX || -15) + (drawParam.parameter.width || 30)/2,
+                                            (drawParam.parameter.markerContentY || -30) + (drawParam.parameter.height || 30)/2);
                 let icon = new BMap.Icon(
-                    obj.parameter.url || './resources/images/defaultMarker.png',
-                    new BMap.Size(obj.parameter.width || 30,obj.parameter.height || 30)
+                    drawParam.parameter.url || './resources/images/defaultMarker.png',
+                    new BMap.Size(drawParam.parameter.width || 30,drawParam.parameter.height || 30)
                 );
-                icon.setImageSize(new BMap.Size(obj.parameter.width || 30,obj.parameter.height || 30));
+                icon.setImageSize(new BMap.Size(drawParam.parameter.width || 30,drawParam.parameter.height || 30));
                 param.icon = icon;
                 param.extData = {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     attributes: {
-                        id: obj.data.id,
-                        url: obj.parameter.url || './resources/images/defaultMarker.png',
+                        id: drawParam.data.id,
+                        url: drawParam.parameter.url || './resources/images/defaultMarker.png',
                         config: {
-                            width: obj.parameter.width || 36,
-                            height: obj.parameter.height || 36
+                            width: drawParam.parameter.width || 36,
+                            height: drawParam.parameter.height || 36
                         }
                     },
                     type: 'point'
@@ -1702,18 +1702,18 @@ class BaiduMap extends React.Component{
                 t._drawmanager.open({markerOptions: param});
             break;
             case 'polyline':
-                param.strokeColor = obj.parameter.color;
-                param.strokeOpacity = obj.parameter.pellucidity;
-                param.strokeWeight = obj.parameter.lineWidth;
-                param.strokeStyle =  obj.parameter.lineType;
+                param.strokeColor = drawParam.parameter.color;
+                param.strokeOpacity = drawParam.parameter.pellucidity;
+                param.strokeWeight = drawParam.parameter.lineWidth;
+                param.strokeStyle =  drawParam.parameter.lineType;
                 param.extData = {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     attributes: {
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         config: {
-                            color: obj.parameter.color,
-                            pellucidity: obj.parameter.pellucidity,
-                            lineWidth: obj.parameter.lineWidth
+                            color: drawParam.parameter.color,
+                            pellucidity: drawParam.parameter.pellucidity,
+                            lineWidth: drawParam.parameter.lineWidth
                         }
                     },
                     type: 'polyline'
@@ -2119,6 +2119,30 @@ class BaiduMap extends React.Component{
        
         return {deletedDataIDs,addedData,updatedData,replacedData};
     }
+    //处理需要增加图元的数据(避免意外问题)
+    dealAdd(ary,ids){
+        let ads = [], otherupds = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                otherupds.push(ary[i]);
+            }else{
+                ads.push(ary[i]);
+            }
+        }
+        return {ads,otherupds};
+    }
+    //处理需要更新图元的数据(避免意外问题)
+    dealUpdate(ary,ids){
+        let upds = [], otherads = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                upds.push(ary[i]);
+            }else{
+                otherads.push(ary[i]);
+            }
+        }
+        return {upds,otherads};
+    }
     //百度搜索功能
     searchPoints(searchValue,pageSize=10,pageIndex=0){
         return new Promise((resolve)=>{
@@ -2167,7 +2191,8 @@ class BaiduMap extends React.Component{
     componentWillReceiveProps(nextProps) {
         let t = this;
         //点/线旧数据
-        let {pointIds,lineIds,polygonIds,circleIds} = t.state;
+        let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
+        let {point,polyline,polygon,circle,rectangle} = drawIds;
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
@@ -2213,14 +2238,16 @@ class BaiduMap extends React.Component{
                 newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'point');
             }
             //增加
-            t.addPoint(addedData);
+            t.addPoint([...ads,...otherads]);
             //更新
-            t.updatePoint(updatedData);
+            t.updatePoint([...upds,...otherupds]);
         }
         /*
             线数据处理
@@ -2234,14 +2261,16 @@ class BaiduMap extends React.Component{
                 newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'line');
             }
             //增加
-            t.addLine(addedData);
+            t.addLine([...ads,...otherads]);
             //更新
-            t.updateLine(updatedData);   
+            t.updateLine([...upds,...otherupds]);  
         }
         //画其他特例线专用
         if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
@@ -2265,12 +2294,16 @@ class BaiduMap extends React.Component{
                 newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'polygon');
             }
-            t.addPolygon(addedData);
-            t.updatePolygon(updatedData);
+            //增加
+            t.addPolygon([...ads,...otherads]);
+            //更新
+            t.updatePolygon([...upds,...otherupds]);
         }
         /*
             圆数据处理
@@ -2284,12 +2317,16 @@ class BaiduMap extends React.Component{
                 newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'circle');
             }
-            t.addCircle(addedData);
-            t.updateCircle(updatedData);
+            //增加
+            t.addCircle([...ads,...otherads]);
+            //更新
+            t.updateCircle([...upds,...otherupds]);
         }
         //绘制边界线
         if(boundaryName instanceof Array && !t.deepEqual(boundaryName,props.boundaryName)){
@@ -2383,20 +2420,20 @@ class BaiduMap extends React.Component{
                 switch(item.type){
                     case 'draw':
                         t.removeGraphic(item.id);
-                        if(t.state.drawIds.point.indexOf(item.id) > -1){
-                            t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
+                        if(point.indexOf(item.id) > -1){
+                            point.splice(point.indexOf(item.id),1);
                         }
-                        if(t.state.drawIds.polyline.indexOf(item.id) > -1){
-                            t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
+                        if(polyline.indexOf(item.id) > -1){
+                            polyline.splice(polyline.indexOf(item.id),1);
                         }
-                        if(t.state.drawIds.polygon.indexOf(item.id) > -1){
-                            t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
+                        if(polygon.indexOf(item.id) > -1){
+                            polygon.splice(polygon.indexOf(item.id),1);
                         }
-                        if(t.state.drawIds.circle.indexOf(item.id) > -1){
-                            t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
+                        if(circle.indexOf(item.id) > -1){
+                            circle.splice(circle.indexOf(item.id),1);
                         }
-                        if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
-                            t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
+                        if(rectangle.indexOf(item.id) > -1){
+                            rectangle.splice(rectangle.indexOf(item.id),1);
                         }
                     break;
                     default :

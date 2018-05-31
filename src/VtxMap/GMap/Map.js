@@ -2636,25 +2636,26 @@ class ArcgisMap extends React.Component{
         $(`#${t.props.mapId}_container`).css({
             cursor: 'crosshair'
         });
+        let drawParam = {};
         //初始化参数
-        obj.geometryType = obj.geometryType || 'point';
-        obj.parameter = obj.parameter || {};
-        obj.data = obj.data || {};
-        obj.data.id = obj.data.id || `draw${new Date().getTime()}`;
+        drawParam.geometryType = obj.geometryType || 'point';
+        drawParam.parameter = obj.parameter || {};
+        drawParam.data = obj.data || {};
+        drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //缓存 绘制的数据
-        t.drawParam = obj;
+        t.drawParam = drawParam;
         //判断id是否存在
-        let len = t.state.drawIds[obj.geometryType].indexOf(obj.data.id);
+        let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
         if(len > -1){
             //如果id存在 删除存在的图元,清除drawId中的id数据
-            t.removeGraphic(obj.data.id);
-            t.state.drawIds[obj.geometryType].splice(len,1);
+            t.removeGraphic(drawParam.data.id);
+            t.state.drawIds[drawParam.geometryType].splice(len,1);
         }
         let lineSymbol = null,fillSymbol = null;
-        if(obj.geometryType !== 'point'){
+        if(drawParam.geometryType !== 'point'){
             //线类型
             let lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
-            switch(obj.parameter.lineType){
+            switch(drawParam.parameter.lineType){
                 case 'solid':
                     lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
                 break;
@@ -2665,37 +2666,37 @@ class ArcgisMap extends React.Component{
             //处理边框线颜色和透明度  使用rgba处理透明度
             let lineColor = null;
             //线和面圆的线透明参数不同
-            if(obj.geometryType == 'polyline'){
-                lineColor = new esri.Color(obj.parameter.color);
-                lineColor.a = obj.parameter.pellucidity;
+            if(drawParam.geometryType == 'polyline'){
+                lineColor = new esri.Color(drawParam.parameter.color);
+                lineColor.a = drawParam.parameter.pellucidity;
             }else{
-                lineColor = new esri.Color(obj.parameter.lineColor);
-                lineColor.a = obj.parameter.lineOpacity;
+                lineColor = new esri.Color(drawParam.parameter.lineColor);
+                lineColor.a = drawParam.parameter.lineOpacity;
             }
             //生成线类型对象
-            lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,obj.parameter.lineWidth);
+            lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,drawParam.parameter.lineWidth);
         }else{
             //点的样式
             let markerSymbol = new esri.symbol.PictureMarkerSymbol(
-                obj.parameter.url || './resources/images/defaultMarker.png', 
-                (obj.parameter.width || 30), (obj.parameter.height || 30)
+                drawParam.parameter.url || './resources/images/defaultMarker.png', 
+                (drawParam.parameter.width || 30), (drawParam.parameter.height || 30)
             );
             //设置点偏移
             markerSymbol.setOffset(
-                (obj.parameter.markerContentX || -15) + (obj.parameter.width || 30)/2,
-                 -((obj.parameter.markerContentY || -15) + (obj.parameter.height || 30)/2)
+                (drawParam.parameter.markerContentX || -15) + (drawParam.parameter.width || 30)/2,
+                 -((drawParam.parameter.markerContentY || -15) + (drawParam.parameter.height || 30)/2)
             );
             t.drawToolbar.setMarkerSymbol(markerSymbol);
         }
         //处理面 矩形 圆的样式
-        if(obj.geometryType == 'polygon' || obj.geometryType == 'circle' || obj.geometryType == 'rectangle'){
+        if(drawParam.geometryType == 'polygon' || drawParam.geometryType == 'circle' || drawParam.geometryType == 'rectangle'){
             //创建面对象
             fillSymbol = new esri.symbol.SimpleFillSymbol();
             //添加边框线数据
             fillSymbol.setOutline(lineSymbol);
             //处理填充颜色和透明度  使用rgba处理透明度
-            let dColor = new esri.Color(obj.parameter.color);
-            dColor.a = obj.parameter.pellucidity;
+            let dColor = new esri.Color(drawParam.parameter.color);
+            dColor.a = drawParam.parameter.pellucidity;
             fillSymbol.setColor(dColor);
             //添加线的样式
             t.drawToolbar.setFillSymbol(fillSymbol);
@@ -2703,7 +2704,7 @@ class ArcgisMap extends React.Component{
         }
         //重新设置绘制类型和数据
         let geometryType = esri.toolbars.Draw.POINT;
-        switch(obj.geometryType){
+        switch(drawParam.geometryType){
             case 'point':
                 geometryType = esri.toolbars.Draw.POINT;
 
@@ -3214,6 +3215,30 @@ class ArcgisMap extends React.Component{
        
         return {deletedDataIDs,addedData,updatedData,replacedData};
     }
+    //处理需要增加图元的数据(避免意外问题)
+    dealAdd(ary,ids){
+        let ads = [], otherupds = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                otherupds.push(ary[i]);
+            }else{
+                ads.push(ary[i]);
+            }
+        }
+        return {ads,otherupds};
+    }
+    //处理需要更新图元的数据(避免意外问题)
+    dealUpdate(ary,ids){
+        let upds = [], otherads = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                upds.push(ary[i]);
+            }else{
+                otherads.push(ary[i]);
+            }
+        }
+        return {upds,otherads};
+    }
     //渲染
     render(){
         let t = this;
@@ -3238,7 +3263,8 @@ class ArcgisMap extends React.Component{
         let initData = ()=>{
             let t = this;
             //点/线旧数据
-            let {pointIds,lineIds,polygonIds,circleIds} = t.state;
+            let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
+            let {point,polyline,polygon,circle,rectangle} = drawIds;
             //点/线新数据
             let {
                 mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
@@ -3281,14 +3307,16 @@ class ArcgisMap extends React.Component{
                     newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
                 }
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
                 //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
                 for(let id of deletedDataIDs){
                     t.removeGraphic(id,'point');
                 }
                 //增加
-                t.addPoint(addedData);
+                t.addPoint([...ads,...otherads]);
                 //更新
-                t.updatePoint(updatedData);
+                t.updatePoint([...upds,...otherupds]);
             }
             /*
                 线数据处理
@@ -3302,14 +3330,16 @@ class ArcgisMap extends React.Component{
                     newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
                 }
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
                 //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
                 for(let id of deletedDataIDs){
                     t.removeGraphic(id,'line');
                 }
                 //增加
-                t.addLine(addedData);
+                t.addLine([...ads,...otherads]);
                 //更新
-                t.updateLine(updatedData);   
+                t.updateLine([...upds,...otherupds]);   
             }
             //画其他特例线专用
             if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
@@ -3333,12 +3363,16 @@ class ArcgisMap extends React.Component{
                     newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
                 }
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
                 //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
                 for(let id of deletedDataIDs){
                     t.removeGraphic(id,'polygon');
                 }
-                t.addPolygon(addedData);
-                t.updatePolygon(updatedData);
+                //增加
+                t.addPolygon([...ads,...otherads]);
+                //更新
+                t.updatePolygon([...upds,...otherupds]);
             }
             /*
                 圆数据处理
@@ -3352,12 +3386,16 @@ class ArcgisMap extends React.Component{
                     newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
                 }
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
                 //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
                 for(let id of deletedDataIDs){
                     t.removeGraphic(id,'circle');
                 }
-                t.addCircle(addedData);
-                t.updateCircle(updatedData);
+                //增加
+                t.addCircle([...ads,...otherads]);
+                //更新
+                t.updateCircle([...upds,...otherupds]);
             }
             //绘制边界线
             // if(boundaryName instanceof Array && !t.deepEqual(boundaryName,t.props.boundaryName)){
