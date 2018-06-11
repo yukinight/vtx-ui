@@ -483,7 +483,8 @@ class VortexAMap extends React.Component{
             },
             zoom: t.getZoomLevel()
         }
-        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],gis.getBounds().getNorthEast());
+        obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],[
+            gis.getBounds().getNorthEast().getLng(),gis.getBounds().getNorthEast().getLat()]);
         return obj;
     }
     //聚合地图图元(arg为空时聚合全部点)
@@ -909,7 +910,8 @@ class VortexAMap extends React.Component{
                 if(!item.config.isAnimation){
                     gc.setPosition(new AMap.LngLat(item.longitude,item.latitude));
                 }else{
-                    let distance = t.calculatePointsDistance([item.longitude,item.latitude],gc.getPosition());
+                    let distance = t.calculatePointsDistance([item.longitude,item.latitude],[
+                        gc.getPosition().getLng(),gc.getPosition().getLat()]);
                     let delay = item.config.animationDelay || 3;
                     let speed = distance/delay*3600/1000;
                     if(cg.autoRotation){
@@ -1680,60 +1682,60 @@ class VortexAMap extends React.Component{
         data //初始化数据   默认{id:'add'}
     */
     draw (obj) {
-        var t = this;
+        var t = this,drawParam = {};
         //初始化参数
-        obj.geometryType = obj.geometryType || 'point';
-        obj.parameter = obj.parameter || {};
-        obj.data = obj.data || {};
-        obj.data.id = obj.data.id || `draw${new Date().getTime()}`;
+        drawParam.geometryType = obj.geometryType || 'point';
+        drawParam.parameter = obj.parameter || {};
+        drawParam.data = obj.data || {};
+        drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
-        let len = t.state.drawIds[obj.geometryType].indexOf(obj.data.id);
+        let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
         if(len > -1){
             //如果id存在 删除存在的图元,清除drawId中的id数据
-            t.removeGraphic(obj.data.id);
-            t.state.drawIds[obj.geometryType].splice(len,1);
+            t.removeGraphic(drawParam.data.id);
+            t.state.drawIds[drawParam.geometryType].splice(len,1);
         }
         //引用百度测距样式
         t.state.gis.setDefaultCursor('crosshair');
         let param = {};
         let paramgcr = {};
-        if(obj.geometryType == 'polygon' || obj.geometryType == 'circle' || obj.geometryType == 'rectangle'){
-            paramgcr.fillColor = obj.parameter.color;
-            paramgcr.strokeColor = obj.parameter.lineColor;
-            paramgcr.strokeOpacity = obj.parameter.lineOpacity;
-            paramgcr.strokeWeight = obj.parameter.lineWidth;
-            paramgcr.fillOpacity = obj.parameter.pellucidity;
-            paramgcr.strokeStyle =  obj.parameter.lineType;
+        if(drawParam.geometryType == 'polygon' || drawParam.geometryType == 'circle' || drawParam.geometryType == 'rectangle'){
+            paramgcr.fillColor = drawParam.parameter.color;
+            paramgcr.strokeColor = drawParam.parameter.lineColor;
+            paramgcr.strokeOpacity = drawParam.parameter.lineOpacity;
+            paramgcr.strokeWeight = drawParam.parameter.lineWidth;
+            paramgcr.fillOpacity = drawParam.parameter.pellucidity;
+            paramgcr.strokeStyle =  drawParam.parameter.lineType;
             paramgcr.extData = {
-                id: obj.data.id,
+                id: drawParam.data.id,
                 attributes: {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     config: {
-                        color: obj.parameter.color,
-                        lineColor: obj.parameter.lineColor,
-                        lineOpacity: obj.parameter.lineOpacity,
-                        pellucidity: obj.parameter.pellucidity,
-                        lineWidth: obj.parameter.lineWidth
+                        color: drawParam.parameter.color,
+                        lineColor: drawParam.parameter.lineColor,
+                        lineOpacity: drawParam.parameter.lineOpacity,
+                        pellucidity: drawParam.parameter.pellucidity,
+                        lineWidth: drawParam.parameter.lineWidth
                     }
                 },
-                type: obj.geometryType
+                type: drawParam.geometryType
             };
         }
-        switch(obj.geometryType){
+        switch(drawParam.geometryType){
             case 'point':
                 param.icon = new AMap.Icon({
-                    image: obj.parameter.url || 'http://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
-                    size: new AMap.Size(obj.parameter.width || 36,obj.parameter.height || 36),
-                    offset: new AMap.Pixel(obj.parameter.labelPixelX || -10,obj.parameter.labelPixelY || -34)
+                    image: drawParam.parameter.url || 'http://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
+                    size: new AMap.Size(drawParam.parameter.width || 36,drawParam.parameter.height || 36),
+                    offset: new AMap.Pixel(drawParam.parameter.labelPixelX || -10,drawParam.parameter.labelPixelY || -34)
                 });
                 param.extData = {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     attributes: {
-                        id: obj.data.id,
-                        url: obj.parameter.url || 'http://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
+                        id: drawParam.data.id,
+                        url: drawParam.parameter.url || 'http://webapi.amap.com/theme/v1.3/markers/n/mark_bs.png',
                         config: {
-                            width: obj.parameter.width || 36,
-                            height: obj.parameter.height || 36
+                            width: drawParam.parameter.width || 36,
+                            height: drawParam.parameter.height || 36
                         }
                     },
                     type: 'point'
@@ -1741,18 +1743,18 @@ class VortexAMap extends React.Component{
                 t.mousetool.marker(param);
             break;
             case 'polyline':
-                param.strokeColor = obj.parameter.color;
-                param.strokeOpacity = obj.parameter.pellucidity;
-                param.strokeWeight = obj.parameter.lineWidth;
-                param.strokeStyle =  obj.parameter.lineType;
+                param.strokeColor = drawParam.parameter.color;
+                param.strokeOpacity = drawParam.parameter.pellucidity;
+                param.strokeWeight = drawParam.parameter.lineWidth;
+                param.strokeStyle =  drawParam.parameter.lineType;
                 param.extData = {
-                    id: obj.data.id,
+                    id: drawParam.data.id,
                     attributes: {
-                        id: obj.data.id,
+                        id: drawParam.data.id,
                         config: {
-                            color: obj.parameter.color,
-                            pellucidity: obj.parameter.pellucidity,
-                            lineWidth: obj.parameter.lineWidth
+                            color: drawParam.parameter.color,
+                            pellucidity: drawParam.parameter.pellucidity,
+                            lineWidth: drawParam.parameter.lineWidth
                         }
                     },
                     type: 'polyline'
@@ -1770,7 +1772,7 @@ class VortexAMap extends React.Component{
             break;
         }
         //保存绘制图元的id便于后期比对
-        t.state.drawIds[obj.geometryType].push(obj.data.id);
+        t.state.drawIds[drawParam.geometryType].push(drawParam.data.id);
     }
     //关闭绘制图元
     closeDraw(){
@@ -1882,8 +1884,9 @@ class VortexAMap extends React.Component{
     }
     //计算2点间距离 单位m 精确到个位
     calculatePointsDistance(f,s){
-        let lnglat = new AMap.LngLat(f[0],f[1]);
-        return Math.round(lnglat.distance(s));
+        let lnglat1 = new AMap.LngLat(f[0],f[1]);
+        let lnglat2 = new AMap.LngLat(s[0],s[1]);
+        return Math.round(lnglat1.distance(lnglat2));
     }
     //计算多个点的距离(常用于线计算)
     calculateDistance(ps){
@@ -1909,6 +1912,30 @@ class VortexAMap extends React.Component{
         let addedData = onlyNewData.filter(item=>updateDataIDs.indexOf(item[type])==-1)
        
         return {deletedDataIDs,addedData,updatedData,replacedData};
+    }
+    //处理需要增加图元的数据(避免意外问题)
+    dealAdd(ary,ids){
+        let ads = [], otherupds = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                otherupds.push(ary[i]);
+            }else{
+                ads.push(ary[i]);
+            }
+        }
+        return {ads,otherupds};
+    }
+    //处理需要更新图元的数据(避免意外问题)
+    dealUpdate(ary,ids){
+        let upds = [], otherads = [];
+        for(let i = 0 ; i < ary.length ; i++){
+            if(ids.indexOf(ary[i].id) > -1){
+                upds.push(ary[i]);
+            }else{
+                otherads.push(ary[i]);
+            }
+        }
+        return {upds,otherads};
     }
     searchPoints(searchValue,pageSize=10,pageIndex=1){
         let t = this;
@@ -1978,7 +2005,8 @@ class VortexAMap extends React.Component{
     componentWillReceiveProps(nextProps,prevProps) {//已加载组件，收到新的参数时调用
         let t = this;
         //点/线旧数据
-        let {pointIds,lineIds,polygonIds,circleIds} = t.state;
+        let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
+        let {point,polyline,polygon,circle,rectangle} = drawIds;
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
@@ -2021,14 +2049,16 @@ class VortexAMap extends React.Component{
                 newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'point');
             }
             //增加
-            t.addPoint(addedData);
+            t.addPoint([...ads,...otherads]);
             //更新
-            t.updatePoint(updatedData);
+            t.updatePoint([...upds,...otherupds]);
         }
         /*
             线数据处理
@@ -2042,12 +2072,16 @@ class VortexAMap extends React.Component{
                 newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'line');
             }
-            t.updateLine(updatedData);
-            t.addLine(addedData);           
+            //增加
+            t.addLine([...ads,...otherads]);
+            //更新
+            t.updateLine([...upds,...otherupds]);          
         }
         //画其他特例线专用
         if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
@@ -2071,12 +2105,16 @@ class VortexAMap extends React.Component{
                 newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'polygon');
             }
-            t.updatePolygon(updatedData)
-            t.addPolygon(addedData);
+            //增加
+            t.addPolygon([...ads,...otherads]);
+            //更新
+            t.updatePolygon([...upds,...otherupds]);
         }
         /*
             面数据处理
@@ -2090,12 +2128,16 @@ class VortexAMap extends React.Component{
                 newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
             }
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
                 t.removeGraphic(id,'circle');
             }
-            t.updateCircle(updatedData)
-            t.addCircle(addedData);
+            //增加
+            t.addCircle([...ads,...otherads]);
+            //更新
+            t.updateCircle([...upds,...otherupds]);
         }
         //绘制边界线
         if(boundaryName instanceof Array && !t.deepEqual(boundaryName,props.boundaryName)){

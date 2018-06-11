@@ -35,15 +35,16 @@ function VtxModal(props) {
         );
     }
     let wrapClassName = `${styles.normal} ${ModalProps.wrapClassName}`;
-    
+    let title = renderTitle();
     delete ModalProps.closable;
     delete ModalProps.wrapClassName;
+    delete ModalProps.title;
     return (
         <Modal 
             width={700}
             maskClosable={false}
             closable={false}
-            title={renderTitle()}
+            title={title}
             wrapClassName={wrapClassName}
             {...ModalProps}
         >

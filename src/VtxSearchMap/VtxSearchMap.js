@@ -472,21 +472,25 @@ class VtxSearchMap extends React.Component {
         if (this.props.modal1Visible) {
             if(this.map){
                 this.map.loadMapComplete.then(()=>{
-                    this.drawLocationPoint();
                     this.mapLoaded = true;
+                    this.drawLocationPoint();
                 });
             }
         }
     }
     componentDidUpdate(prevProps, prevState) {//重新渲染结束
         if (this.props.modal1Visible && !this.state.locationPoint[0]) {
-            if(this.map && this.mapLoaded){
-                this.drawLocationPoint();   
+            if(this.map){
+                this.map.loadMapComplete.then(()=>{
+                    if(!this.mapLoaded){
+                        this.mapLoaded = true;
+                        this.drawLocationPoint();
+                    }
+                });
             }
         }
     }
     componentWillReceiveProps(nextProps){
-        if(this.mapLoaded)return;
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter,
@@ -505,7 +509,22 @@ class VtxSearchMap extends React.Component {
             });
                 if(!!this.map && !!this.state.locationPoint[0] && nextProps.mapCenter && !!nextProps.mapCenter[0]){
                     if(this.map.getGraphic('locationPoint')){
-                        this.map.getGraphic('locationPoint').mapLayer.setPosition(new AMap.LngLat(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                        switch(nextProps.mapType){
+                            case 'bmap':
+                                this.map.getGraphic('locationPoint').mapLayer.setPosition(new BMap.Point(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                            break;
+                            case 'amap':
+                                this.map.getGraphic('locationPoint').mapLayer.setPosition(new AMap.LngLat(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                            break;
+                            case 'tmap':
+                                this.map.getGraphic('locationPoint').mapLayer.setLngLat(new T.LngLat(nextProps.mapCenter[0],nextProps.mapCenter[1]));
+                            break;
+                            case 'gmap':
+                                this.map.getGraphic('locationPoint').mapLayer.geometry.setLatitude(nextProps.mapCenter[1]);
+                                this.map.getGraphic('locationPoint').mapLayer.geometry.setLongitude(nextProps.mapCenter[0]);
+                                this.map.state.gis.graphics.refresh();
+                            break;
+                        }
                     }
                     this.map.setCenter(nextProps.mapCenter);
                 }

@@ -75,10 +75,21 @@ class VtxModalList extends React.Component{
             if(!chil.length){
                 return t.cloneComponent(this.props.children);
             }else{
-                let elems = chil.map((item,index)=>{
-                    return t.cloneComponent(item,index);
-                });
-                return elems;
+                let clone = (ary)=>{
+                    return ary.map((item,index)=>{
+                        if(typeof(item) === 'string'){
+                            return item;
+                        }
+                        if(item instanceof Array){
+                            return clone(item);
+                        }
+                        return t.cloneComponent(item, index);
+                    })
+                }
+                // let elems = chil.map((item,index)=>{
+                //     return t.cloneComponent(item,index);
+                // });
+                return clone(chil);
             }
         }
     }
@@ -92,6 +103,16 @@ class VtxModalList extends React.Component{
             mld = elem.props['data-modallist'] || {},
             reg = mld.regexp || {};
         let ty = (mld.layout || {}).type || 'default';
+        if(ty == 'ctext'){
+            return (
+                <LayoutComponent 
+                    key={index} 
+                    {...((elem.props['data-modallist'] || {}).layout || {})}
+                >   
+                    <div>{reg.value}</div>
+                </LayoutComponent>
+            )
+        }
         let isInherit = ()=>{
             // if(typeof(elem.type) == 'function'){
             //     switch(elem.type.name.toLocaleLowerCase()){
@@ -248,9 +269,30 @@ class VtxModalList extends React.Component{
                     if(reg.exp instanceof RegExp){
                         required = reg.exp.test(value);
                         errorMsg = '数据不符合规范';
+                        if(typeof(reg.errorMsg) == 'string'){
+                            errorMsg = reg.errorMsg;
+                        }
                     }else if(reg.exp instanceof Function){
                         required = reg.exp(value);
                         errorMsg = '数据不符合规范';
+                        if(typeof(reg.errorMsg) == 'string'){
+                            errorMsg = reg.errorMsg;
+                        }
+                    }else if(reg.exp instanceof Array){
+                        errorMsg = '数据不符合规范';
+                        for(let i = 0 ; i < reg.exp.length; i++){
+                            if(reg.exp[i] instanceof RegExp){
+                                required = reg.exp[i].test(value);
+                            }else if(reg.exp[i] instanceof Function){
+                                required = reg.exp[i](value);
+                            }
+                            if(!required){
+                                if(reg.errorMsg instanceof Array){
+                                    errorMsg = reg.errorMsg[i] || errorMsg;
+                                }
+                                break;
+                            }
+                        }
                     }else{
                         console.error('参数reg: 格式不是验证方法或正则表达式!');
                     }
@@ -295,6 +337,17 @@ class VtxModalList extends React.Component{
                                 required = reg.exp.test(r.value);
                             }else if(reg.exp instanceof Function){
                                 required = reg.exp(r.value);
+                            }else if(reg.exp instanceof Array){
+                                for(let i = 0 ; i < reg.exp.length; i++){
+                                    if(reg.exp[i] instanceof RegExp){
+                                        required = reg.exp[i].test(r.value);
+                                    }else if(reg.exp[i] instanceof Function){
+                                        required = reg.exp[i](r.value);
+                                    }
+                                    if(!required){
+                                        break;
+                                    }
+                                }
                             }else{
                                 console.error('参数reg: 格式不是验证方法或正则表达式!');
                             }
@@ -420,7 +473,7 @@ function LayoutComponent(props) {
                 :''
             }
             {
-                type == 'text' || type == 'title'?
+                type == 'text' || type == 'ctext' || type == 'title'?
                 <span className={`vtx-ui-modallist-list-right-text`}>
                     {children}
                 </span>:''

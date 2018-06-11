@@ -130,28 +130,28 @@ export function getPolygonArea(polygon){
     var Count = pts.length;        
     for (var i = 0; i < Count; i++) {
         if (i == 0) {
-            LowX = pts[Count - 1].lng * Math.PI / 180;
-            LowY = pts[Count - 1].lat * Math.PI / 180;
-            MiddleX = pts[0].lng * Math.PI / 180;
-            MiddleY = pts[0].lat * Math.PI / 180;
-            HighX = pts[1].lng * Math.PI / 180;
-            HighY = pts[1].lat * Math.PI / 180;
+            LowX = (pts[Count - 1].lng || pts[Count - 1][0]) * Math.PI / 180;
+            LowY = (pts[Count - 1].lat || pts[Count - 1][1]) * Math.PI / 180;
+            MiddleX = (pts[0].lng || pts[0][0]) * Math.PI / 180;
+            MiddleY = (pts[0].lat || pts[0][1]) * Math.PI / 180;
+            HighX = (pts[1].lng || pts[1][0]) * Math.PI / 180;
+            HighY = (pts[1].lat || pts[1][1]) * Math.PI / 180;
         }
         else if (i == Count - 1) {
-            LowX = pts[Count - 2].lng * Math.PI / 180;
-            LowY = pts[Count - 2].lat * Math.PI / 180;
-            MiddleX = pts[Count - 1].lng * Math.PI / 180;
-            MiddleY = pts[Count - 1].lat * Math.PI / 180;
-            HighX = pts[0].lng * Math.PI / 180;
-            HighY = pts[0].lat * Math.PI / 180;
+            LowX = (pts[Count - 2].lng || pts[Count - 2][0]) * Math.PI / 180;
+            LowY = (pts[Count - 2].lat || pts[Count - 2][1]) * Math.PI / 180;
+            MiddleX = (pts[Count - 1].lng || pts[Count - 1][0]) * Math.PI / 180;
+            MiddleY = (pts[Count - 1].lat || pts[Count - 1][1]) * Math.PI / 180;
+            HighX = (pts[0].lng || pts[0][0]) * Math.PI / 180;
+            HighY = (pts[0].lat || pts[0][1]) * Math.PI / 180;
         }
         else {
-            LowX = pts[i - 1].lng * Math.PI / 180;
-            LowY = pts[i - 1].lat * Math.PI / 180;
-            MiddleX = pts[i].lng * Math.PI / 180;
-            MiddleY = pts[i].lat * Math.PI / 180;
-            HighX = pts[i + 1].lng * Math.PI / 180;
-            HighY = pts[i + 1].lat * Math.PI / 180;
+            LowX = (pts[i - 1].lng || pts[i - 1][0]) * Math.PI / 180;
+            LowY = (pts[i - 1].lat || pts[i - 1][1]) * Math.PI / 180;
+            MiddleX = (pts[i].lng || pts[i][0]) * Math.PI / 180;
+            MiddleY = (pts[i].lat || pts[i][1]) * Math.PI / 180;
+            HighX = (pts[i + 1].lng || pts[i + 1][0]) * Math.PI / 180;
+            HighY = (pts[i + 1].lat || pts[i + 1][1]) * Math.PI / 180;
         }
         AM = Math.cos(MiddleY) * Math.cos(MiddleX);
         BM = Math.cos(MiddleY) * Math.sin(MiddleX);
@@ -170,8 +170,12 @@ export function getPolygonArea(polygon){
         AHtangent = CoefficientH * AH - AM;
         BHtangent = CoefficientH * BH - BM;
         CHtangent = CoefficientH * CH - CM;
-        AngleCos = (AHtangent * ALtangent + BHtangent * BLtangent + CHtangent * CLtangent) / (Math.sqrt(AHtangent * AHtangent + BHtangent * BHtangent + CHtangent * CHtangent) * Math.sqrt(ALtangent * ALtangent + BLtangent * BLtangent + CLtangent * CLtangent));
-        AngleCos = Math.acos(AngleCos);            
+        if(!(Math.sqrt(AHtangent * AHtangent + BHtangent * BHtangent + CHtangent * CHtangent) * Math.sqrt(ALtangent * ALtangent + BLtangent * BLtangent + CLtangent * CLtangent))){
+            AngleCos = 0;
+        }else{
+            AngleCos = (AHtangent * ALtangent + BHtangent * BLtangent + CHtangent * CLtangent) / (Math.sqrt(AHtangent * AHtangent + BHtangent * BHtangent + CHtangent * CHtangent) * Math.sqrt(ALtangent * ALtangent + BLtangent * BLtangent + CLtangent * CLtangent));
+            AngleCos = Math.acos(AngleCos);            
+        }
         ANormalLine = BHtangent * CLtangent - CHtangent * BLtangent;
         BNormalLine = 0 - (AHtangent * CLtangent - CHtangent * ALtangent);
         CNormalLine = AHtangent * BLtangent - BHtangent * ALtangent;
