@@ -2095,20 +2095,24 @@ class TMap extends React.Component{
                 pageCapacity: pageSize*pageIndex,   //每页显示的数量
                 //接收数据的回调函数
                 onSearchComplete: (result)=>{
-                    let list = result.pois.map((r)=>{
-                        return {
-                            id: r.hotPointID,
-                            longitude: r.lonlat.split(' ')[0],
-                            latitude: r.lonlat.split(' ')[1],
-                            canShowLabel: true,
-                            config: {
-                                labelContent: r.name,
-                                labelPixelY: 27
-                            },
-                            other: 'search'
-                        }
-                    })
-                    resolve(list);
+                    if(!result.pois){
+                        resolve([]);;
+                    }else{
+                        let list = result.pois.map((r)=>{
+                            return {
+                                id: r.hotPointID,
+                                longitude: r.lonlat.split(' ')[0],
+                                latitude: r.lonlat.split(' ')[1],
+                                canShowLabel: true,
+                                config: {
+                                    labelContent: r.name,
+                                    labelPixelY: 27
+                                },
+                                other: 'search'
+                            }
+                        })
+                        resolve(list);
+                    }
                 } 
             };
             //创建搜索对象
