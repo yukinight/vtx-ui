@@ -804,15 +804,12 @@ class VortexAMap extends React.Component{
                     id: item.id
                 }
             }
-            switch(cg.BAnimationType){
-                case 0:
-                    markerOption.animation ='AMAP_ANIMATION_BOUNCE';
-                break;
-                case 1:
-                    markerOption.animation = 'AMAP_ANIMATION_DROP';
-                break;
-                default:
-                    markerOption.animation = 'AMAP_ANIMATION_NONE';
+            if(cg.BAnimationType == 0){
+                markerOption.animation ='AMAP_ANIMATION_BOUNCE';
+            }else if(cg.BAnimationType == 1){
+                markerOption.animation = 'AMAP_ANIMATION_DROP';
+            }else{
+                markerOption.animation = 'AMAP_ANIMATION_NONE';
             }
             //判断html还是图片
             if(!!item.markerContent){
@@ -912,24 +909,23 @@ class VortexAMap extends React.Component{
                 }else{
                     let distance = t.calculatePointsDistance([item.longitude,item.latitude],[
                         gc.getPosition().getLng(),gc.getPosition().getLat()]);
-                    let delay = item.config.animationDelay || 3;
-                    let speed = distance/delay*3600/1000;
-                    if(cg.autoRotation){
-                        gc.setAngle(t.rotateDeg(gc.getPosition(),[item.longitude,item.latitude]));
+                    if(distance > 0){
+                        let delay = item.config.animationDelay || 3;
+                        let speed = distance/delay*3600/1000;
+                        if(cg.autoRotation){
+                            gc.setAngle(t.rotateDeg(gc.getPosition(),[item.longitude,item.latitude]));
+                        }
+                        gc.moveTo(new AMap.LngLat(item.longitude,item.latitude),speed,function(k){
+                            return k;
+                        })
                     }
-                    gc.moveTo(new AMap.LngLat(item.longitude,item.latitude),speed,function(k){
-                        return k;
-                    })
                 }
-                switch(item.config.BAnimationType){
-                    case 0:
-                        gc.setAnimation('AMAP_ANIMATION_BOUNCE');
-                    break;
-                    case 1:
-                        gc.setAnimation('AMAP_ANIMATION_DROP');
-                    break;
-                    default:
-                        gc.setAnimation('AMAP_ANIMATION_NONE');
+                if(item.config.BAnimationType == 0){
+                    gc.setAnimation('AMAP_ANIMATION_BOUNCE');
+                }else if(item.config.BAnimationType == 1){
+                    gc.setAnimation('AMAP_ANIMATION_DROP');
+                }else{
+                    gc.setAnimation('AMAP_ANIMATION_NONE');
                 }
                 //判断html还是图片
                 if(!!item.markerContent){

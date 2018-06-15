@@ -61,6 +61,7 @@ class VtxSearchMap extends React.Component {
             // 返回点位/图形
             graphicType: props.graphicType ||'point',
             isDraw: props.graphicType!=='point',
+            parameter: props.drawParameter || {},
             graphicValue: null,
             drawGraphID:'drawnGraph',
             /*地图Api参数*/
@@ -350,7 +351,7 @@ class VtxSearchMap extends React.Component {
             },
             mapDraw:{
                 geometryType: this.state.graphicType,
-                parameter: {},
+                parameter: this.state.parameter,
                 data: {id: drawGraphID}
             }  
         }
