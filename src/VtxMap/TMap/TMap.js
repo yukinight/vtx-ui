@@ -2045,7 +2045,11 @@ class TMap extends React.Component{
         if (ps.length < 0) {return false;}
         for(let i= 0 ; i< ps.length ; i++){
             if(i < ps.length-1){
-                totalDistance += ps[i].distanceTo(ps[i+1]);
+                if('distanceTo' in ps[i]){
+                    totalDistance += ps[i].distanceTo(ps[i + 1]);
+                }else{
+                    totalDistance += new T.LngLat(ps[i][0],ps[i][1]).distanceTo(new T.LngLat(ps[i + 1][0],ps[i + 1][1]));
+                }
             }
         }
         return Math.round(totalDistance*100)/100;
