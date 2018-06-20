@@ -286,13 +286,15 @@ class TMap extends React.Component{
                 ls = getLngLats(ids);
             break;
         }
-        if(obj.type == 'zoom'){
-            t.setZoomLevel(t.state.gis.getViewport(ls).zoom);
-        }else if(obj.type == 'center'){
-            let {center} = (t.state.gis.getViewport(ls));
-            t.setCenter([center.lng,center.lat]);
-        }else{
-            t.state.gis.setViewport(ls);
+        if(ls.length > 1){
+            if(obj.type == 'zoom'){
+                t.setZoomLevel(t.state.gis.getViewport(ls).zoom);
+            }else if(obj.type == 'center'){
+                let {center} = (t.state.gis.getViewport(ls));
+                t.setCenter([center.lng,center.lat]);
+            }else{
+                t.state.gis.setViewport(ls);
+            }
         }
     }
 
