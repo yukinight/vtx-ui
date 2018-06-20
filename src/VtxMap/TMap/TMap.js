@@ -1404,6 +1404,9 @@ class TMap extends React.Component{
                 this.polylineTool.open();
                 this.polylineTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentDistance,currentPolyline,allPolylines} = ob;
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     t.GM.setGraphic(drawParam.data.id,currentPolyline);
                     let backobj ={
                         geometryType: 'polyline',
@@ -1420,10 +1423,10 @@ class TMap extends React.Component{
                         mapLayer: currentPolyline,
                         geometry: {
                             type: 'polyline',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             paths: getMaxMin(currentLnglats).path
                         },
-                        lnglatAry: currentLnglats
+                        lnglatAry: lnglatAry
                     };
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1437,6 +1440,9 @@ class TMap extends React.Component{
                 this.polygonTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentArea,currentPolygon,allPolygons} = ob;
                     t.GM.setGraphic(drawParam.data.id,currentPolygon);
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     let backobj = {
                         geometryType: 'polygon',
                         id: drawParam.data.id,
@@ -1453,12 +1459,12 @@ class TMap extends React.Component{
                         mapLayer: currentPolygon,
                         geometry: {
                             type: 'polygon',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             rings: getMaxMin(currentLnglats).path,
                             _extent: getMaxMin(currentLnglats)._extent,
                             area: currentArea
                         },
-                        lnglatAry: currentLnglats,
+                        lnglatAry: lnglatAry,
                         area: currentArea
                     };
                     if('drawEnd' in t.props){
@@ -1511,8 +1517,13 @@ class TMap extends React.Component{
                     t.GM.setGraphic(drawParam.data.id,currentRectangle);
                     let currentLnglats = [
                         currentBounds.getNorthEast(),
-                        currentBounds.getSouthWest()
+                        currentBounds.getSouthWest(),
+                        {lng: currentBounds.getSouthWest().lng,lat: currentBounds.getNorthEast().lat},
+                        {lng: currentBounds.getNorthEast().lng,lat: currentBounds.getSouthWest().lat}
                     ];
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     let area = currentBounds.getNorthEast().distanceTo(
                             new T.LngLat(currentBounds.getNorthEast().lng,
                                 currentBounds.getSouthWest().lat)
@@ -1536,12 +1547,12 @@ class TMap extends React.Component{
                         mapLayer: currentRectangle,
                         geometry: {
                             type: 'rectangle',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             rings: getMaxMin(currentLnglats).path,
                             _extent: getMaxMin(currentLnglats)._extent,
                             area: area
                         },
-                        lnglatAry: currentLnglats,
+                        lnglatAry: lnglatAry,
                         area: area
                     };
                     if('drawEnd' in t.props){
@@ -1576,7 +1587,6 @@ class TMap extends React.Component{
     doEdit(id){
         let t = this;
         let ms = t.getGraphic(id);
-        console.log(ms);
         if(!ms){
             return false;
         }
