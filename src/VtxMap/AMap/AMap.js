@@ -872,6 +872,9 @@ class VortexAMap extends React.Component{
                     console.error(`点 经纬度 数据错误`);
                     return false;
                 }
+                if(item.config){
+                    item.config = {};
+                }
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let cg = {
@@ -1064,6 +1067,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //根据参数判断是否显示多折线
                 if(item.config && item.config.isHidden){
                     gc.hide();
@@ -1213,6 +1219,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //根据参数判断是否显示面
                 // if(item.config && item.config.isHidden){
                 //     gc.hide();
@@ -1360,6 +1369,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //获取原有的面属性,转换key值
                 let cg = {
                     lineType: op.strokeStyle,
