@@ -286,13 +286,15 @@ class TMap extends React.Component{
                 ls = getLngLats(ids);
             break;
         }
-        if(obj.type == 'zoom'){
-            t.setZoomLevel(t.state.gis.getViewport(ls).zoom);
-        }else if(obj.type == 'center'){
-            let {center} = (t.state.gis.getViewport(ls));
-            t.setCenter([center.lng,center.lat]);
-        }else{
-            t.state.gis.setViewport(ls);
+        if(ls.length > 1){
+            if(obj.type == 'zoom'){
+                t.setZoomLevel(t.state.gis.getViewport(ls).zoom);
+            }else if(obj.type == 'center'){
+                let {center} = (t.state.gis.getViewport(ls));
+                t.setCenter([center.lng,center.lat]);
+            }else{
+                t.state.gis.setViewport(ls);
+            }
         }
     }
 
@@ -1402,6 +1404,9 @@ class TMap extends React.Component{
                 this.polylineTool.open();
                 this.polylineTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentDistance,currentPolyline,allPolylines} = ob;
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     t.GM.setGraphic(drawParam.data.id,currentPolyline);
                     let backobj ={
                         geometryType: 'polyline',
@@ -1418,10 +1423,10 @@ class TMap extends React.Component{
                         mapLayer: currentPolyline,
                         geometry: {
                             type: 'polyline',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             paths: getMaxMin(currentLnglats).path
                         },
-                        lnglatAry: currentLnglats
+                        lnglatAry: lnglatAry
                     };
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1435,6 +1440,9 @@ class TMap extends React.Component{
                 this.polygonTool.addEventListener('draw',(ob)=>{
                     let {type,target,currentLnglats,currentArea,currentPolygon,allPolygons} = ob;
                     t.GM.setGraphic(drawParam.data.id,currentPolygon);
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     let backobj = {
                         geometryType: 'polygon',
                         id: drawParam.data.id,
@@ -1451,12 +1459,12 @@ class TMap extends React.Component{
                         mapLayer: currentPolygon,
                         geometry: {
                             type: 'polygon',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             rings: getMaxMin(currentLnglats).path,
                             _extent: getMaxMin(currentLnglats)._extent,
                             area: currentArea
                         },
-                        lnglatAry: currentLnglats,
+                        lnglatAry: lnglatAry,
                         area: currentArea
                     };
                     if('drawEnd' in t.props){
@@ -1509,8 +1517,13 @@ class TMap extends React.Component{
                     t.GM.setGraphic(drawParam.data.id,currentRectangle);
                     let currentLnglats = [
                         currentBounds.getNorthEast(),
-                        currentBounds.getSouthWest()
+                        currentBounds.getSouthWest(),
+                        {lng: currentBounds.getSouthWest().lng,lat: currentBounds.getNorthEast().lat},
+                        {lng: currentBounds.getNorthEast().lng,lat: currentBounds.getSouthWest().lat}
                     ];
+                    let lnglatAry = (currentLnglats || []).map((item,index)=>{
+                        return {lngX: item.lng,latX: item.lat};
+                    });
                     let area = currentBounds.getNorthEast().distanceTo(
                             new T.LngLat(currentBounds.getNorthEast().lng,
                                 currentBounds.getSouthWest().lat)
@@ -1534,12 +1547,12 @@ class TMap extends React.Component{
                         mapLayer: currentRectangle,
                         geometry: {
                             type: 'rectangle',
-                            lnglatAry: currentLnglats,
+                            lnglatAry: lnglatAry,
                             rings: getMaxMin(currentLnglats).path,
                             _extent: getMaxMin(currentLnglats)._extent,
                             area: area
                         },
-                        lnglatAry: currentLnglats,
+                        lnglatAry: lnglatAry,
                         area: area
                     };
                     if('drawEnd' in t.props){
@@ -1574,7 +1587,6 @@ class TMap extends React.Component{
     doEdit(id){
         let t = this;
         let ms = t.getGraphic(id);
-        console.log(ms);
         if(!ms){
             return false;
         }
@@ -2045,7 +2057,11 @@ class TMap extends React.Component{
         if (ps.length < 0) {return false;}
         for(let i= 0 ; i< ps.length ; i++){
             if(i < ps.length-1){
-                totalDistance += ps[i].distanceTo(ps[i+1]);
+                if('distanceTo' in ps[i]){
+                    totalDistance += ps[i].distanceTo(ps[i + 1]);
+                }else{
+                    totalDistance += new T.LngLat(ps[i][0],ps[i][1]).distanceTo(new T.LngLat(ps[i + 1][0],ps[i + 1][1]));
+                }
             }
         }
         return Math.round(totalDistance*100)/100;
@@ -2095,20 +2111,24 @@ class TMap extends React.Component{
                 pageCapacity: pageSize*pageIndex,   //每页显示的数量
                 //接收数据的回调函数
                 onSearchComplete: (result)=>{
-                    let list = result.pois.map((r)=>{
-                        return {
-                            id: r.hotPointID,
-                            longitude: r.lonlat.split(' ')[0],
-                            latitude: r.lonlat.split(' ')[1],
-                            canShowLabel: true,
-                            config: {
-                                labelContent: r.name,
-                                labelPixelY: 27
-                            },
-                            other: 'search'
-                        }
-                    })
-                    resolve(list);
+                    if(!result.pois){
+                        resolve([]);;
+                    }else{
+                        let list = result.pois.map((r)=>{
+                            return {
+                                id: r.hotPointID,
+                                longitude: r.lonlat.split(' ')[0],
+                                latitude: r.lonlat.split(' ')[1],
+                                canShowLabel: true,
+                                config: {
+                                    labelContent: r.name,
+                                    labelPixelY: 27
+                                },
+                                other: 'search'
+                            }
+                        })
+                        resolve(list);
+                    }
                 } 
             };
             //创建搜索对象

@@ -61,6 +61,7 @@ class VtxSearchMap extends React.Component {
             // 返回点位/图形
             graphicType: props.graphicType ||'point',
             isDraw: props.graphicType!=='point',
+            parameter: props.drawParameter || {},
             graphicValue: null,
             drawGraphID:'drawnGraph',
             /*地图Api参数*/
@@ -106,20 +107,20 @@ class VtxSearchMap extends React.Component {
                     break;
                 case 'polygon':
                     this.props.callback(this.state.graphicValue?{
-                        rings:this.state.graphicValue.geometry.rings[0],
+                        rings:this.state.graphicValue.geometry.rings,
                         area: this.state.graphicValue.area
                     }:null);
                     break;
                 case 'rectangle':
                     this.props.callback(this.state.graphicValue?{
-                        rings:this.state.graphicValue.geometry.rings[0],
+                        rings:this.state.graphicValue.geometry.rings,
                         area: this.state.graphicValue.area
                     }:null);
                     break;
                 case 'polyline':
                     this.props.callback(this.state.graphicValue?{
-                        paths:this.state.graphicValue.geometry.paths[0],
-                        length: this.map.state.gis.calculateDistance(this.state.graphicValue.geometry.paths[0])
+                        paths:this.state.graphicValue.geometry.paths,
+                        length: this.map.calculateDistance(this.state.graphicValue.geometry.paths)
                     }:null);
                     break;
             }
@@ -350,7 +351,7 @@ class VtxSearchMap extends React.Component {
             },
             mapDraw:{
                 geometryType: this.state.graphicType,
-                parameter: {},
+                parameter: this.state.parameter,
                 data: {id: drawGraphID}
             }  
         }

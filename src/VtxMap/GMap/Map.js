@@ -2427,6 +2427,7 @@ class ArcgisMap extends React.Component{
         //获取图元对象
         let gc = t.GM.getGraphic(id);
         let gp = t.GM.getGraphicParam(id);
+        if(!gc)return;
         switch(gp.geometryType){
             case 'point':
                 //将编辑的图元放在最上面
