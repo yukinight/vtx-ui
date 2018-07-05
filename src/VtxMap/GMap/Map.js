@@ -513,8 +513,12 @@ class ArcgisMap extends React.Component{
                     //分母系数
                     let coefficient = Math.pow(10,Math.floor(getScale).toString().length-1);
                     //判断系数 , 总长度值
-                    let gs = getScale/coefficient,toldis = 1;
+                    let gs = getScale/coefficient,toldis = 1,isCent = false;
                     //计算比例尺数值和长度
+                    if(gs < 1){
+                        isCent = true;
+                        gs *= 10;
+                    }
                     if(gs >= 5){
                         toldis = 5*coefficient*100
                     }else if(gs >= 2){
@@ -523,6 +527,10 @@ class ArcgisMap extends React.Component{
                         toldis = 1*coefficient*100;
                     }
                     let scaleW = toldis/getScale;
+                    if(isCent){
+                        scaleW /= 10;
+                        toldis /= 10;
+                    }
                     //宽度矫正处理
                     if(scaleW<50){
                         toldis *= 1.5;
@@ -662,106 +670,113 @@ class ArcgisMap extends React.Component{
         let t = this;
         //清除所有图层服务
         t.state.gis.removeAllLayers();
-        let url = [...(mapServer.url || [])],
-            services = [];
-        //从新加载图层
-        switch(mapServer.type){
-            case 'gis':
-                for(let i = 0 ; i < url.length ; i++){
-                    let basemap = new esri.layers.ArcGISTiledMapServiceLayer(url[i]);
-                    services.push(basemap);
-                }
-            break;
-            case 'wmts':
-                let tileInfo = new esri.layers.TileInfo({
-                    "dpi": 96,
-                    "format": "format/png",
-                    "compressionQuality": 0,
-                    "spatialReference": new esri.SpatialReference({
-                      "wkid": mapServer.wkid || 4326
-                    }),
-                    "rows": 256,
-                    "cols": 256,
-                    "origin": mapServer.origin || {x : -180,y : 90},
-                    "lods": mapServer.lods || []
-                });
-                let tileExtent = new esri.geometry.Extent(mapServer.fullExtent.xmin, mapServer.fullExtent.ymin, mapServer.fullExtent.xmax, mapServer.fullExtent.ymax, new esri.SpatialReference({
-                    wkid: mapServer.wkid
-                }));
-                let inTileExtent = new esri.geometry.Extent(mapServer.initialExtent.xmin, mapServer.initialExtent.ymin, mapServer.initialExtent.xmax, mapServer.initialExtent.ymax, new esri.SpatialReference({
-                    wkid: mapServer.wkid
-                }));
-                let layerInfo = new esri.layers.WMTSLayerInfo({
-                    tileInfo: tileInfo,
-                    fullExtent: tileExtent,
-                    initialExtent: inTileExtent,
-                    identifier: "SRTM_Color_Index",
-                    tileMatrixSet: "31.25m",
-                    format: "png",
-                    style: "default"
-                });
-                let resourceInfo = {
-                    version: "1.0.0",
-                    layerInfos: [layerInfo],
-                    copyright: ''
-                };
-                let options = {
-                    serviceMode: "KVP",
-                    resourceInfo: resourceInfo,
-                    layerInfo: layerInfo,
-                };
-                for(let i = 0 ; i < url.length ; i++){
-                    let wmtsLayer = new esri.layers.WMTSLayer(url[i], options);
-                    services.push(wmtsLayer);
-                }
-            break;
-            default :
-                console.warn('!warning 图层服务必选,或图层类型暂不支持,默认天地图浙江地理wmts图层服务!');
-                let dtileInfo = new esri.layers.TileInfo({
-                    "dpi": 96,
-                    // "format": "tiles",
-                    "compressionQuality": 0,
-                    "spatialReference": new esri.SpatialReference({
-                      "wkid": defaultWmtsMapLayers.wkid || 4326
-                    }),
-                    "rows": 256,
-                    "cols": 256,
-                    "origin": defaultWmtsMapLayers.origin || {x : -180,y : 90},
-                    "lods": defaultWmtsMapLayers.lods || []
-                });
-                let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
-                    wkid: defaultWmtsMapLayers.wkid
-                }));
-                let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
-                    wkid: defaultWmtsMapLayers.wkid
-                }));
-                let dlayerInfo = new esri.layers.WMTSLayerInfo({
-                    tileInfo: dtileInfo,
-                    fullExtent: dtileExtent,
-                    initialExtent: dinTileExtent,
-                    identifier: "SRTM_Color_Index",
-                    tileMatrixSet: "31.25m",
-                    format: "png",
-                    style: "default"
-                });
-                let dresourceInfo = {
-                    version: "1.0.0",
-                    layerInfos: [dlayerInfo],
-                    copyright: ''
-                };
-                let doptions = {
-                    serviceMode: "KVP",
-                    resourceInfo: dresourceInfo,
-                    layerInfo: dlayerInfo,
-                };
-                for(let i = 0 ; i < defaultWmtsMapLayers.url.length ; i++){
-                    let wmtsLayer = new esri.layers.WMTSLayer(defaultWmtsMapLayers.url[i], doptions);
-                    services.push(wmtsLayer);
-                }
-            break;
+        let services = [...(mapServer.services || [])],
+            servs = [];
+        for(let im = 0; im < services.length ; im++){
+            let url = services[im].url;
+            //从新加载图层
+            switch(services[im].type){
+                case 'gis':
+                    for(let i = 0 ; i < url.length ; i++){
+                        let basemap = new esri.layers.ArcGISTiledMapServiceLayer(url[i]);
+                        servs.push(basemap);
+                    }
+                break;
+                case 'wmts':
+                    for(let i = 0 ; i < url.length ; i++){
+                        let tileInfo = new esri.layers.TileInfo({
+                            "dpi": 96,
+                            "format": services[im].format || "format/png",
+                            "compressionQuality": 0,
+                            "spatialReference": new esri.SpatialReference({
+                              "wkid": mapServer.wkid || 4326
+                            }),
+                            "rows": 256,
+                            "cols": 256,
+                            "origin": mapServer.origin || {x : -180,y : 90},
+                            "lods": mapServer.lods || []
+                        });
+                        let tileExtent = new esri.geometry.Extent(mapServer.fullExtent.xmin, mapServer.fullExtent.ymin, mapServer.fullExtent.xmax, mapServer.fullExtent.ymax, new esri.SpatialReference({
+                            wkid: mapServer.wkid
+                        }));
+                        let inTileExtent = new esri.geometry.Extent(mapServer.initialExtent.xmin, mapServer.initialExtent.ymin, mapServer.initialExtent.xmax, mapServer.initialExtent.ymax, new esri.SpatialReference({
+                            wkid: mapServer.wkid
+                        }));
+                        let layerInfo = new esri.layers.WMTSLayerInfo({
+                            tileInfo: tileInfo,
+                            fullExtent: tileExtent,
+                            initialExtent: inTileExtent,
+                            identifier: services[im].layer[i] || "SRTM_Color_Index",
+                            tileMatrixSet: services[im].tilematrixset || "31.25m",
+                            format: services[im].format || "png",
+                            style: "default"
+                        });
+                        let resourceInfo = {
+                            version: "1.0.0",
+                            layerInfos: [layerInfo],
+                            copyright: ''
+                        };
+                        let options = {
+                            serviceMode: "KVP",
+                            resourceInfo: resourceInfo,
+                            layerInfo: layerInfo,
+                        };
+                        let wmtsLayer = new esri.layers.WMTSLayer(url[i], options);
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace(wmtsLayer.UrlTemplate.substring(
+                            wmtsLayer.UrlTemplate.indexOf('&FORMAT'),
+                            wmtsLayer.UrlTemplate.indexOf('&TILEMATRIXSET')
+                        ),`&FORMAT=${services[im].format}`);
+                        servs.push(wmtsLayer);
+                    }
+                break;
+            }
         }
-        for(let j = 0 ; j < services.length ; j++){
-            t.state.gis.addLayer(services[j]);
+        if(services.length <= 0){
+            console.warn('!warning 图层服务必选,或图层类型暂不支持,默认天地图浙江地理wmts图层服务!');
+            let dtileInfo = new esri.layers.TileInfo({
+                "dpi": 96,
+                // "format": "tiles",
+                "compressionQuality": 0,
+                "spatialReference": new esri.SpatialReference({
+                  "wkid": defaultWmtsMapLayers.wkid || 4326
+                }),
+                "rows": 256,
+                "cols": 256,
+                "origin": defaultWmtsMapLayers.origin || {x : -180,y : 90},
+                "lods": defaultWmtsMapLayers.lods || []
+            });
+            let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
+                wkid: defaultWmtsMapLayers.wkid
+            }));
+            let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
+                wkid: defaultWmtsMapLayers.wkid
+            }));
+            let dlayerInfo = new esri.layers.WMTSLayerInfo({
+                tileInfo: dtileInfo,
+                fullExtent: dtileExtent,
+                initialExtent: dinTileExtent,
+                identifier: "SRTM_Color_Index",
+                tileMatrixSet: "31.25m",
+                format: "png",
+                style: "default"
+            });
+            let dresourceInfo = {
+                version: "1.0.0",
+                layerInfos: [dlayerInfo],
+                copyright: ''
+            };
+            let doptions = {
+                serviceMode: "KVP",
+                resourceInfo: dresourceInfo,
+                layerInfo: dlayerInfo,
+            };
+            for(let i = 0 ; i < defaultWmtsMapLayers.url.length ; i++){
+                let wmtsLayer = new esri.layers.WMTSLayer(defaultWmtsMapLayers.url[i], doptions);
+                servs.push(wmtsLayer);
+            }
+        }
+        for(let j = 0 ; j < servs.length ; j++){
+            t.state.gis.addLayer(servs[j]);
         }
     }
     //新增点位
@@ -2090,7 +2105,11 @@ class ArcgisMap extends React.Component{
             //分母系数
             let coefficient = Math.pow(10,Math.floor(getScale).toString().length-1);
             //判断系数 , 总长度值
-            let gs = getScale/coefficient,toldis = 1;
+            let gs = getScale/coefficient,toldis = 1,isCent = false;
+            if(gs < 1){
+                isCent = true;
+                gs *= 10;
+            }
             //计算比例尺数值和长度
             if(gs >= 5){
                 toldis = 5*coefficient*100
@@ -2100,6 +2119,10 @@ class ArcgisMap extends React.Component{
                 toldis = 1*coefficient*100;
             }
             let scaleW = toldis/getScale;
+            if(isCent){
+                scaleW /= 10;
+                toldis /= 10;
+            }
             //宽度矫正处理
             if(scaleW<50){
                 toldis *= 1.5;
