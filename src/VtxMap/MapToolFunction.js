@@ -242,13 +242,27 @@ export function getDistance(point1,point2,map){
 //resolution = (0.025399998 *scale)/(96*111000)
 //比例尺 resolution*111000  或 0.025399998/96*scale
 export const defaultWmtsMapLayers = {
-    type:'wmts',
-    url:['http://srv.zjditu.cn/ZJEMAP_2D/wmts','http://srv.zjditu.cn/ZJDOMANNO_2D/wmts'],
-    // url:['http://srv.zjditu.cn/ZJDOM_2D/wmts','http://srv.zjditu.cn/ZJEMAPANNO_2D/wmts'],
+    services:[{
+        type:'wmts',
+        url:['http://t1.tianditu.com/vec_c/wmts','http://t2.tianditu.com/cva_c/wmts'],
+        tilematrixset: 'c',
+        format: 'tiles',
+        layer: ['vec','cva']
+    },{
+        type:'wmts',
+        url:['http://srv2.zjditu.cn/ZJEMAP_2D/wmts','http://srv2.zjditu.cn/ZJEMAPANNO_2D/wmts'],
+        tilematrixset: 'default028mm',
+        format: 'image/jpgpng',
+        layer: ['TDT_ZJEMAPANNO','TDT_ZJEMAPANNO']
+    }],
     origin: {x: -180,y: 90},
     wkid: 4326,
     fullExtent: {xmin : -180.0,ymin : -90.0,xmax : 180.0,ymax : 90.0},
-    initialExtent: {xmin : 117.55337,ymin : 26.69868,xmax : 122.95991,ymax : 31.608534},
+    // initialExtent: {xmin : 119.96,ymin : 30.2,xmax : 120.3,ymax : 30.54},
+    initialExtent: {
+        xmin : 120.741407641,ymin : 30.7612148640001,
+        xmax : 121.033872803,ymax : 31.0324190470001
+    },
     defaultType : "2D",  //暂时没用到,抄上就行
     switchTypeArrays : [ "2D", "Satellite" ], //暂时没用到,抄上就行
     lods : [{
@@ -323,5 +337,17 @@ export const defaultWmtsMapLayers = {
         "level" : 17,
         "resolution" : 0.0000107288360595703125,
         "scale" : 4508.9355250676658443872844296
+    }, {
+        "level" : 18,
+        "resolution" : 0.000005364418029785156,
+        "scale" : 2254.46776253383
+    }, {
+        "level" : 19,
+        "resolution" : 0.000002682209014892578,
+        "scale" : 1127.23388126692
+    }, {
+        "level" : 20,
+        "resolution" : 0.000001341104507446289,
+        "scale" : 563.616940633458
     }]
 };
