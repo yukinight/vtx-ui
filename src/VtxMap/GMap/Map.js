@@ -903,19 +903,21 @@ class ArcgisMap extends React.Component{
                 }
             });
         });
-        //添加绘制点
-        if(type){
-            t.setState({
-                drawIds:{
-                    ...t.state.drawIds,
-                    [type]: psids
-                }
-            });
-        }else{
-            //所有点缓存在state中
-            t.setState({
-                pointIds: psids
-            });
+        if(type !== 'defined'){
+            //添加绘制点
+            if(type){
+                t.setState({
+                    drawIds:{
+                        ...t.state.drawIds,
+                        [type]: psids
+                    }
+                });
+            }else{
+                //所有点缓存在state中
+                t.setState({
+                    pointIds: psids
+                });
+            }
         }
     }
     //更新点位
@@ -1129,18 +1131,20 @@ class ArcgisMap extends React.Component{
                 }
             });
         });
-        //添加绘制点
-        if(type){
-            t.setState({
-                drawIds:{
-                    ...t.state.drawIds,
-                    [type]: lsids
-                }
-            });
-        }else{
-            t.setState({
-                lineIds: lsids
-            });
+        if(type !== 'defined'){
+            //添加绘制点
+            if(type){
+                t.setState({
+                    drawIds:{
+                        ...t.state.drawIds,
+                        [type]: lsids
+                    }
+                });
+            }else{
+                t.setState({
+                    lineIds: lsids
+                });
+            }
         }
     }
     //更新线

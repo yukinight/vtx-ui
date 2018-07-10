@@ -552,7 +552,7 @@ class TMap extends React.Component{
         return p;
     }
     //添加点
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let psids = [...t.state.pointIds];
         mapPoints.map((item,index)=>{
@@ -671,9 +671,11 @@ class TMap extends React.Component{
                 }
             );
         });
-        t.setState({
-            pointIds: psids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                pointIds: psids
+            });
+        }
     }
     //更新点
     updatePoint(mapPoints){
@@ -782,7 +784,7 @@ class TMap extends React.Component{
         t.moveAnimation();
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
         //遍历添加线(图元)
@@ -857,9 +859,11 @@ class TMap extends React.Component{
             //state中缓存 line的id...用于数据判断
             t.state.lineIds.push(item.id);
         });
-        t.setState({
-            lineIds: lsids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){

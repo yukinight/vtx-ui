@@ -761,7 +761,7 @@ class VortexAMap extends React.Component{
         });
     }
     //添加点
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let ps = [];
         let psids = [...t.state.pointIds];
@@ -857,9 +857,11 @@ class VortexAMap extends React.Component{
         });
         //统一加点
         t.state.gis.add(ps);
-        t.setState({
-            pointIds: psids
-        })
+        if(type == 'defined'){
+            t.setState({
+                pointIds: psids
+            })
+        }
     }
     //更新点
     updatePoint(mapPoints){
@@ -957,7 +959,7 @@ class VortexAMap extends React.Component{
         })
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let ls = [];
         let lsids = [...t.state.lineIds];
@@ -1048,9 +1050,11 @@ class VortexAMap extends React.Component{
             // });
         });
         t.state.gis.add(ls);
-        t.setState({
-            lineIds: lsids
-        });
+        if(type == 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){

@@ -338,7 +338,7 @@ class BaiduMap extends React.Component{
         }
     }
     //新增点位
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let psids = [...t.state.pointIds];
         mapPoints.map((item,index)=>{
@@ -474,10 +474,12 @@ class BaiduMap extends React.Component{
                 }
             });
         });
-        //所有点缓存在state中
-        t.setState({
-            pointIds: psids
-        });
+        if(type !== 'defined'){
+            //所有点缓存在state中
+            t.setState({
+                pointIds: psids
+            });
+        }
     }
     //更新点位
     updatePoint(mapPoints){
@@ -630,7 +632,7 @@ class BaiduMap extends React.Component{
         }
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
          //遍历添加线(图元)
@@ -705,9 +707,11 @@ class BaiduMap extends React.Component{
                 }
             });
         });
-        t.setState({
-            lineIds: lsids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){
