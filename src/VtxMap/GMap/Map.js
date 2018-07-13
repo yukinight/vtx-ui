@@ -2667,8 +2667,8 @@ class ArcgisMap extends React.Component{
         let drawParam = {};
         //初始化参数
         drawParam.geometryType = obj.geometryType || 'point';
-        drawParam.parameter = obj.parameter || {};
-        drawParam.data = obj.data || {};
+        drawParam.parameter = obj.parameter?{...obj.parameter}:{};
+        drawParam.data = obj.data?{...obj.data}:{};
         drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //缓存 绘制的数据
         t.drawParam = drawParam;

@@ -1311,8 +1311,8 @@ class TMap extends React.Component{
         var t = this,drawParam = {};
         //初始化参数
         drawParam.geometryType = obj.geometryType || 'point';
-        drawParam.parameter = obj.parameter || {};
-        drawParam.data = obj.data || {};
+        drawParam.parameter = obj.parameter?{...obj.parameter}:{};
+        drawParam.data = obj.data?{...obj.data}:{};
         drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
         let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
