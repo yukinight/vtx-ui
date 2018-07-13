@@ -1540,6 +1540,23 @@ class BaiduMap extends React.Component{
             case 'circle':
                 ids = t.state.circleIds;
             break;
+            case 'draw':
+                if(point.indexOf(item.id) > -1){
+                    point.splice(point.indexOf(item.id),1);
+                }
+                if(polyline.indexOf(item.id) > -1){
+                    polyline.splice(polyline.indexOf(item.id),1);
+                }
+                if(polygon.indexOf(item.id) > -1){
+                    polygon.splice(polygon.indexOf(item.id),1);
+                }
+                if(circle.indexOf(item.id) > -1){
+                    circle.splice(circle.indexOf(item.id),1);
+                }
+                if(rectangle.indexOf(item.id) > -1){
+                    rectangle.splice(rectangle.indexOf(item.id),1);
+                }
+            break;
         }
         if(ids.indexOf(id) != -1){
             ids.splice(ids.indexOf(id),1);
@@ -2421,29 +2438,7 @@ class BaiduMap extends React.Component{
         //删除指定图元
         if(isRemove){
             mapRemove.map((item,index)=>{
-                switch(item.type){
-                    case 'draw':
-                        t.removeGraphic(item.id);
-                        if(point.indexOf(item.id) > -1){
-                            point.splice(point.indexOf(item.id),1);
-                        }
-                        if(polyline.indexOf(item.id) > -1){
-                            polyline.splice(polyline.indexOf(item.id),1);
-                        }
-                        if(polygon.indexOf(item.id) > -1){
-                            polygon.splice(polygon.indexOf(item.id),1);
-                        }
-                        if(circle.indexOf(item.id) > -1){
-                            circle.splice(circle.indexOf(item.id),1);
-                        }
-                        if(rectangle.indexOf(item.id) > -1){
-                            rectangle.splice(rectangle.indexOf(item.id),1);
-                        }
-                    break;
-                    default :
-                        t.removeGraphic(item.id,item.type);
-                    break;
-                }
+                t.removeGraphic(item.id,item.type);
             });
         }
     }

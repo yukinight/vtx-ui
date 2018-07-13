@@ -2013,6 +2013,23 @@ class ArcgisMap extends React.Component{
             case 'circle':
                 ids = t.state.circleIds;
             break;
+            case 'draw':
+                if(t.state.drawIds.point.indexOf(item.id) > -1){
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polyline.indexOf(item.id) > -1){
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polygon.indexOf(item.id) > -1){
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.circle.indexOf(item.id) > -1){
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
+                }
+            break;
         }
         if(ids.indexOf(id) != -1){
             ids.splice(ids.indexOf(id),1);
@@ -3514,29 +3531,7 @@ class ArcgisMap extends React.Component{
             //删除指定图元
             if(isRemove){
                 mapRemove.map((item,index)=>{
-                    switch(item.type){
-                        case 'draw':
-                            t.removeGraphic(item.id);
-                            if(t.state.drawIds.point.indexOf(item.id) > -1){
-                                t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
-                            }
-                            if(t.state.drawIds.polyline.indexOf(item.id) > -1){
-                                t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
-                            }
-                            if(t.state.drawIds.polygon.indexOf(item.id) > -1){
-                                t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
-                            }
-                            if(t.state.drawIds.circle.indexOf(item.id) > -1){
-                                t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
-                            }
-                            if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
-                                t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
-                            }
-                        break;
-                        default :
-                            t.removeGraphic(item.id,item.type);
-                        break;
-                    }
+                    t.removeGraphic(item.id,item.type);
                 });
             }
         }
