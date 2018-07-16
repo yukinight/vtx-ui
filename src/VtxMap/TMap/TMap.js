@@ -176,7 +176,7 @@ class TMap extends React.Component{
         pointCollectionDiv.id = t.pointCollectionId;
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
-        t.state.gis.getPanes().mapPane.children[0].before(pointCollectionDiv);
+        t.state.gis.getPanes().mapPane.children[0].insertBefore(pointCollectionDiv);
     }
     //清空地图所有图元
     clearAll (){
@@ -1836,8 +1836,8 @@ class TMap extends React.Component{
                 //重画海量点
                 let xylist = t.state.gis.getPanes().mapPane.style.transform.substr(12).split(',');
                 $(`#${t.pointCollectionId}`).css({
-                    top: `${-eval(xylist[1].replace('px',''))}px`,
-                    left: `${-eval(xylist[0].replace('px',''))}px`
+                    top: `${-eval((xylist[1] || '').replace('px',''))}px`,
+                    left: `${-eval((xylist[0] || '').replace('px',''))}px`
                 })
                 if(t.morepoints.length > 0){
                     t.updatePointCollection(t.props.mapPointCollection);
