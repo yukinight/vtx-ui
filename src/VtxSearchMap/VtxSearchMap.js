@@ -142,7 +142,7 @@ class VtxSearchMap extends React.Component {
                 id: 'locationPoint',
                 longitude: lglt.nowCenter.lng,
                 latitude: lglt.nowCenter.lat,
-                url: '/resources/images/defaultMarker.png',
+                url: './resources/images/defaultMarker.png',
                 config: {
                     zIndex: 1000
                 }
@@ -192,7 +192,7 @@ class VtxSearchMap extends React.Component {
                     let r = results[i];
                     lsp.push({
                         ...results[i],
-                        url: '/resources/images/defaultMarker_selected.png',
+                        url: './resources/images/defaultMarker_selected.png',
                         labelClass: styles.hiddenLabel,
                     });
                     lsm.push({
