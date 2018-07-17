@@ -176,7 +176,7 @@ class TMap extends React.Component{
         pointCollectionDiv.id = t.pointCollectionId;
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
-        t.state.gis.getPanes().mapPane.children[0].before(pointCollectionDiv);
+        t.state.gis.getPanes().mapPane.children[0].insertBefore(pointCollectionDiv);
     }
     //清空地图所有图元
     clearAll (){
@@ -552,7 +552,7 @@ class TMap extends React.Component{
         return p;
     }
     //添加点
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let psids = [...t.state.pointIds];
         mapPoints.map((item,index)=>{
@@ -671,9 +671,11 @@ class TMap extends React.Component{
                 }
             );
         });
-        t.setState({
-            pointIds: psids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                pointIds: psids
+            });
+        }
     }
     //更新点
     updatePoint(mapPoints){
@@ -782,7 +784,7 @@ class TMap extends React.Component{
         t.moveAnimation();
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
         //遍历添加线(图元)
@@ -857,9 +859,11 @@ class TMap extends React.Component{
             //state中缓存 line的id...用于数据判断
             t.state.lineIds.push(item.id);
         });
-        t.setState({
-            lineIds: lsids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){
@@ -1307,8 +1311,8 @@ class TMap extends React.Component{
         var t = this,drawParam = {};
         //初始化参数
         drawParam.geometryType = obj.geometryType || 'point';
-        drawParam.parameter = obj.parameter || {};
-        drawParam.data = obj.data || {};
+        drawParam.parameter = obj.parameter?{...obj.parameter}:{};
+        drawParam.data = obj.data?{...obj.data}:{};
         drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
         let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
@@ -1720,6 +1724,23 @@ class TMap extends React.Component{
             case 'circle':
                 ids = t.state.circleIds;
             break;
+            case 'draw':
+                if(t.state.drawIds.point.indexOf(item.id) > -1){
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polyline.indexOf(item.id) > -1){
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polygon.indexOf(item.id) > -1){
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.circle.indexOf(item.id) > -1){
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
+                }
+            break;
         }
         if(ids.indexOf(id) != -1){
             ids.splice(ids.indexOf(id),1);
@@ -1815,8 +1836,8 @@ class TMap extends React.Component{
                 //重画海量点
                 let xylist = t.state.gis.getPanes().mapPane.style.transform.substr(12).split(',');
                 $(`#${t.pointCollectionId}`).css({
-                    top: `${-eval(xylist[1].replace('px',''))}px`,
-                    left: `${-eval(xylist[0].replace('px',''))}px`
+                    top: `${-eval((xylist[1] || '').replace('px',''))}px`,
+                    left: `${-eval((xylist[0] || '').replace('px',''))}px`
                 })
                 if(t.morepoints.length > 0){
                     t.updatePointCollection(t.props.mapPointCollection);
@@ -2359,29 +2380,7 @@ class TMap extends React.Component{
         //单独删除操作
         if(isRemove){
             mapRemove.map((item,index)=>{
-                switch(item.type){
-                    case 'draw':
-                        t.removeGraphic(item.id);
-                        if(t.state.drawIds.point.indexOf(item.id) > -1){
-                            t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.polyline.indexOf(item.id) > -1){
-                            t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.polygon.indexOf(item.id) > -1){
-                            t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.circle.indexOf(item.id) > -1){
-                            t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
-                            t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
-                        }
-                    break;
-                    default :
-                        t.removeGraphic(item.id,item.type);
-                    break;
-                }
+                t.removeGraphic(item.id,item.type);
             });
         }
         //设置区域限制

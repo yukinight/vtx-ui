@@ -761,7 +761,7 @@ class VortexAMap extends React.Component{
         });
     }
     //添加点
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let ps = [];
         let psids = [...t.state.pointIds];
@@ -857,9 +857,11 @@ class VortexAMap extends React.Component{
         });
         //统一加点
         t.state.gis.add(ps);
-        t.setState({
-            pointIds: psids
-        })
+        if(type == 'defined'){
+            t.setState({
+                pointIds: psids
+            })
+        }
     }
     //更新点
     updatePoint(mapPoints){
@@ -871,6 +873,9 @@ class VortexAMap extends React.Component{
                 if(!item.longitude || !item.latitude){
                     console.error(`点 经纬度 数据错误`);
                     return false;
+                }
+                if(item.config){
+                    item.config = {};
                 }
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
@@ -954,7 +959,7 @@ class VortexAMap extends React.Component{
         })
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let ls = [];
         let lsids = [...t.state.lineIds];
@@ -1045,9 +1050,11 @@ class VortexAMap extends React.Component{
             // });
         });
         t.state.gis.add(ls);
-        t.setState({
-            lineIds: lsids
-        });
+        if(type == 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){
@@ -1064,6 +1071,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //根据参数判断是否显示多折线
                 if(item.config && item.config.isHidden){
                     gc.hide();
@@ -1213,6 +1223,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //根据参数判断是否显示面
                 // if(item.config && item.config.isHidden){
                 //     gc.hide();
@@ -1360,6 +1373,9 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
+                if(item.config){
+                    item.config = {};
+                }
                 //获取原有的面属性,转换key值
                 let cg = {
                     lineType: op.strokeStyle,
@@ -1681,8 +1697,8 @@ class VortexAMap extends React.Component{
         var t = this,drawParam = {};
         //初始化参数
         drawParam.geometryType = obj.geometryType || 'point';
-        drawParam.parameter = obj.parameter || {};
-        drawParam.data = obj.data || {};
+        drawParam.parameter = obj.parameter?{...obj.parameter}:{};
+        drawParam.data = obj.data?{...obj.data}:{};
         drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
         let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
@@ -1836,6 +1852,23 @@ class VortexAMap extends React.Component{
             break;
             case 'circle':
                 ids = t.state.circleIds;
+            break;
+            case 'draw':
+                if(t.state.drawIds.point.indexOf(item.id) > -1){
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polyline.indexOf(item.id) > -1){
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.polygon.indexOf(item.id) > -1){
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.circle.indexOf(item.id) > -1){
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
+                }
+                if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
+                }
             break;
         }
         if(ids.indexOf(id) != -1){
@@ -2201,29 +2234,7 @@ class VortexAMap extends React.Component{
         //单独删除操作
         if(isRemove){
             mapRemove.map((item,index)=>{
-                switch(item.type){
-                    case 'draw':
-                        t.removeGraphic(item.id);
-                        if(t.state.drawIds.point.indexOf(item.id) > -1){
-                            t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.polyline.indexOf(item.id) > -1){
-                            t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.polygon.indexOf(item.id) > -1){
-                            t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.circle.indexOf(item.id) > -1){
-                            t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
-                        }
-                        if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
-                            t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
-                        }
-                    break;
-                    default :
-                        t.removeGraphic(item.id,item.type);
-                    break;
-                }
+                t.removeGraphic(item.id,item.type);
             });
         }
         //设置区域限制

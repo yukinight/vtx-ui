@@ -338,7 +338,7 @@ class BaiduMap extends React.Component{
         }
     }
     //新增点位
-    addPoint(mapPoints){
+    addPoint(mapPoints,type){
         let t = this;
         let psids = [...t.state.pointIds];
         mapPoints.map((item,index)=>{
@@ -474,10 +474,12 @@ class BaiduMap extends React.Component{
                 }
             });
         });
-        //所有点缓存在state中
-        t.setState({
-            pointIds: psids
-        });
+        if(type !== 'defined'){
+            //所有点缓存在state中
+            t.setState({
+                pointIds: psids
+            });
+        }
     }
     //更新点位
     updatePoint(mapPoints){
@@ -630,7 +632,7 @@ class BaiduMap extends React.Component{
         }
     }
     //添加线
-    addLine(mapLines){
+    addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
          //遍历添加线(图元)
@@ -705,9 +707,11 @@ class BaiduMap extends React.Component{
                 }
             });
         });
-        t.setState({
-            lineIds: lsids
-        });
+        if(type !== 'defined'){
+            t.setState({
+                lineIds: lsids
+            });
+        }
     }
     //更新线
     updateLine(mapLines){
@@ -1536,6 +1540,23 @@ class BaiduMap extends React.Component{
             case 'circle':
                 ids = t.state.circleIds;
             break;
+            case 'draw':
+                if(point.indexOf(item.id) > -1){
+                    point.splice(point.indexOf(item.id),1);
+                }
+                if(polyline.indexOf(item.id) > -1){
+                    polyline.splice(polyline.indexOf(item.id),1);
+                }
+                if(polygon.indexOf(item.id) > -1){
+                    polygon.splice(polygon.indexOf(item.id),1);
+                }
+                if(circle.indexOf(item.id) > -1){
+                    circle.splice(circle.indexOf(item.id),1);
+                }
+                if(rectangle.indexOf(item.id) > -1){
+                    rectangle.splice(rectangle.indexOf(item.id),1);
+                }
+            break;
         }
         if(ids.indexOf(id) != -1){
             ids.splice(ids.indexOf(id),1);
@@ -1642,8 +1663,8 @@ class BaiduMap extends React.Component{
         t._drawmanager.close();
         //初始化参数
         drawParam.geometryType = obj.geometryType || 'point';
-        drawParam.parameter = obj.parameter || {};
-        drawParam.data = obj.data || {};
+        drawParam.parameter = obj.parameter?{...obj.parameter}:{};
+        drawParam.data = obj.data?{...obj.data}:{};
         drawParam.data.id = (obj.data || {}).id || `draw${new Date().getTime()}`;
         //判断id是否存在
         let len = t.state.drawIds[drawParam.geometryType].indexOf(drawParam.data.id);
@@ -2417,29 +2438,7 @@ class BaiduMap extends React.Component{
         //删除指定图元
         if(isRemove){
             mapRemove.map((item,index)=>{
-                switch(item.type){
-                    case 'draw':
-                        t.removeGraphic(item.id);
-                        if(point.indexOf(item.id) > -1){
-                            point.splice(point.indexOf(item.id),1);
-                        }
-                        if(polyline.indexOf(item.id) > -1){
-                            polyline.splice(polyline.indexOf(item.id),1);
-                        }
-                        if(polygon.indexOf(item.id) > -1){
-                            polygon.splice(polygon.indexOf(item.id),1);
-                        }
-                        if(circle.indexOf(item.id) > -1){
-                            circle.splice(circle.indexOf(item.id),1);
-                        }
-                        if(rectangle.indexOf(item.id) > -1){
-                            rectangle.splice(rectangle.indexOf(item.id),1);
-                        }
-                    break;
-                    default :
-                        t.removeGraphic(item.id,item.type);
-                    break;
-                }
+                t.removeGraphic(item.id,item.type);
             });
         }
     }
