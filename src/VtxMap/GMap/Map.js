@@ -5,7 +5,6 @@ import {
 } from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;
-
 class ArcgisMap extends React.Component{
     constructor(props){
         super(props);
@@ -706,7 +705,7 @@ class ArcgisMap extends React.Component{
                             tileInfo: tileInfo,
                             fullExtent: tileExtent,
                             initialExtent: inTileExtent,
-                            identifier: services[im].layer[i] || "SRTM_Color_Index",
+                            identifier: (services[im].layer || {})[i] || "SRTM_Color_Index",
                             tileMatrixSet: services[im].tilematrixset || "31.25m",
                             format: services[im].format || "png",
                             style: "default"
@@ -733,46 +732,55 @@ class ArcgisMap extends React.Component{
         }
         if(services.length <= 0){
             console.warn('!warning 图层服务必选,或图层类型暂不支持,默认天地图浙江地理wmts图层服务!');
-            let dtileInfo = new esri.layers.TileInfo({
-                "dpi": 96,
-                // "format": "tiles",
-                "compressionQuality": 0,
-                "spatialReference": new esri.SpatialReference({
-                  "wkid": defaultWmtsMapLayers.wkid || 4326
-                }),
-                "rows": 256,
-                "cols": 256,
-                "origin": defaultWmtsMapLayers.origin || {x : -180,y : 90},
-                "lods": defaultWmtsMapLayers.lods || []
-            });
-            let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
-                wkid: defaultWmtsMapLayers.wkid
-            }));
-            let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
-                wkid: defaultWmtsMapLayers.wkid
-            }));
-            let dlayerInfo = new esri.layers.WMTSLayerInfo({
-                tileInfo: dtileInfo,
-                fullExtent: dtileExtent,
-                initialExtent: dinTileExtent,
-                identifier: "SRTM_Color_Index",
-                tileMatrixSet: "31.25m",
-                format: "png",
-                style: "default"
-            });
-            let dresourceInfo = {
-                version: "1.0.0",
-                layerInfos: [dlayerInfo],
-                copyright: ''
-            };
-            let doptions = {
-                serviceMode: "KVP",
-                resourceInfo: dresourceInfo,
-                layerInfo: dlayerInfo,
-            };
-            for(let i = 0 ; i < defaultWmtsMapLayers.url.length ; i++){
-                let wmtsLayer = new esri.layers.WMTSLayer(defaultWmtsMapLayers.url[i], doptions);
-                servs.push(wmtsLayer);
+            for(let im = 0; im < defaultWmtsMapLayers.services.length ; im++){
+                let url = defaultWmtsMapLayers.services[im].url;
+                let dtileInfo = new esri.layers.TileInfo({
+                    "dpi": 96,
+                    // "format": "tiles",
+                    "compressionQuality": 0,
+                    "spatialReference": new esri.SpatialReference({
+                      "wkid": defaultWmtsMapLayers.wkid || 4326
+                    }),
+                    "rows": 256,
+                    "cols": 256,
+                    "origin": defaultWmtsMapLayers.origin || {x : -180,y : 90},
+                    "lods": defaultWmtsMapLayers.lods || []
+                });
+                let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
+                    wkid: defaultWmtsMapLayers.wkid
+                }));
+                let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
+                    wkid: defaultWmtsMapLayers.wkid
+                }));
+                for(let i = 0 ; i < url.length ; i++){
+                    let dlayerInfo = new esri.layers.WMTSLayerInfo({
+                        tileInfo: dtileInfo,
+                        fullExtent: dtileExtent,
+                        initialExtent: dinTileExtent,
+                        identifier: defaultWmtsMapLayers.services[im].layer[i] || "SRTM_Color_Index",
+                        tileMatrixSet: defaultWmtsMapLayers.services[im].tilematrixset || "31.25m",
+                        format: defaultWmtsMapLayers.services[im].format || "png",
+                        style: "default"
+                    });
+                    let dresourceInfo = {
+                        version: "1.0.0",
+                        layerInfos: [dlayerInfo],
+                        copyright: ''
+                    };
+                    let doptions = {
+                        serviceMode: "KVP",
+                        resourceInfo: dresourceInfo,
+                        layerInfo: dlayerInfo,
+                    };
+                    let wmtsLayer = new esri.layers.WMTSLayer(url[i], doptions);
+                    wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace(
+                        wmtsLayer.UrlTemplate.substr(wmtsLayer.UrlTemplate.indexOf('&FORMAT='),
+                        wmtsLayer.UrlTemplate.substr(
+                            wmtsLayer.UrlTemplate.indexOf('&FORMAT=')+1).indexOf('&')+1),
+                            `&FORMAT=${defaultWmtsMapLayers.services[im].format}`
+                    );
+                    servs.push(wmtsLayer);
+                }
             }
         }
         for(let j = 0 ; j < servs.length ; j++){
@@ -1906,7 +1914,8 @@ class ArcgisMap extends React.Component{
                             ...gp.attributes.other,
                             rings: pts
                         }
-                    }
+                    },
+                    area: getPolygonArea(pts)
                 }
             break;
             case 'circle':
@@ -1933,7 +1942,8 @@ class ArcgisMap extends React.Component{
                             latitude: lat,
                             radius
                         }
-                    }
+                    },
+                    area: Math.PI*radius*radius
                 }
             break;
         }
@@ -2607,9 +2617,11 @@ class ArcgisMap extends React.Component{
                     }
                 }
                 if(t.drawParam.geometryType == 'polygon' || t.drawParam.geometryType == 'rectangle'){
+                    let rs = [...e.geometry.rings[0]];
+                    rs.pop();
                     t.addPolygon([{
                         id: t.drawParam.data.id,
-                        rings: e.geometry.rings[0],
+                        rings: rs,
                         config: {
                             ...t.drawParam.parameter
                         }
@@ -2670,6 +2682,7 @@ class ArcgisMap extends React.Component{
                         mapLayer: t.GM.getGraphic(t.drawParam.data.id)
                     }
                 }
+                // t.GM.setGraphicParam(t.drawParam.data.id,param);
                 //绘制返回
                 if('drawEnd' in t.props && typeof(t.props.drawEnd) == 'function'){
                     t.props.drawEnd(param);

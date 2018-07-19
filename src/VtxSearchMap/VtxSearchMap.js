@@ -74,6 +74,7 @@ class VtxSearchMap extends React.Component {
             },
             setVisiblePoints: false,
             isDoEdit: false,
+            isEndEdit: false,
             editGraphicId: '',
             mapZoomLevel: 11,
             setZoomLevel: false,
@@ -87,6 +88,7 @@ class VtxSearchMap extends React.Component {
     //经纬度回调
     callback(){
         if('callback' in this.props && typeof(this.props.callback) === 'function'){
+            let {editGraphicId} = this.state;
             switch (this.state.graphicType){
                 case 'point':
                     let {locationPoint} = this.state;
@@ -106,10 +108,18 @@ class VtxSearchMap extends React.Component {
                     }:null);
                     break;
                 case 'polygon':
-                    this.props.callback(this.state.graphicValue?{
-                        rings:this.state.graphicValue.geometry.rings,
-                        area: this.state.graphicValue.area
-                    }:null);
+                    if(this.map.getGraphic(editGraphicId)){
+                        let p = this.map.getGraphic(editGraphicId);
+                        this.props.callback({
+                            rings:p.geometry.rings,
+                            area: p.area
+                        });
+                    }else{
+                        this.props.callback(this.state.graphicValue?{
+                            rings:this.state.graphicValue.geometry.rings,
+                            area: this.state.graphicValue.area
+                        }:null);
+                    }
                     break;
                 case 'rectangle':
                     this.props.callback(this.state.graphicValue?{
@@ -118,10 +128,18 @@ class VtxSearchMap extends React.Component {
                     }:null);
                     break;
                 case 'polyline':
-                    this.props.callback(this.state.graphicValue?{
-                        paths:this.state.graphicValue.geometry.paths,
-                        length: this.map.calculateDistance(this.state.graphicValue.geometry.paths)
-                    }:null);
+                    if(this.map.getGraphic(editGraphicId)){
+                        let p = this.map.getGraphic(editGraphicId);
+                        this.props.callback({
+                            paths:p.geometry.paths,
+                            length: this.map.calculateDistance(p.geometry.paths)
+                        });
+                    }else{
+                        this.props.callback(this.state.graphicValue?{
+                            paths:this.state.graphicValue.geometry.paths,
+                            length: this.map.calculateDistance(this.state.graphicValue.geometry.paths)
+                        }:null);
+                    }
                     break;
             }
         }
@@ -142,7 +160,7 @@ class VtxSearchMap extends React.Component {
                 id: 'locationPoint',
                 longitude: lglt.nowCenter.lng,
                 latitude: lglt.nowCenter.lat,
-                url: '/resources/images/defaultMarker.png',
+                url: './resources/images/defaultMarker.png',
                 config: {
                     zIndex: 1000
                 }
@@ -192,7 +210,7 @@ class VtxSearchMap extends React.Component {
                     let r = results[i];
                     lsp.push({
                         ...results[i],
-                        url: '/resources/images/defaultMarker_selected.png',
+                        url: './resources/images/defaultMarker_selected.png',
                         labelClass: styles.hiddenLabel,
                     });
                     lsm.push({
@@ -299,7 +317,10 @@ class VtxSearchMap extends React.Component {
     clearDrawnGraph(){
         this.setState({
             isDraw:true,
-            graphicValue:null
+            graphicValue:null,
+            isEndEdit: true
+        },()=>{
+            this.setState({isEndEdit: false})
         });
     }
     render() {
@@ -312,7 +333,7 @@ class VtxSearchMap extends React.Component {
             mapZoomLevel,setZoomLevel,
             mapCenter,setCenter,mapType,
             mapVisiblePoints,setVisiblePoints,
-            isDoEdit,editGraphicId,
+            isDoEdit,editGraphicId,isEndEdit,
             /*modal参数*/
             modal1Visible,
             drawGraphID,
@@ -344,9 +365,18 @@ class VtxSearchMap extends React.Component {
         const drawProps = this.state.graphicType=='point'?null:{
             isDraw:this.state.isDraw,
             drawEnd:(obj)=>{
-                this.setState({
+                let objparam = {
                     graphicValue:obj,
                     isDraw:false
+                };
+                if(obj.geometryType == 'polyline' || obj.geometryType == 'polygon'){
+                    objparam.editGraphicId = obj.id;
+                    objparam.isDoEdit = true;
+                }
+                this.setState(objparam,()=>{
+                    this.setState({
+                        isDoEdit: false
+                    })
                 });
             },
             mapDraw:{
@@ -452,6 +482,7 @@ class VtxSearchMap extends React.Component {
                                 mapVisiblePoints={mapVisiblePoints}
                                 setVisiblePoints={setVisiblePoints}
                                 isDoEdit={isDoEdit}
+                                isEndEdit={isEndEdit}
                                 editGraphicId={editGraphicId}
                                 editGraphicChange={()=>{}}
                                 clickGraphic={this.clickGraphic.bind(this)}

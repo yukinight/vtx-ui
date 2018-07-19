@@ -86,12 +86,14 @@ export function getMaxMin(path = []){
 }
 //计算面  面积
 export function getPolygonArea(polygon){
-    let pts = polygon; 
+    let pts = [...polygon]; 
     
     if(pts.length < 3){//小于3个顶点，不能构建面
         return 0;
     }
-    
+    if((pts[0][0] == pts[pts.length - 1][0]) && (pts[0][1] == pts[pts.length - 1][1])){
+        pts.pop();
+    }
     var totalArea = 0;//初始化总面积
     var LowX = 0.0;
     var LowY = 0.0;

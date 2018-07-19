@@ -286,8 +286,6 @@ class BaiduMap extends React.Component{
                 let drawExtData = e.extData;
                 //保存绘制图元的id便于后期比对
                 t.state.drawIds[drawExtData.type].push(drawExtData.id);
-                //缓存绘制的图元信息
-                t.GM.setGraphic(drawExtData.id,e.overlay);
                 let backobj = {
                     id: drawExtData.id,
                     attributes: drawExtData.attributes,
@@ -297,6 +295,9 @@ class BaiduMap extends React.Component{
                         type: drawExtData.type
                     }
                 };
+                //缓存绘制的图元信息
+                t.GM.setGraphic(drawExtData.id,e.overlay);
+
                 //区别点和圆的经纬度数据处理
                 let {lnglatAry,_extent,path} = t.dealData(e.overlay);
                 //处理返回数据
@@ -330,6 +331,7 @@ class BaiduMap extends React.Component{
                         backobj.area = e.calculate;
                     break;
                 }
+                t.GM.setGraphicParam(drawExtData.id,backobj);
                 t._drawmanager.close();
                 if('drawEnd' in t.props){
                     t.props.drawEnd(backobj);

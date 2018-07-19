@@ -24,7 +24,7 @@ class VortexUpload extends React.Component{
         this.downLoadURL = props.downLoadURL || defaultDownloadURL;
         // 可在外部配置的属性，具体文档参考AntUI
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
-        'disabled','withCredentials'];
+        'disabled','withCredentials','beforeUpload'];
 
         this.state = {
             previewVisible: false,
