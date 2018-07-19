@@ -114,7 +114,9 @@ class TMap extends React.Component{
         }
         //添加海量点
         if(mapPointCollection instanceof Array){
-            t.addPointCollection(mapPointCollection);
+            setTimeout(()=>{
+                t.addPointCollection(mapPointCollection);
+            },100)
         }
         //设置比例尺
         if(mapZoomLevel){
@@ -176,7 +178,7 @@ class TMap extends React.Component{
         pointCollectionDiv.id = t.pointCollectionId;
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
-        t.state.gis.getPanes().mapPane.children[0].insertBefore(pointCollectionDiv);
+        $(t.state.gis.getPanes().mapPane.children[0]).before(pointCollectionDiv);
     }
     //清空地图所有图元
     clearAll (){
@@ -1394,6 +1396,7 @@ class TMap extends React.Component{
                         geometryType: 'point',
                         mapLayer: currentMarker
                     };
+                    t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1432,6 +1435,7 @@ class TMap extends React.Component{
                         },
                         lnglatAry: lnglatAry
                     };
+                    t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1471,6 +1475,7 @@ class TMap extends React.Component{
                         lnglatAry: lnglatAry,
                         area: currentArea
                     };
+                    t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1507,6 +1512,7 @@ class TMap extends React.Component{
                         },
                         area: area
                     };
+                    t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1559,6 +1565,7 @@ class TMap extends React.Component{
                         lnglatAry: lnglatAry,
                         area: area
                     };
+                    t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1833,8 +1840,13 @@ class TMap extends React.Component{
         let t = this;
         if(typeof(t.props.moveEnd) ==="function"){
             t.state.gis.addEventListener('moveend', function(e) {
+                let xylist = [],mapPane = t.state.gis.getPanes().mapPane;
+                if(mapPane.style.top){
+                    xylist = [mapPane.style.left,mapPane.style.top];
+                }else{
+                    xylist = (mapPane.style.transform || '').substr(12).split(',');
+                }
                 //重画海量点
-                let xylist = t.state.gis.getPanes().mapPane.style.transform.substr(12).split(',');
                 $(`#${t.pointCollectionId}`).css({
                     top: `${-eval((xylist[1] || '').replace('px',''))}px`,
                     left: `${-eval((xylist[0] || '').replace('px',''))}px`
