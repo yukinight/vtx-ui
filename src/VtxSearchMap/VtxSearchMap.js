@@ -41,6 +41,15 @@ import {VtxMap} from '../VtxMap';
 const warning = () => {
     message.warning('位置点查询失败,请缩小比例尺或切换关键字后再重新查询!');
 };
+function distinct(ary){
+    let pts = [...ary];
+    if((pts[0][0] == pts[pts.length - 1][0]) && (pts[0][1] == pts[pts.length - 1][1])){
+        pts.pop();
+        return distinct(pts);
+    }else{
+        return pts;
+    }
+}
 class VtxSearchMap extends React.Component {
     constructor(props){
         super(props);
@@ -76,6 +85,7 @@ class VtxSearchMap extends React.Component {
             isDoEdit: false,
             isEndEdit: false,
             editGraphicId: '',
+            editGraphic: null,
             mapZoomLevel: 11,
             setZoomLevel: false,
             /*modal参数*/
@@ -111,19 +121,19 @@ class VtxSearchMap extends React.Component {
                     if(this.map.getGraphic(editGraphicId)){
                         let p = this.map.getGraphic(editGraphicId);
                         this.props.callback({
-                            rings:p.geometry.rings,
-                            area: p.area
+                            rings: distinct(p.geometry.rings),
+                            area: this.map.getPolygonArea(distinct(p.geometry.rings))
                         });
                     }else{
                         this.props.callback(this.state.graphicValue?{
-                            rings:this.state.graphicValue.geometry.rings,
+                            rings: distinct(this.state.graphicValue.geometry.rings),
                             area: this.state.graphicValue.area
                         }:null);
                     }
                     break;
                 case 'rectangle':
                     this.props.callback(this.state.graphicValue?{
-                        rings:this.state.graphicValue.geometry.rings,
+                        rings: distinct(this.state.graphicValue.geometry.rings),
                         area: this.state.graphicValue.area
                     }:null);
                     break;
@@ -154,8 +164,13 @@ class VtxSearchMap extends React.Component {
     }
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
-        let lglt = this.map.getMapExtent();
+        let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
+        if(this.props.editParam){
+            editGraphic = {...this.props.editParam,id: 'drawnGraph'};
+            editGraphicId = 'drawnGraph';
+        }
         this.setState({
+            editGraphic,
             locationPoint: [{
                 id: 'locationPoint',
                 longitude: lglt.nowCenter.lng,
@@ -168,7 +183,7 @@ class VtxSearchMap extends React.Component {
         },()=>{
             this.setState({
                 isDoEdit: true,
-                editGraphicId: 'locationPoint'
+                editGraphicId
             },()=>{
                 this.setState({
                     isDoEdit: false
@@ -324,6 +339,7 @@ class VtxSearchMap extends React.Component {
         });
     }
     render() {
+        let t = this;
         let {
             isShowList,
             searchValue,
@@ -337,23 +353,12 @@ class VtxSearchMap extends React.Component {
             /*modal参数*/
             modal1Visible,
             drawGraphID,
-            isShowOther,otherText,isShowOtherGraph
+            isShowOther,otherText,isShowOtherGraph,
+            editGraphic
         } = this.state;
-        let mapPoints = [],mapLines=[],mapPolygons=[],mapCircles=[];
-        if(this.state.graphicType == 'point'){
-            mapPoints = [...locationPoint,...listPoint];
-        }else{
-            mapPoints = [...listPoint];
-        }
-        if(isShowOtherGraph){
-            let {otherGraph} = this.props;
-            if(otherGraph){
-                mapPoints = [...mapPoints,...(otherGraph.point || [])];
-                mapLines=[...(otherGraph.polyline || [])];
-                mapPolygons=[...(otherGraph.polygon || [])];
-                mapCircles=[...(otherGraph.circle || [])];
-            }
-        }
+        let {
+            graphicType
+        } = this.props;
         const InputProps = {
             style: {'width': '200px'},
             placeholder: '输入关键字',
@@ -362,7 +367,7 @@ class VtxSearchMap extends React.Component {
             onPressEnter: this.searchList.bind(this),
             onKeyDown: this.changeValue.bind(this)
         };
-        const drawProps = this.state.graphicType=='point'?null:{
+        let drawProps = this.state.graphicType=='point'?null:{
             isDraw:this.state.isDraw,
             drawEnd:(obj)=>{
                 let objparam = {
@@ -384,6 +389,35 @@ class VtxSearchMap extends React.Component {
                 parameter: this.state.parameter,
                 data: {id: drawGraphID}
             }  
+        }
+        let mapPoints = [],mapLines=[],mapPolygons=[],mapCircles=[];
+        if(graphicType == 'point'){
+            mapPoints = [...locationPoint,...listPoint];
+        }else{
+            mapPoints = [...listPoint];
+        }
+        if(graphicType === 'polygon'){
+            if(editGraphic){
+                mapPolygons.push(editGraphic);
+                drawProps = null;
+
+            }
+        }
+        if(graphicType === 'polyline'){
+            if(editGraphic){
+                mapLines.push(editGraphic);
+                drawProps = null;
+
+            }
+        }
+        if(isShowOtherGraph){
+            let {otherGraph} = this.props;
+            if(otherGraph){
+                mapPoints = [...mapPoints,...(otherGraph.point || [])];
+                mapLines=[...(otherGraph.polyline || [])];
+                mapPolygons=[...(otherGraph.polygon || [])];
+                mapCircles=[...(otherGraph.circle || [])];
+            }
         }
         return (
             <VtxModal
@@ -413,9 +447,16 @@ class VtxSearchMap extends React.Component {
                         }
                         {
                             this.state.graphicType!='point'?<Button onClick={()=>{
-                                this.setState({
+                                 this.setState({
                                     isDraw:true,
-                                    graphicValue:null
+                                    graphicValue:null,
+                                    editGraphic: null,
+                                    isEndEdit: true
+                                },()=>{
+                                    t.map.removeGraphic('drawnGraph','draw')
+                                    t.setState({
+                                        isEndEdit: false
+                                    })
                                 });
                                 if('editDraw' in this.props && typeof(this.props.editDraw) == 'function'){
                                     this.props.editDraw();
