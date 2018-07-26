@@ -1,6 +1,6 @@
 import React from 'react';
 import './AMap.less';
-import {graphicManage} from '../MapToolFunction';
+import {graphicManage,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 
 const {Set} = Immutable;
@@ -9,6 +9,7 @@ class VortexAMap extends React.Component{
         super(props);
         //初始化 图元管理方法
         this.GM = new graphicManage();
+        this.getPolygonArea = getPolygonArea;
         this.pointCollectionId = 'vtx_gmap_html_pointCollection';//海量点canvas点位容器id class管理
         this.morepoints = [];//海量点集合
         this.htmlXY = {x:0,y:0,px:0,py:0,isCount: false};
@@ -1854,20 +1855,20 @@ class VortexAMap extends React.Component{
                 ids = t.state.circleIds;
             break;
             case 'draw':
-                if(t.state.drawIds.point.indexOf(item.id) > -1){
-                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(item.id),1);
+                if(t.state.drawIds.point.indexOf(id) > -1){
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(id),1);
                 }
-                if(t.state.drawIds.polyline.indexOf(item.id) > -1){
-                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(item.id),1);
+                if(t.state.drawIds.polyline.indexOf(id) > -1){
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(id),1);
                 }
-                if(t.state.drawIds.polygon.indexOf(item.id) > -1){
-                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(item.id),1);
+                if(t.state.drawIds.polygon.indexOf(id) > -1){
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(id),1);
                 }
-                if(t.state.drawIds.circle.indexOf(item.id) > -1){
-                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(item.id),1);
+                if(t.state.drawIds.circle.indexOf(id) > -1){
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(id),1);
                 }
-                if(t.state.drawIds.rectangle.indexOf(item.id) > -1){
-                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(item.id),1);
+                if(t.state.drawIds.rectangle.indexOf(id) > -1){
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(id),1);
                 }
             break;
         }

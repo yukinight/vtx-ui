@@ -33,8 +33,9 @@ $ import {VtxModalList} from 'vtx-ui';
 $ import {VtxModal,DraggableModal} from 'vtx-ui';
 # 地图弹出框组件
 $ import {VtxSearchMap} from 'vtx-ui';
-# 树组件
+# 树组件(VtxZtree主要用于大量节点的树，性能有所优化，api与VtxTree相比有部分改动，请仔细阅读文档)
 $ import {VtxTree} from 'vtx-ui';
+$ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
 ```
@@ -72,8 +73,9 @@ $ import {VtxModal} from 'vtx-ui';
 $ const {DraggableModal} = VtxModal;
 # 地图弹出框组件
 $ import {VtxSearchMap} from 'vtx-ui';
-# 树组件
+# 树组件(VtxZtree主要用于大量节点的树，性能有所优化，api与VtxTree相比有部分改动，请仔细阅读文档)
 $ import {VtxTree} from 'vtx-ui';
+$ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
 ```
