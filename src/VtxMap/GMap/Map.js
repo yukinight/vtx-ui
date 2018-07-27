@@ -1026,6 +1026,12 @@ class ArcgisMap extends React.Component{
                 }else{
                     t.pointAnimation(item.id,null);
                 }
+                //删除原有的label  下面从新加载
+                if(t.Label[item.id]){
+                    t.Label[item.id].html.remove();
+                }
+                //刷新点位
+                t.dealLabelGraphics(item.id,label);
                 //动画效果会延迟执行经纬度的切换
                 if(cg.isAnimation){
                     t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation);
@@ -1037,13 +1043,7 @@ class ArcgisMap extends React.Component{
                         //设置完点位后  需要刷新下点位的显示范围
                         gc._extent.update(item.longitude,item.latitude,item.longitude,item.latitude,{ wkid: t.wkid });
                         gc._extent._parts[0].extent = gc._extent.centerAt(position);
-                        //删除原有的label  下面从新加载
-                        if(t.Label[item.id]){
-                            t.Label[item.id].html.remove();
-                        }
                     }
-                    //刷新点位
-                    t.dealLabelGraphics(item.id,label);
                 }
                 //刷新缓存数据
                 t.GM.setGraphicParam(
