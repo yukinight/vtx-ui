@@ -1,5 +1,6 @@
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
+import _merge from 'lodash/merge';
 import './VtxZtree.less';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
@@ -14,7 +15,7 @@ const style = {
 export default class VtxZtree extends React.Component{
     constructor(props){
         super();
-        this.treeId = `tree-${new Date().getTime()}-${parseInt(Math.random()*1000)}`;
+        this.treeId = `tree-${new Date().getTime()}-${parseInt(Math.random()*10000)}`;
         this.zTreeObj = null;
         this.treeSetting = {};
         this.treeNodes = [];
@@ -132,6 +133,10 @@ export default class VtxZtree extends React.Component{
                 }
             }
         };
+        // 继承外部配置
+        if(typeof this.props.customCfg=='object'){
+            _merge(this.treeSetting,this.props.customCfg)
+        }
     }
     // 初始化树的数据，对expandedKeys，checkedKeys做处理
     initTreeNodes(props){
@@ -387,7 +392,6 @@ export default class VtxZtree extends React.Component{
                 
                 <div id={this.treeId} className={`ztree ${style.ztree}`} style={{height:'100%'}}></div>
             </div>
-            
         )
     }
 }
