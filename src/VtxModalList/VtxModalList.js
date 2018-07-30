@@ -102,7 +102,8 @@ class VtxModalList extends React.Component{
         let t = this,
             mld = elem.props['data-modallist'] || {},
             reg = mld.regexp || {};
-        let ty = (mld.layout || {}).type || 'default';
+        let ty = (mld.layout || {}).type || 'default',
+            maxNum = (mld.layout || {}).maxNum;
         if(ty == 'ctext'){
             return (
                 <LayoutComponent 
@@ -142,7 +143,7 @@ class VtxModalList extends React.Component{
                 ...elem.props.style,
                 width: '100%',
             },
-            className: `${elem.props.className || ''} ${isMaxNum?(eval(mld.layout.maxNum) >= 100?'maxNum-input55':'maxNum-input45'):''}`,
+            className: `${elem.props.className || ''} ${isMaxNum?(eval((mld.layout || {}).maxNum) >= 100?'maxNum-input55':'maxNum-input45'):''}`,
             //样式小问题解决
             ...(isInherit()?{inherit:true}:{}),
             //失交验重
@@ -201,8 +202,19 @@ class VtxModalList extends React.Component{
                     //     }
                     // }
                     // if(required || value === ''){
-                        elem.props.onChange(e);
+                    //     elem.props.onChange(e);
                     // }
+                    if(maxNum){
+                        if(typeof(maxNum) == 'number'){
+                            if(e.target.value.length <= maxNum){
+                                elem.props.onChange(e);
+                            }
+                        }else{
+                            console.error('maxNum必须为number类型');
+                        }
+                    }else{
+                        elem.props.onChange(e);
+                    }
                 }}:{}
             )
         });
