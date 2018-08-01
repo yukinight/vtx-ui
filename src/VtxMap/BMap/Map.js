@@ -1544,20 +1544,20 @@ class BaiduMap extends React.Component{
                 ids = t.state.circleIds;
             break;
             case 'draw':
-                if(point.indexOf(id) > -1){
-                    point.splice(point.indexOf(id),1);
+                if(t.state.drawIds.point.indexOf(id) > -1){
+                    t.state.drawIds.point.splice(point.indexOf(id),1);
                 }
-                if(polyline.indexOf(id) > -1){
-                    polyline.splice(polyline.indexOf(id),1);
+                if(t.state.drawIds.polyline.indexOf(id) > -1){
+                    t.state.drawIds.polyline.splice(polyline.indexOf(id),1);
                 }
-                if(polygon.indexOf(id) > -1){
-                    polygon.splice(polygon.indexOf(id),1);
+                if(t.state.drawIds.polygon.indexOf(id) > -1){
+                    t.state.drawIds.polygon.splice(polygon.indexOf(id),1);
                 }
-                if(circle.indexOf(id) > -1){
-                    circle.splice(circle.indexOf(id),1);
+                if(t.state.drawIds.circle.indexOf(id) > -1){
+                    t.state.drawIds.circle.splice(circle.indexOf(id),1);
                 }
-                if(rectangle.indexOf(id) > -1){
-                    rectangle.splice(rectangle.indexOf(id),1);
+                if(t.state.drawIds.rectangle.indexOf(id) > -1){
+                    t.state.drawIds.rectangle.splice(rectangle.indexOf(id),1);
                 }
             break;
         }
