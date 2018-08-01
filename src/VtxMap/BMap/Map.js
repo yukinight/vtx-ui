@@ -1545,19 +1545,19 @@ class BaiduMap extends React.Component{
             break;
             case 'draw':
                 if(t.state.drawIds.point.indexOf(id) > -1){
-                    t.state.drawIds.point.splice(point.indexOf(id),1);
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(id),1);
                 }
                 if(t.state.drawIds.polyline.indexOf(id) > -1){
-                    t.state.drawIds.polyline.splice(polyline.indexOf(id),1);
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(id),1);
                 }
                 if(t.state.drawIds.polygon.indexOf(id) > -1){
-                    t.state.drawIds.polygon.splice(polygon.indexOf(id),1);
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(id),1);
                 }
                 if(t.state.drawIds.circle.indexOf(id) > -1){
-                    t.state.drawIds.circle.splice(circle.indexOf(id),1);
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(id),1);
                 }
                 if(t.state.drawIds.rectangle.indexOf(id) > -1){
-                    t.state.drawIds.rectangle.splice(rectangle.indexOf(id),1);
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(id),1);
                 }
             break;
         }
