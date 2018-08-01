@@ -857,6 +857,7 @@ class ArcgisMap extends React.Component{
                 let markerSymbol = new esri.symbol.PictureMarkerSymbol(
                     (item.url || './resources/images/defaultMarker.png'), cg.width, cg.height
                 );
+                markerSymbol.setAngle(cg.deg);
                 //设置偏移点的位置到左上角(原来在中心)
                 markerSymbol.setOffset(
                     cg.markerContentX + cg.width/2, -(cg.markerContentY + cg.height/2)
@@ -990,6 +991,7 @@ class ArcgisMap extends React.Component{
                     if(gc.symbol){
                         gc.symbol.setUrl(item.url || './resources/images/defaultMarker.png');
                     }
+                    gc.symbol.setAngle(cg.deg);
                     //添加label
                     if(item.canShowLabel && cg.labelContent){
                         //label默认样式
