@@ -636,16 +636,16 @@ class TMap extends React.Component{
                     })
                     marker.showLabel();
                 }
-                if(cg.deg){
-                    marker.getElement().style.transform = marker.getElement().style.transform + ` rotate(${cg.deg}deg)`;
-                    marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
-                }
             }
             //点跳动动画
             if(!item.markerContent && cg.BAnimationType == 0){
                 t.pointAnimation(item.id,marker);
             }else{
                 t.pointAnimation(item.id,null);
+            }
+            if(cg.deg && !item.markerContent){
+                marker.getElement().style.transform = marker.getElement().style.transform + ` rotate(${cg.deg}deg)`;
+                marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
             }
             marker.addEventListener( 'click', (e)=>{
                 t.clickGraphic(item.id,e);
@@ -733,10 +733,6 @@ class TMap extends React.Component{
                         //修改经纬度
                         gc.setLngLat(new T.LngLat(item.longitude,item.latitude));
                     }
-                    if(cg.deg){
-                        gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${cg.deg}deg)`;
-                        gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
-                    }
                     //是否展示label
                     if(item.canShowLabel){
                         if(gc.label){
@@ -761,6 +757,10 @@ class TMap extends React.Component{
                     t.pointAnimation(item.id,gc);
                 }else{
                     t.pointAnimation(item.id,null);
+                }
+                if(cg.deg && !item.markerContent){
+                    gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${cg.deg}deg)`;
+                    gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
                 }
                 //动画效果会延迟执行经纬度的切换
                 if(item.config.isAnimation){

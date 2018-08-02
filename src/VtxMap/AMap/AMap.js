@@ -858,7 +858,7 @@ class VortexAMap extends React.Component{
         });
         //统一加点
         t.state.gis.add(ps);
-        if(type == 'defined'){
+        if(type !== 'defined'){
             t.setState({
                 pointIds: psids
             })
@@ -875,7 +875,7 @@ class VortexAMap extends React.Component{
                     console.error(`点 经纬度 数据错误`);
                     return false;
                 }
-                if(item.config){
+                if(!item.config){
                     item.config = {};
                 }
                 //获取原有的图元
@@ -1051,7 +1051,7 @@ class VortexAMap extends React.Component{
             // });
         });
         t.state.gis.add(ls);
-        if(type == 'defined'){
+        if(type !== 'defined'){
             t.setState({
                 lineIds: lsids
             });
@@ -1072,7 +1072,7 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
-                if(item.config){
+                if(!item.config){
                     item.config = {};
                 }
                 //根据参数判断是否显示多折线
@@ -1155,7 +1155,7 @@ class VortexAMap extends React.Component{
                 pellucidity: 0.5
                 // isHidden: false  //后期跟百度一起加
             }
-            if(item.config){
+            if(!item.config){
                 cg = {...cg,...item.config};
             }
             let polygonOption = {
@@ -1224,7 +1224,7 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
-                if(item.config){
+                if(!item.config){
                     item.config = {};
                 }
                 //根据参数判断是否显示面
@@ -1374,7 +1374,7 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id);
                 let op = gc.getOptions();
-                if(item.config){
+                if(!item.config){
                     item.config = {};
                 }
                 //获取原有的面属性,转换key值
