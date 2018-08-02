@@ -74,7 +74,8 @@ class ArcgisMap extends React.Component{
             }
             else{
                 //加载 js
-                $.getScript('http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
+                // $.getScript('http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
+                $.getScript('http://120.26.218.105:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
                         $.getScript('./resources/js/mapPlugin/gisheatmap.js',()=>{
                             resolve();
