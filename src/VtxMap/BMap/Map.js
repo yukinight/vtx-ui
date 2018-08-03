@@ -908,9 +908,9 @@ class BaiduMap extends React.Component{
                             rings: item.rings,
                             other: item
                         },
-                        geometryType: 'polyline',
+                        geometryType: 'polygon',
                         geometry: {
-                            type: 'polyline',
+                            type: 'polygon',
                             rings: item.rings
                         }
                     }

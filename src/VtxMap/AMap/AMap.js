@@ -1270,9 +1270,9 @@ class VortexAMap extends React.Component{
                             rings: pts,
                             other: item
                         },
-                        geometryType: 'polyline',
+                        geometryType: 'polygon',
                         geometry: {
-                            type: 'polyline',
+                            type: 'polygon',
                             rings: pts
                         }
                     }

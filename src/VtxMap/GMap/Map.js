@@ -1391,6 +1391,18 @@ class ArcgisMap extends React.Component{
             let polygonColor = new esri.Color(cg.color);
             polygonColor.a = cg.pellucidity;
             gc.symbol.setColor(polygonColor);
+            t.GM.setGraphicParam(item.id,{
+                attributes: {
+                    ...item,
+                    rings: item.rings,
+                    other: item
+                },
+                geometryType: 'polygon',
+                geometry: {
+                    type: 'polygon',
+                    rings: item.rings
+                },
+            });
         });
         //刷新图元
         t.state.gis.graphics.refresh();
@@ -1543,6 +1555,16 @@ class ArcgisMap extends React.Component{
             gc.setGeometry(position);
             //更新样式
             gc.setSymbol(circleSymbol);
+            t.GM.setGraphicParam(item.id,{
+                attributes: {...item,other: item},
+                geometryType: 'circle',
+                geometry: {
+                    type: 'circle',
+                    x: item.longitude,
+                    y: item.latitude,
+                    radius: item.radius
+                }
+            });
         });
         //刷新图元
         t.state.gis.graphics.refresh();
