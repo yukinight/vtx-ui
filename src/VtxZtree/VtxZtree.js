@@ -30,13 +30,13 @@ export default class VtxZtree extends React.Component{
     loadTreeResource(){
         if(!$.fn.zTree){
             const treeAll = new Promise((resolve)=>{
-                $.getScript("https://cdn.bootcss.com/zTree.v3/3.5.33/js/jquery.ztree.all.min.js", function(){
-                    $.getScript("https://cdn.bootcss.com/zTree.v3/3.5.33/js/jquery.ztree.exhide.min.js", function(){
+                $.getScript("http://120.26.217.62:25048/ztree/js/jquery.ztree.all.min.js", function(){
+                    $.getScript("http://120.26.217.62:25048/ztree/js/jquery.ztree.exhide.min.js", function(){
                         resolve();
                     });
                 });
             });
-            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "https://cdn.bootcss.com/zTree.v3/3.5.33/css/zTreeStyle/zTreeStyle.min.css"}).appendTo("head");
+            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/ztree/css/zTreeStyle/zTreeStyle.css"}).appendTo("head");
             return treeAll;
         }
         else{
