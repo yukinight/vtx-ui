@@ -33,7 +33,8 @@ import Checkbox from 'antd/lib/checkbox';
 import 'antd/lib/checkbox/style/css';
 import {VtxModal} from '../VtxModal';
 import {VtxMap} from '../VtxMap';
-
+//公共地址配置
+import configUrl from '../default';
 // message.config({
 //   top: document.getElementById('root').offsetHeight/3,
 //   duration: 5,
@@ -165,7 +166,7 @@ class VtxSearchMap extends React.Component {
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
         let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
-        if(this.props.editParam){
+        if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
             editGraphic = {...this.props.editParam,id: 'drawnGraph'};
             editGraphicId = 'drawnGraph';
         }
@@ -175,7 +176,7 @@ class VtxSearchMap extends React.Component {
                 id: 'locationPoint',
                 longitude: lglt.nowCenter.lng,
                 latitude: lglt.nowCenter.lat,
-                url: './resources/images/defaultMarker.png',
+                url: `${configUrl.mapServerURL}/images/defaultMarker.png`,
                 config: {
                     zIndex: 1000
                 }
@@ -225,7 +226,7 @@ class VtxSearchMap extends React.Component {
                     let r = results[i];
                     lsp.push({
                         ...results[i],
-                        url: './resources/images/defaultMarker_selected.png',
+                        url: `${configUrl.mapServerURL}/images/defaultMarker_selected.png`,
                         labelClass: styles.hiddenLabel,
                     });
                     lsm.push({
