@@ -99,7 +99,10 @@ class VortexUpload extends React.Component{
         // if(matchRes && matchRes[1]<10){
         //判断是否IE
         if(!!window.ActiveXObject || "ActiveXObject" in window){
-            config.action = proxyUploadURL;
+            // 未配置上传地址使用默认地址，需切换到代理
+            if(!props.action){
+                config.action = proxyUploadURL;
+            }
         }
         
         // 继承相关配置

@@ -4,6 +4,8 @@ import {
     graphicManage,defaultWmtsMapLayers,getPixelDistance,getDistance,getPolygonArea
 } from '../MapToolFunction';
 import Immutable from 'immutable';
+//公共地址配置
+import configUrl from '../../default';
 const {Set} = Immutable;
 class ArcgisMap extends React.Component{
     constructor(props){
@@ -74,14 +76,15 @@ class ArcgisMap extends React.Component{
             }
             else{
                 //加载 js
-                $.getScript('http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
+                // $.getScript('http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
+                $.getScript(`${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/init.js`,()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/gisheatmap.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/gisheatmap.js`,()=>{
                             resolve();
                         });
                     });
                     let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/GPointCollection.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                             resolve();
                         });
                     });
@@ -102,8 +105,8 @@ class ArcgisMap extends React.Component{
                     })
                 });
                 //加载 css
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css"}).appendTo("head");
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css"}).appendTo("head");
             }
         });
     }
@@ -838,7 +841,7 @@ class ArcgisMap extends React.Component{
                 //html点位
                 //添加透明点(便于事件处理)
                 let markerSymbol = new esri.symbol.PictureMarkerSymbol(
-                    './resources/images/touming.png', cg.width, cg.height
+                    `${configUrl.mapServerURL}/images/touming.png`, cg.width, cg.height
                 );
                 //设置偏移点的位置到左上角(原来在中心)
                 markerSymbol.setOffset(cg.markerContentX + cg.width/2, -(cg.markerContentY + cg.height/2));
@@ -855,8 +858,9 @@ class ArcgisMap extends React.Component{
             }else{
                 //图片点位
                 let markerSymbol = new esri.symbol.PictureMarkerSymbol(
-                    (item.url || './resources/images/defaultMarker.png'), cg.width, cg.height
+                    (item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`), cg.width, cg.height
                 );
+                markerSymbol.setAngle(cg.deg);
                 //设置偏移点的位置到左上角(原来在中心)
                 markerSymbol.setOffset(
                     cg.markerContentX + cg.width/2, -(cg.markerContentY + cg.height/2)
@@ -973,7 +977,7 @@ class ArcgisMap extends React.Component{
                 if(item.markerContent){
                     //symbol 样式信息修改
                     if(gc.symbol){
-                        gc.symbol.setUrl('./resources/images/touming.png');
+                        gc.symbol.setUrl(`${configUrl.mapServerURL}/images/touming.png`);
                     }
                     //设置markercontent的数据,用于label加点到地图
                     label = {
@@ -988,8 +992,9 @@ class ArcgisMap extends React.Component{
                 }else{
                     //symbol 样式信息修改
                     if(gc.symbol){
-                        gc.symbol.setUrl(item.url || './resources/images/defaultMarker.png');
+                        gc.symbol.setUrl(item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`);
                     }
+                    gc.symbol.setAngle(cg.deg);
                     //添加label
                     if(item.canShowLabel && cg.labelContent){
                         //label默认样式
@@ -1388,6 +1393,18 @@ class ArcgisMap extends React.Component{
             let polygonColor = new esri.Color(cg.color);
             polygonColor.a = cg.pellucidity;
             gc.symbol.setColor(polygonColor);
+            t.GM.setGraphicParam(item.id,{
+                attributes: {
+                    ...item,
+                    rings: item.rings,
+                    other: item
+                },
+                geometryType: 'polygon',
+                geometry: {
+                    type: 'polygon',
+                    rings: item.rings
+                },
+            });
         });
         //刷新图元
         t.state.gis.graphics.refresh();
@@ -1540,6 +1557,16 @@ class ArcgisMap extends React.Component{
             gc.setGeometry(position);
             //更新样式
             gc.setSymbol(circleSymbol);
+            t.GM.setGraphicParam(item.id,{
+                attributes: {...item,other: item},
+                geometryType: 'circle',
+                geometry: {
+                    type: 'circle',
+                    x: item.longitude,
+                    y: item.latitude,
+                    radius: item.radius
+                }
+            });
         });
         //刷新图元
         t.state.gis.graphics.refresh();
@@ -2566,7 +2593,7 @@ class ArcgisMap extends React.Component{
                         id: t.drawParam.data.id,
                         longitude: e.geometry.x,
                         latitude: e.geometry.y,
-                        url: t.drawParam.parameter.url || './resources/images/defaultMarker.png',
+                        url: t.drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                         config: {
                             ...t.drawParam.parameter
                         }
@@ -2576,7 +2603,7 @@ class ArcgisMap extends React.Component{
                         id: t.drawParam.data.id,
                         attributes: {
                             id: t.drawParam.data.id,
-                            url: t.drawParam.parameter.url || './resources/images/defaultMarker.png',
+                            url: t.drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                             config: {
                                 width: t.drawParam.parameter.width || 30,
                                 height: t.drawParam.parameter.height || 30
@@ -2737,7 +2764,7 @@ class ArcgisMap extends React.Component{
         }else{
             //点的样式
             let markerSymbol = new esri.symbol.PictureMarkerSymbol(
-                drawParam.parameter.url || './resources/images/defaultMarker.png', 
+                drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`, 
                 (drawParam.parameter.width || 30), (drawParam.parameter.height || 30)
             );
             //设置点偏移

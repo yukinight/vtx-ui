@@ -3,6 +3,8 @@ import './Map.less';
 import {graphicManage,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;
+//公共地址配置
+import configUrl from '../../default';
 const gisMapConstant = {
     circle: 'BMAP_POINT_SHAPE_CIRCLE',//圆形
     star: 1,//星形
@@ -63,42 +65,42 @@ class BaiduMap extends React.Component{
             else{
                 $.getScript('http://api.map.baidu.com/getscript?v=2.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ',()=>{
                     let DistanceTool = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/DistanceTool_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/DistanceTool_min.js`,()=>{
                             resolve();
                         });
                     });
                     let TrafficControl = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/TrafficControl_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/TrafficControl_min.js`,()=>{
                             resolve();
                         });
                     });
                     let MarkerClusterer = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/MarkerClusterer_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/MarkerClusterer_min.js`,()=>{
                             resolve();
                         });
                     });
                     let AreaRestriction = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/AreaRestriction_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/AreaRestriction_min.js`,()=>{
                             resolve();
                         })
                     });
                     let DrawingManager = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/DrawingManager_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/DrawingManager_min.js`,()=>{
                             resolve();
                         });
                     });
                     let Heatmap = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/Heatmap_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/Heatmap_min.js`,()=>{
                             resolve();
                         });
                     });
                     let GeoUtils = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/GeoUtils_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/GeoUtils_min.js`,()=>{
                             resolve();
                         });
                     });
                     let TextIconOverlay = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/TextIconOverlay_min.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/TextIconOverlay_min.js`,()=>{
                             resolve();
                         });
                     });
@@ -387,7 +389,7 @@ class BaiduMap extends React.Component{
                     icon: null
                 }
                 let icon = new BMap.Icon(
-                    './resources/images/touming.png',
+                    `${configUrl.mapServerURL}/images/touming.png`,
                     new BMap.Size(cg.width,cg.height)
                 );
                 icon.setImageSize(new BMap.Size(cg.width,cg.height));
@@ -413,7 +415,7 @@ class BaiduMap extends React.Component{
                     icon: null
                 }
                 let icon = new BMap.Icon(
-                    item.url || './resources/images/defaultMarker.png',
+                    item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     new BMap.Size(cg.width,cg.height)
                 );
                 icon.setImageSize(new BMap.Size(cg.width,cg.height));
@@ -521,7 +523,7 @@ class BaiduMap extends React.Component{
                     gc.setOffset(new BMap.Size(cg.markerContentX + cg.width/2,
                                             cg.markerContentY + cg.height/2));
                     let icon = new BMap.Icon(
-                        './resources/images/touming.png',
+                        `${configUrl.mapServerURL}/images/touming.png`,
                         new BMap.Size(cg.width,cg.height)
                     );
                     icon.setImageSize(new BMap.Size(cg.width,cg.height));
@@ -546,7 +548,7 @@ class BaiduMap extends React.Component{
                     cg.height = cg.height || gc.getIcon().size.height;
                     //未改变方式的点 直接修改数据
                     let icon = new BMap.Icon(
-                        item.url || './resources/images/defaultMarker.png',
+                        item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                         new BMap.Size(cg.width,cg.height)
                     );
                     icon.setImageSize(new BMap.Size(cg.width,cg.height));
@@ -908,9 +910,9 @@ class BaiduMap extends React.Component{
                             rings: item.rings,
                             other: item
                         },
-                        geometryType: 'polyline',
+                        geometryType: 'polygon',
                         geometry: {
-                            type: 'polyline',
+                            type: 'polygon',
                             rings: item.rings
                         }
                     }
@@ -1544,20 +1546,20 @@ class BaiduMap extends React.Component{
                 ids = t.state.circleIds;
             break;
             case 'draw':
-                if(point.indexOf(id) > -1){
-                    point.splice(point.indexOf(id),1);
+                if(t.state.drawIds.point.indexOf(id) > -1){
+                    t.state.drawIds.point.splice(t.state.drawIds.point.indexOf(id),1);
                 }
-                if(polyline.indexOf(id) > -1){
-                    polyline.splice(polyline.indexOf(id),1);
+                if(t.state.drawIds.polyline.indexOf(id) > -1){
+                    t.state.drawIds.polyline.splice(t.state.drawIds.polyline.indexOf(id),1);
                 }
-                if(polygon.indexOf(id) > -1){
-                    polygon.splice(polygon.indexOf(id),1);
+                if(t.state.drawIds.polygon.indexOf(id) > -1){
+                    t.state.drawIds.polygon.splice(t.state.drawIds.polygon.indexOf(id),1);
                 }
-                if(circle.indexOf(id) > -1){
-                    circle.splice(circle.indexOf(id),1);
+                if(t.state.drawIds.circle.indexOf(id) > -1){
+                    t.state.drawIds.circle.splice(t.state.drawIds.circle.indexOf(id),1);
                 }
-                if(rectangle.indexOf(id) > -1){
-                    rectangle.splice(rectangle.indexOf(id),1);
+                if(t.state.drawIds.rectangle.indexOf(id) > -1){
+                    t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(id),1);
                 }
             break;
         }
@@ -1705,7 +1707,7 @@ class BaiduMap extends React.Component{
                 param.offset = new BMap.Size((drawParam.parameter.markerContentX || -15) + (drawParam.parameter.width || 30)/2,
                                             (drawParam.parameter.markerContentY || -30) + (drawParam.parameter.height || 30)/2);
                 let icon = new BMap.Icon(
-                    drawParam.parameter.url || './resources/images/defaultMarker.png',
+                    drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     new BMap.Size(drawParam.parameter.width || 30,drawParam.parameter.height || 30)
                 );
                 icon.setImageSize(new BMap.Size(drawParam.parameter.width || 30,drawParam.parameter.height || 30));
@@ -1714,7 +1716,7 @@ class BaiduMap extends React.Component{
                     id: drawParam.data.id,
                     attributes: {
                         id: drawParam.data.id,
-                        url: drawParam.parameter.url || './resources/images/defaultMarker.png',
+                        url: drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                         config: {
                             width: drawParam.parameter.width || 36,
                             height: drawParam.parameter.height || 36

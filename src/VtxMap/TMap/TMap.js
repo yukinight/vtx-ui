@@ -3,6 +3,8 @@ import './TMap.less';
 import {graphicManage,getMaxMin,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;
+//公共地址配置
+import configUrl from '../../default';
 class TMap extends React.Component{
     constructor(props){
         super(props);
@@ -61,12 +63,12 @@ class TMap extends React.Component{
                 $.getScript('http://api.tianditu.com/getscript?v=4.0',()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
                         //对象问题  和arcgis使用不同的热力图
-                        $.getScript('./resources/js/mapPlugin/Theatmap.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{
                             resolve();
                         });
                     });
                     let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/GPointCollection.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                             resolve();
                         });
                     });
@@ -596,7 +598,7 @@ class TMap extends React.Component{
             //判断html还是图片
             if(!!item.markerContent){
                 markerOption.icon = new T.Icon({
-                    iconUrl: item.url || './resources/images/touming.png',
+                    iconUrl: item.url || `${configUrl.mapServerURL}/images/touming.png`,
                     iconSize: new T.Point(cg.width,cg.height),
                     iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
                 });
@@ -615,7 +617,7 @@ class TMap extends React.Component{
                 //统一加点
             }else{
                 markerOption.icon = new T.Icon({
-                    iconUrl: item.url || './resources/images/defaultMarker.png',
+                    iconUrl: item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     iconSize: new T.Point(cg.width,cg.height),
                     iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
                 });
@@ -636,16 +638,16 @@ class TMap extends React.Component{
                     })
                     marker.showLabel();
                 }
-                if(cg.deg){
-                    marker.getElement().style.transform = marker.getElement().style.transform + ` rotate(${cg.deg}deg)`;
-                    marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
-                }
             }
             //点跳动动画
             if(!item.markerContent && cg.BAnimationType == 0){
                 t.pointAnimation(item.id,marker);
             }else{
                 t.pointAnimation(item.id,null);
+            }
+            if(cg.deg){
+                marker.getElement().style.transform = marker.getElement().style.transform + ` rotate(${cg.deg}deg)`;
+                marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
             }
             marker.addEventListener( 'click', (e)=>{
                 t.clickGraphic(item.id,e);
@@ -733,10 +735,6 @@ class TMap extends React.Component{
                         //修改经纬度
                         gc.setLngLat(new T.LngLat(item.longitude,item.latitude));
                     }
-                    if(cg.deg){
-                        gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${cg.deg}deg)`;
-                        gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
-                    }
                     //是否展示label
                     if(item.canShowLabel){
                         if(gc.label){
@@ -761,6 +759,10 @@ class TMap extends React.Component{
                     t.pointAnimation(item.id,gc);
                 }else{
                     t.pointAnimation(item.id,null);
+                }
+                if(cg.deg){
+                    gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${cg.deg}deg)`;
+                    gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
                 }
                 //动画效果会延迟执行经纬度的切换
                 if(item.config.isAnimation){
@@ -1367,7 +1369,7 @@ class TMap extends React.Component{
         switch(drawParam.geometryType){
             case 'point':
                 param.icon = new T.Icon({
-                    iconUrl: drawParam.parameter.url || './resources/images/defaultMarker.png',
+                    iconUrl: drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     iconSize: new T.Point(drawParam.parameter.width || 33,drawParam.parameter.height || 33),
                     iconAnchor: new T.Point(drawParam.parameter.width?drawParam.parameter.width/2:16.5,
                             drawParam.parameter.height?drawParam.parameter.height:33)

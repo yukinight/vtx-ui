@@ -4,6 +4,7 @@ import _merge from 'lodash/merge';
 import './VtxZtree.less';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
+import CONFIG from '../default';
 
 const style = {
 	treeComponent: 'vtx-ui-ztree-component',
@@ -30,13 +31,13 @@ export default class VtxZtree extends React.Component{
     loadTreeResource(){
         if(!$.fn.zTree){
             const treeAll = new Promise((resolve)=>{
-                $.getScript("https://cdn.bootcss.com/zTree.v3/3.5.33/js/jquery.ztree.all.min.js", function(){
-                    $.getScript("https://cdn.bootcss.com/zTree.v3/3.5.33/js/jquery.ztree.exhide.min.js", function(){
+                $.getScript(`${CONFIG.ztreeServer}/js/jquery.ztree.all.min.js`, function(){
+                    $.getScript(`${CONFIG.ztreeServer}/js/jquery.ztree.exhide.min.js`, function(){
                         resolve();
                     });
                 });
             });
-            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "https://cdn.bootcss.com/zTree.v3/3.5.33/css/zTreeStyle/zTreeStyle.min.css"}).appendTo("head");
+            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${CONFIG.ztreeServer}/css/zTreeStyle/zTreeStyle.css`}).appendTo("head");
             return treeAll;
         }
         else{
@@ -151,10 +152,14 @@ export default class VtxZtree extends React.Component{
             const chkDisabled = !!props.disableCheckboxAll;
             this.treeNodes = (function genNodes(nodes) {
                 return nodes.map((item)=>{
-                    const checked = checkedKeys.indexOf(item.key)!=-1;
+                    let checked = checkedKeys.indexOf(item.key)!=-1;
                     const open = expandedKeys.indexOf(item.key)!=-1;
                     t.keyNameMapping[item.key] = item.name;
                     if(Array.isArray(item.children) && item.children.length>0){
+                        // 如果子节点全部被勾选，父节点自动勾选
+                        if(item.children.every(item=>checkedKeys.indexOf(item.key)!=-1)){
+                            checked = true;
+                        }
                         return {
                             ...item,
                             checked,
@@ -181,7 +186,6 @@ export default class VtxZtree extends React.Component{
         this.initTreeSetting(newProps);
         this.initTreeNodes(newProps);
         this.zTreeObj = $.fn.zTree.init($(`#${this.treeId}`), this.treeSetting, this.treeNodes);
-        console.log(this.zTreeObj)
         // if(Array.isArray(newProps.checkedKeys))this.checkNodes(newProps.checkedKeys);
         // if(Array.isArray(newProps.expandedKeys)){
         //     this.expandNodes(newProps.expandedKeys);
