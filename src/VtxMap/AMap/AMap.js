@@ -2,7 +2,8 @@ import React from 'react';
 import './AMap.less';
 import {graphicManage,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
-
+//公共地址配置
+import configUrl from '../../default';
 const {Set} = Immutable;
 class VortexAMap extends React.Component{
     constructor(props){
@@ -63,7 +64,7 @@ class VortexAMap extends React.Component{
             else{
                 $.getScript('http://webapi.amap.com/maps?v=1.4.6&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap',()=>{
                     let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/GPointCollection.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                             resolve();
                         });
                     });

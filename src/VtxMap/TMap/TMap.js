@@ -3,6 +3,8 @@ import './TMap.less';
 import {graphicManage,getMaxMin,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;
+//公共地址配置
+import configUrl from '../../default';
 class TMap extends React.Component{
     constructor(props){
         super(props);
@@ -61,12 +63,12 @@ class TMap extends React.Component{
                 $.getScript('http://api.tianditu.com/getscript?v=4.0',()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
                         //对象问题  和arcgis使用不同的热力图
-                        $.getScript('./resources/js/mapPlugin/Theatmap.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{
                             resolve();
                         });
                     });
                     let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript('./resources/js/mapPlugin/GPointCollection.js',()=>{
+                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                             resolve();
                         });
                     });
@@ -596,7 +598,7 @@ class TMap extends React.Component{
             //判断html还是图片
             if(!!item.markerContent){
                 markerOption.icon = new T.Icon({
-                    iconUrl: item.url || './resources/images/touming.png',
+                    iconUrl: item.url || `${configUrl.mapServerURL}/images/touming.png`,
                     iconSize: new T.Point(cg.width,cg.height),
                     iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
                 });
@@ -615,7 +617,7 @@ class TMap extends React.Component{
                 //统一加点
             }else{
                 markerOption.icon = new T.Icon({
-                    iconUrl: item.url || './resources/images/defaultMarker.png',
+                    iconUrl: item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     iconSize: new T.Point(cg.width,cg.height),
                     iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
                 });
@@ -643,7 +645,7 @@ class TMap extends React.Component{
             }else{
                 t.pointAnimation(item.id,null);
             }
-            if(cg.deg && !item.markerContent){
+            if(cg.deg){
                 marker.getElement().style.transform = marker.getElement().style.transform + ` rotate(${cg.deg}deg)`;
                 marker.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
             }
@@ -758,7 +760,7 @@ class TMap extends React.Component{
                 }else{
                     t.pointAnimation(item.id,null);
                 }
-                if(cg.deg && !item.markerContent){
+                if(cg.deg){
                     gc.getElement().style.transform = gc.getElement().style.transform + ` rotate(${cg.deg}deg)`;
                     gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
                 }
@@ -1058,9 +1060,9 @@ class TMap extends React.Component{
                             rings: [pts],
                             other: item
                         },
-                        geometryType: 'polygon',
+                        geometryType: 'polyline',
                         geometry: {
-                            type: 'polygon',
+                            type: 'polyline',
                             rings: [pts]
                         }
                     }
@@ -1367,7 +1369,7 @@ class TMap extends React.Component{
         switch(drawParam.geometryType){
             case 'point':
                 param.icon = new T.Icon({
-                    iconUrl: drawParam.parameter.url || './resources/images/defaultMarker.png',
+                    iconUrl: drawParam.parameter.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     iconSize: new T.Point(drawParam.parameter.width || 33,drawParam.parameter.height || 33),
                     iconAnchor: new T.Point(drawParam.parameter.width?drawParam.parameter.width/2:16.5,
                             drawParam.parameter.height?drawParam.parameter.height:33)
