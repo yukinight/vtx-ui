@@ -4,6 +4,7 @@ import _merge from 'lodash/merge';
 import './VtxZtree.less';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
+import CONFIG from '../default';
 
 const style = {
 	treeComponent: 'vtx-ui-ztree-component',
@@ -30,13 +31,13 @@ export default class VtxZtree extends React.Component{
     loadTreeResource(){
         if(!$.fn.zTree){
             const treeAll = new Promise((resolve)=>{
-                $.getScript("http://120.26.217.62:25048/ztree/js/jquery.ztree.all.min.js", function(){
-                    $.getScript("http://120.26.217.62:25048/ztree/js/jquery.ztree.exhide.min.js", function(){
+                $.getScript(`${CONFIG.ztreeServer}/js/jquery.ztree.all.min.js`, function(){
+                    $.getScript(`${CONFIG.ztreeServer}/js/jquery.ztree.exhide.min.js`, function(){
                         resolve();
                     });
                 });
             });
-            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/ztree/css/zTreeStyle/zTreeStyle.css"}).appendTo("head");
+            $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${CONFIG.ztreeServer}/css/zTreeStyle/zTreeStyle.css`}).appendTo("head");
             return treeAll;
         }
         else{
