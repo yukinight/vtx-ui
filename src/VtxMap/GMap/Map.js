@@ -728,7 +728,7 @@ class ArcgisMap extends React.Component{
                         wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace(wmtsLayer.UrlTemplate.substring(
                             wmtsLayer.UrlTemplate.indexOf('&FORMAT'),
                             wmtsLayer.UrlTemplate.indexOf('&TILEMATRIXSET')
-                        ),`&FORMAT=${services[im].format}`);
+                        ),`&FORMAT=${services[im].format || 'format/png'}`);
                         servs.push(wmtsLayer);
                     }
                 break;
@@ -781,7 +781,7 @@ class ArcgisMap extends React.Component{
                         wmtsLayer.UrlTemplate.substr(wmtsLayer.UrlTemplate.indexOf('&FORMAT='),
                         wmtsLayer.UrlTemplate.substr(
                             wmtsLayer.UrlTemplate.indexOf('&FORMAT=')+1).indexOf('&')+1),
-                            `&FORMAT=${defaultWmtsMapLayers.services[im].format}`
+                            `&FORMAT=${defaultWmtsMapLayers.services[im].format  || 'format/png'}`
                     );
                     servs.push(wmtsLayer);
                 }
