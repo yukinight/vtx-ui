@@ -77,14 +77,18 @@ class VtxModalList extends React.Component{
             }else{
                 let clone = (ary)=>{
                     return ary.map((item,index)=>{
-                        if(typeof(item) === 'string'){
+                        if(!!item){
+                            if(typeof(item) === 'string'){
+                                t.repeteList[index] = {};
+                                return item;
+                            }
+                            if(item instanceof Array){
+                                return clone(item);
+                            }
+                            return t.cloneComponent(item, index);
+                        }else{
                             t.repeteList[index] = {};
-                            return item;
                         }
-                        if(item instanceof Array){
-                            return clone(item);
-                        }
-                        return t.cloneComponent(item, index);
                     })
                 }
                 // let elems = chil.map((item,index)=>{
