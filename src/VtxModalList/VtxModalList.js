@@ -270,7 +270,7 @@ class VtxModalList extends React.Component{
             值为空时,不验证重复,验证是否为空等
             值不为空时,验证重复,和验证其他状态
          */
-        if((!value || typeof(value) == 'string' && !value.trim()) && (mld.layout || {}).require){
+        if(((!value && value != 0) || typeof(value) == 'string' && !value.trim()) && (mld.layout || {}).require){
             //全局判断是不是不验证状态 isRequired==true时不执行验证
             if(!isRequired){
                 required = false;
@@ -342,7 +342,7 @@ class VtxModalList extends React.Component{
                 if(r.type == 'default'){
                     //重新验证一遍
                     //必填项 值为空
-                    if((r.mld.layout || {}).require && (!r.value || typeof(r.value) == 'string' && !r.value.trim())){
+                    if((r.mld.layout || {}).require && ((!r.value && r.value != 0) || typeof(r.value) == 'string' && !r.value.trim())){
                         resolve(false);
                         break;
                     }
