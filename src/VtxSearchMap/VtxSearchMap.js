@@ -170,6 +170,7 @@ class VtxSearchMap extends React.Component {
             editGraphic = {...this.props.editParam,id: 'drawnGraph'};
             editGraphicId = 'drawnGraph';
         }
+        this.isinit = false;
         this.setState({
             editGraphic,
             locationPoint: [{
@@ -355,11 +356,8 @@ class VtxSearchMap extends React.Component {
             modal1Visible,
             drawGraphID,
             isShowOther,otherText,isShowOtherGraph,
-            editGraphic
+            editGraphic,graphicType
         } = this.state;
-        let {
-            graphicType
-        } = this.props;
         const InputProps = {
             style: {'width': '200px'},
             placeholder: '输入关键字',
@@ -368,7 +366,7 @@ class VtxSearchMap extends React.Component {
             onPressEnter: this.searchList.bind(this),
             onKeyDown: this.changeValue.bind(this)
         };
-        let drawProps = this.state.graphicType=='point'?null:{
+        let drawProps = this.state.graphicType=='point' || t.isinit?null:{
             isDraw:this.state.isDraw,
             drawEnd:(obj)=>{
                 let objparam = {
@@ -401,14 +399,12 @@ class VtxSearchMap extends React.Component {
             if(editGraphic){
                 mapPolygons.push(editGraphic);
                 drawProps = null;
-
             }
         }
         if(graphicType === 'polyline'){
             if(editGraphic){
                 mapLines.push(editGraphic);
                 drawProps = null;
-
             }
         }
         if(isShowOtherGraph){
@@ -541,19 +537,8 @@ class VtxSearchMap extends React.Component {
             </VtxModal>
         );
     }
-    componentDidMount(){
-        //绘制定位点(以当前的中心点位参照=>初始化好后才有ref可以获取中心点)
-        if (this.props.modal1Visible) {
-            if(this.map){
-                this.map.loadMapComplete.then(()=>{
-                    this.mapLoaded = true;
-                    this.drawLocationPoint();
-                });
-            }
-        }
-    }
-    componentDidUpdate(prevProps, prevState) {//重新渲染结束
-        if (this.props.modal1Visible && !this.state.locationPoint[0]) {
+    initSearchMap(){
+        if (this.props.modal1Visible /*&& !this.state.locationPoint[0]*/) {
             if(this.map){
                 this.map.loadMapComplete.then(()=>{
                     if(!this.mapLoaded){
@@ -564,11 +549,29 @@ class VtxSearchMap extends React.Component {
             }
         }
     }
+    componentDidMount(){
+        //绘制定位点(以当前的中心点位参照=>初始化好后才有ref可以获取中心点)
+        this.initSearchMap();
+    }
+    componentDidUpdate(prevProps, prevState) {//重新渲染结束
+        this.initSearchMap();
+    }
     componentWillReceiveProps(nextProps){
+        let t = this;
+        if(t.state.graphicType !== nextProps.graphicType && !!this.map){
+            this.map.clearAll();
+            t.mapLoaded = false;
+            t.isinit = true;
+        }
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter,
-           mapType: nextProps.mapType
+           mapType: nextProps.mapType,
+           graphicType: nextProps.graphicType,
+           isDraw: nextProps.graphicType,
+           editGraphicId: '',
+        },()=>{
+            t.initSearchMap();
         });
         setTimeout(()=>{
             //实现2+次进入时,清理数据
