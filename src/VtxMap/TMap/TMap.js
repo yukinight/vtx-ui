@@ -1021,7 +1021,7 @@ class TMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //多边形点位数据不符合,直接跳过
                 if(!(item.rings && item.rings.length >= 3)){
-                    console.error(`多边形paths数据错误`);
+                    console.error(`多边形rings数据错误`);
                     return false;
                 }
                 //获取原有的图元

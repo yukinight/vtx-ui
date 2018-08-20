@@ -728,7 +728,7 @@ class ArcgisMap extends React.Component{
                         wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace(wmtsLayer.UrlTemplate.substring(
                             wmtsLayer.UrlTemplate.indexOf('&FORMAT'),
                             wmtsLayer.UrlTemplate.indexOf('&TILEMATRIXSET')
-                        ),`&FORMAT=${services[im].format}`);
+                        ),`&FORMAT=${services[im].format || 'format/png'}`);
                         servs.push(wmtsLayer);
                     }
                 break;
@@ -781,7 +781,7 @@ class ArcgisMap extends React.Component{
                         wmtsLayer.UrlTemplate.substr(wmtsLayer.UrlTemplate.indexOf('&FORMAT='),
                         wmtsLayer.UrlTemplate.substr(
                             wmtsLayer.UrlTemplate.indexOf('&FORMAT=')+1).indexOf('&')+1),
-                            `&FORMAT=${defaultWmtsMapLayers.services[im].format}`
+                            `&FORMAT=${defaultWmtsMapLayers.services[im].format  || 'format/png'}`
                     );
                     servs.push(wmtsLayer);
                 }
@@ -1063,6 +1063,9 @@ class ArcgisMap extends React.Component{
                         }
                     }
                 );
+            }else{
+                console.error(`更新的点位id不存在!`);
+                return false;
             }
         });
         t.state.gis.graphics.refresh(); 
@@ -1341,7 +1344,7 @@ class ArcgisMap extends React.Component{
             if (t.GM.isRepetition(item.id)) {
                 //多边形点位数据不符合,直接跳过
                 if(!(item.rings && item.rings.length >= 3)){
-                    console.error(`多边形paths数据错误`);
+                    console.error(`多边形rings数据错误`);
                     return false;
                 }
             }else{
