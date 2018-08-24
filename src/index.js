@@ -13,3 +13,4 @@ export {VtxTree} from './VtxTree';
 export {VtxTreeSelect} from './VtxTreeSelect';
 export {VtxModalList} from './VtxModalList';
 export {VtxZtree} from './VtxZtree';
+export {VtxZtreeSelect} from './VtxZtreeSelect';

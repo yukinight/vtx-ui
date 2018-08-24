@@ -12,12 +12,14 @@ import VtxGrid from './routes/grid';
 import ComboGrid from './routes/comboGrid';
 import VtxModal from './routes/modal';
 import Upload from './routes/upload';
+import ZTree from './routes/ztree';
 
 function RouterConfig({ history }) {
   return (
     <Router history={history}>
         <Route path="/" component={IndexPage} />
         <Route path="/tree" component={Tree} />
+        <Route path="/ztree" component={ZTree} />
         <Route path="/datagrid" component={DataGrid} />
         <Route path="/map" component={VMap} />   
         <Route path="/optmap" component={OMap} />   
