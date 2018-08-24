@@ -222,16 +222,16 @@ export function getPixelDistance(lt1,lt2){
     return d;
 }
 //计算2点间的距离 (单位m)
-export function getDistance(point1,point2,map){
+export function getDistance(point1,point2,map,wkid){
     let lt1 = map.toScreen(new esri.geometry.Point({
         longitude: point1[0],
         latitude: point1[1],
-        spatialReference:{ wkid: 4326 }
+        spatialReference:{ wkid: wkid || 4326 }
     }));
     let lt2 = map.toScreen(new esri.geometry.Point({
         longitude: point2[0],
         latitude: point2[1],
-        spatialReference:{ wkid: 4326 }
+        spatialReference:{ wkid: wkid || 4326 }
     }));
     let x = Math.abs(lt1.x - lt2.x);
     let y = Math.abs(lt1.y - lt2.y);

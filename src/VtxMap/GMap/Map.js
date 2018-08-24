@@ -208,7 +208,8 @@ class ArcgisMap extends React.Component{
                         t.rangingTool.distance += getDistance(lnlt,
                             [t.rangingTool.points[t.rangingTool.points.length-1].longitude,
                             t.rangingTool.points[t.rangingTool.points.length-1].latitude],
-                            t.state.gis
+                            t.state.gis,
+                            t.state.wkid
                         );
                     }else{
                         t.rangingTool.line.paths = [];
@@ -347,7 +348,8 @@ class ArcgisMap extends React.Component{
                             [e.mapPoint.x,e.mapPoint.y],
                             [t.rangingTool.points[t.rangingTool.points.length-1].longitude,
                             t.rangingTool.points[t.rangingTool.points.length-1].latitude],
-                            t.state.gis
+                            t.state.gis,
+                            t.state.wkid
                         );
                         // 实时计算距离
                         distance += t.rangingTool.distance;
@@ -2683,7 +2685,8 @@ class ArcgisMap extends React.Component{
                     let radius = getDistance(
                         [e.geometry._extent.xmin,e.geometry._extent.ymin],
                         [e.geometry._extent.xmax,e.geometry._extent.ymax],
-                        t.state.gis
+                        t.state.gis,
+                        t.state.wkid
                     )/2;
                     radius = Math.sqrt(Math.pow(radius,2)*2)/2;
                     t.addCircle([{
@@ -3062,7 +3065,7 @@ class ArcgisMap extends React.Component{
     }
     //计算2点间距离 单位m 精确到2位小数
     calculatePointsDistance(fp,ep){
-        return getDistance(fp,ep,this.state.gis);
+        return getDistance(fp,ep,this.state.gis,this.state.wkid);
     }
     //计算多个点的距离(常用于线计算)
     calculateDistance(ps){
