@@ -221,6 +221,28 @@ class VtxModalList extends React.Component{
                         elem.props.onChange(e);
                     }
                 }}:{}
+            ),
+            //聚焦事件
+            ...(
+                ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                    (mld.layout || {}).comType == 'input') && 
+                {onFocus: (e)=>{
+                    if('onFocus' in elem.props &&
+                        typeof(elem.props.onBlur) == 'function'){
+                        elem.props.onFocus(e);
+                    }
+                    if(reg.repete && e.target.value){
+                        t.repeteList[index] = {
+                            ...t.repeteList[index],
+                            isRepete: true,
+                            errorMsg: ''
+                        }
+                        t.setState({
+                            //刷新用
+                            isRefresh: +t.state.isRefresh,
+                        })
+                    }
+                }}:{}
             )
         });
         t.repeteList[index] = {
