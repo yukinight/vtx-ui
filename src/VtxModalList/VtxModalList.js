@@ -225,7 +225,7 @@ class VtxModalList extends React.Component{
             //聚焦事件
             ...(
                 ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
-                    (mld.layout || {}).comType == 'input') && 
+                    (mld.layout || {}).comType == 'input')?
                 {onFocus: (e)=>{
                     if('onFocus' in elem.props &&
                         typeof(elem.props.onBlur) == 'function'){
