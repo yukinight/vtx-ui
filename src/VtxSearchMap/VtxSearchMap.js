@@ -422,6 +422,7 @@ class VtxSearchMap extends React.Component {
               style={{ top: 50 }}
               visible={modal1Visible}
               wrapClassName={styles.searchModal}
+              bodyStyle={{height:`${window.innerHeight*0.7}px`}}
               maskClosable={false}
               onCancel={this.closeModal.bind(this)} 
               footer={null}

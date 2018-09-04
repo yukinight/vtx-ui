@@ -38,6 +38,7 @@ $ import {VtxTree} from 'vtx-ui';
 $ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
+$ import {VtxZtreeSelect} from 'vtx-ui';
 ```
 
 ## 使用动态加载babel-plugin-import的调用方式
@@ -78,6 +79,7 @@ $ import {VtxTree} from 'vtx-ui';
 $ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
+$ import {VtxZtreeSelect} from 'vtx-ui';
 ```
 
 

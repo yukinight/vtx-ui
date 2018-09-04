@@ -12,16 +12,18 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 function VtxModal(props) {
-    let ModalProps = {...props};
-    let closable = true;
-    if('closable' in props){
-        closable = props.closable;
-    }
-    function renderTitle() {
+    let {closable=true,wrapClassName='',title='',bodyStyle={},...ModalProps} = props;
+    
+    wrapClassName = `${styles.normal} ${wrapClassName}`;
+    bodyStyle = {
+        maxHeight:`${window.innerHeight*0.7}px`,
+        ...bodyStyle,
+    };
+    title = (function renderTitle() {
         return (
             <div className={styles.title} style={{paddingRight: (closable?'32px':'0px')}}>
                 <div className={styles.title_name}>
-                    {ModalProps.title}
+                    {title}
                 </div>
                 {
                     closable?
@@ -33,12 +35,8 @@ function VtxModal(props) {
                 }
             </div>
         );
-    }
-    let wrapClassName = `${styles.normal} ${ModalProps.wrapClassName}`;
-    let title = renderTitle();
-    delete ModalProps.closable;
-    delete ModalProps.wrapClassName;
-    delete ModalProps.title;
+    })();
+
     return (
         <Modal 
             width={700}
@@ -46,6 +44,7 @@ function VtxModal(props) {
             closable={false}
             title={title}
             wrapClassName={wrapClassName}
+            bodyStyle={bodyStyle}
             {...ModalProps}
         >
             {
