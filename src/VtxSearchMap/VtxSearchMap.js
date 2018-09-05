@@ -566,11 +566,11 @@ class VtxSearchMap extends React.Component {
         }
         this.setState({
            modal1Visible: nextProps.modal1Visible,
-           mapCenter: nextProps.mapCenter,
-           mapType: nextProps.mapType,
-           graphicType: nextProps.graphicType,
-           isDraw: nextProps.graphicType,
-           editGraphicId: '',
+           mapCenter: nextProps.mapCenter || '',
+           mapType: nextProps.mapType || 'bmap',
+           graphicType: nextProps.graphicType ||'point',
+           isDraw: nextProps.graphicType!=='point',
+           editGraphicId: ''
         },()=>{
             t.initSearchMap();
         });
