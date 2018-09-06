@@ -209,17 +209,17 @@ class VtxModalList extends React.Component{
                     // if(required || value === ''){
                     //     elem.props.onChange(e);
                     // }
-                    if(maxNum){
-                        if(typeof(maxNum) == 'number'){
-                            if(e.target.value.length <= maxNum){
-                                elem.props.onChange(e);
-                            }
-                        }else{
-                            console.error('maxNum必须为number类型');
-                        }
-                    }else{
+                    // if(maxNum){
+                    //     if(typeof(maxNum) == 'number'){
+                    //         if(e.target.value.length <= maxNum){
+                    //             elem.props.onChange(e);
+                    //         }
+                    //     }else{
+                    //         console.error('maxNum必须为number类型');
+                    //     }
+                    // }else{
                         elem.props.onChange(e);
-                    }
+                    // }
                 }}:{}
             ),
             //聚焦事件
@@ -253,7 +253,7 @@ class VtxModalList extends React.Component{
             type: ty,
             elem: e
         }
-        let {required,errorMsg} = t.verify(reg.value,mld,index,reg.repete);
+        let {required,errorMsg} = t.verify(reg.value,mld,index,isMaxNum,reg.repete);
         
         return (
             <LayoutComponent 
@@ -283,7 +283,7 @@ class VtxModalList extends React.Component{
         )
     }
     //数据验证展示
-    verify(value='',mld,index,repete=''){
+    verify(value='',mld,index,isMaxNum,repete=''){
         let t = this,
             isRequired = t.state.isRequired,
             reg = mld.regexp || {};
@@ -299,41 +299,46 @@ class VtxModalList extends React.Component{
                 errorMsg = '必填项';
             }
         }else{
-            //判断是否重复
-            if(!t.repeteList[index].isRepete && !!repete){
+            if(!isRequired && isMaxNum && value.length > eval((mld.layout || {}).maxNum)){
                 required = false;
-                errorMsg = t.repeteList[index].errorMsg?t.repeteList[index].errorMsg:'字段重复';
+                errorMsg = '字数超限';
             }else{
-                if(!!reg.exp && !isRequired && value){
-                    if(reg.exp instanceof RegExp){
-                        required = reg.exp.test(value);
-                        errorMsg = '数据不符合规范';
-                        if(typeof(reg.errorMsg) == 'string'){
-                            errorMsg = reg.errorMsg;
-                        }
-                    }else if(reg.exp instanceof Function){
-                        required = reg.exp(value);
-                        errorMsg = '数据不符合规范';
-                        if(typeof(reg.errorMsg) == 'string'){
-                            errorMsg = reg.errorMsg;
-                        }
-                    }else if(reg.exp instanceof Array){
-                        errorMsg = '数据不符合规范';
-                        for(let i = 0 ; i < reg.exp.length; i++){
-                            if(reg.exp[i] instanceof RegExp){
-                                required = reg.exp[i].test(value);
-                            }else if(reg.exp[i] instanceof Function){
-                                required = reg.exp[i](value);
+                //判断是否重复
+                if(!t.repeteList[index].isRepete && !!repete){
+                    required = false;
+                    errorMsg = t.repeteList[index].errorMsg?t.repeteList[index].errorMsg:'字段重复';
+                }else{
+                    if(!!reg.exp && !isRequired && value){
+                        if(reg.exp instanceof RegExp){
+                            required = reg.exp.test(value);
+                            errorMsg = '数据不符合规范';
+                            if(typeof(reg.errorMsg) == 'string'){
+                                errorMsg = reg.errorMsg;
                             }
-                            if(!required){
-                                if(reg.errorMsg instanceof Array){
-                                    errorMsg = reg.errorMsg[i] || errorMsg;
+                        }else if(reg.exp instanceof Function){
+                            required = reg.exp(value);
+                            errorMsg = '数据不符合规范';
+                            if(typeof(reg.errorMsg) == 'string'){
+                                errorMsg = reg.errorMsg;
+                            }
+                        }else if(reg.exp instanceof Array){
+                            errorMsg = '数据不符合规范';
+                            for(let i = 0 ; i < reg.exp.length; i++){
+                                if(reg.exp[i] instanceof RegExp){
+                                    required = reg.exp[i].test(value);
+                                }else if(reg.exp[i] instanceof Function){
+                                    required = reg.exp[i](value);
                                 }
-                                break;
+                                if(!required){
+                                    if(reg.errorMsg instanceof Array){
+                                        errorMsg = reg.errorMsg[i] || errorMsg;
+                                    }
+                                    break;
+                                }
                             }
+                        }else{
+                            console.error('参数reg: 格式不是验证方法或正则表达式!');
                         }
-                    }else{
-                        console.error('参数reg: 格式不是验证方法或正则表达式!');
                     }
                 }
             }
@@ -370,7 +375,12 @@ class VtxModalList extends React.Component{
                     }
                     //有值  做正则判断
                     if(r.value && !(typeof(r.value) == 'string' && !r.value.trim())){
-                        let reg = r.mld.regexp || {},required =true;
+                        let reg = r.mld.regexp || {},required =true,maxNum = eval((r.mld.layout || {}).maxNum);
+                        //判断字数是否超限
+                        if(!!maxNum && r.value.length > maxNum){
+                            resolve(false);
+                            break;
+                        }
                         if(!!reg.exp){
                             if(reg.exp instanceof RegExp){
                                 required = reg.exp.test(r.value);
