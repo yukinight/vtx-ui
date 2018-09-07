@@ -288,7 +288,13 @@ class TMap extends React.Component{
                 }else if(typeof(obj.fitView) === 'string'){
                     ids = obj.fitView.split(',');
                 }
-                ls = getLngLats(ids);
+                if(ids[0] instanceof Array){
+                    for(let i = 0 ; i < ids.length ; i++){
+                        ls = new T.LngLat(ids[i][0],ids[i][1]);
+                    }
+                }else{
+                    ls = getLngLats(ids);
+                }
             break;
         }
         if(ls.length > 1){

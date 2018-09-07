@@ -1356,7 +1356,15 @@ class BaiduMap extends React.Component{
             ary = arg.split(',');
             obj = t.getFitView(ary);
         }else if(arg instanceof Array){
-            obj = t.getFitView(arg);
+            if(ary[0] instanceof Array){
+                let a = [];
+                for(let i = 0 ; i < ary.length ; i++){
+                    a = new BMap.Point(ary[i][0],ary[i][1]);
+                }
+                obj = t.state.gis.getViewport(a);
+            }else{
+                obj = t.getFitView(arg);
+            }
         }
         if(!obj){return false} 
         if(!type || type == 'all'){

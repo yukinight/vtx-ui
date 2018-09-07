@@ -1833,19 +1833,23 @@ class ArcgisMap extends React.Component{
         }else if(arg instanceof Array){
             ary = arg;
         }
-        for(let i = 0 ; i < ary.length ; i++){
-            let g = t.GM.getGraphicParam(ary[i]);
-            switch(g.geometry.type){
-                case 'point':
-                case 'circle':
-                    obj.push([g.geometry.x,g.geometry.y]);
-                break;
-                case 'polyline':
-                    obj = [...obj,...g.geometry.paths];
-                break;
-                case 'polygon':
-                    obj = [...obj,...g.geometry.rings];
-                break;
+        if(ary[0] instanceof Array){
+            obj = [...obj,...ary];
+        }else{
+            for(let i = 0 ; i < ary.length ; i++){
+                let g = t.GM.getGraphicParam(ary[i]);
+                switch(g.geometry.type){
+                    case 'point':
+                    case 'circle':
+                        obj.push([g.geometry.x,g.geometry.y]);
+                    break;
+                    case 'polyline':
+                        obj = [...obj,...g.geometry.paths];
+                    break;
+                    case 'polygon':
+                        obj = [...obj,...g.geometry.rings];
+                    break;
+                }
             }
         }
         let {_extent} = t.dealData(obj);
