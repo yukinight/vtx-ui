@@ -60,7 +60,7 @@ class TMap extends React.Component{
                 resolve(window.T);
             }
             else{
-                $.getScript('http://api.tianditu.com/getscript?v=4.0',()=>{
+                $.getScript('http://api.tianditu.com/getscript?v=4.0&tk=e781ae595c43649431fb7270328e0669',()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
                         //对象问题  和arcgis使用不同的热力图
                         $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{
@@ -288,7 +288,13 @@ class TMap extends React.Component{
                 }else if(typeof(obj.fitView) === 'string'){
                     ids = obj.fitView.split(',');
                 }
-                ls = getLngLats(ids);
+                if(ids[0] instanceof Array){
+                    for(let i = 0 ; i < ids.length ; i++){
+                        ls = new T.LngLat(ids[i][0],ids[i][1]);
+                    }
+                }else{
+                    ls = getLngLats(ids);
+                }
             break;
         }
         if(ls.length > 1){

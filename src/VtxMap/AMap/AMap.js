@@ -421,6 +421,7 @@ class VortexAMap extends React.Component{
     //设置指定图元展示   高德只有zoom和center全适应,单适应暂时无法实现
     setVisiblePoints(obj){
         let t = this;
+        let ids = [];
         switch(obj.fitView){
             case 'point':
                 t.state.gis.setFitView(t.state.gis.getAllOverlays('marker'));
@@ -440,13 +441,19 @@ class VortexAMap extends React.Component{
                 t.state.gis.setFitView(pts);
             break;
             default:
-                let ids = [];
                 if(obj.fitView instanceof Array){
                     ids = obj.fitView;
                 }else if(typeof(obj.fitView) === 'string'){
                     ids = obj.fitView.split(',');
                 }
-                t.state.gis.setFitView(this.GM.getMoreGraphic(ids));
+                if(ids[0] instanceof Array){
+                    let l = new AMap.LngLat(ids[0][0],ids[0][1]),
+                        r = new AMap.LngLat(ids[1][0],ids[1][1]); 
+                    let b = new AMap.Bounds(l,r); 
+                    t.state.gis.setBounds(b);
+                }else{
+                    t.state.gis.setFitView(this.GM.getMoreGraphic(ids));
+                }
             break;
         }
     }
