@@ -21,7 +21,7 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 const TreeNode = Tree.TreeNode;
 const Search = Input.Search;
-
+import _isEqual from 'lodash/isEqual';
 
 class VtxTree extends React.Component {
 	constructor(props){
@@ -500,6 +500,28 @@ class VtxTree extends React.Component {
 		let keys = t.getLeafKeys();
 		if(!!t.state.onLoad && !!t.state.data[0])
 			t.state.onLoad({leafNode:keys.leafNode,leafKeys:keys.leafKeys});
+    }
+    shouldComponentUpdate(nextProps, nextState){
+    	let t = this;
+    	let oldProps = {...t.props};
+    	let newProps = {...nextProps};
+    	delete oldProps.onClick;
+    	delete oldProps.onCheck;
+    	delete oldProps.onLoadData;
+    	delete oldProps.onExpand;
+    	delete oldProps.onRightClick;
+    	delete oldProps.onLoad;
+    	delete oldProps.searchInput;
+
+    	delete newProps.onClick;
+    	delete newProps.onCheck;
+    	delete newProps.onLoadData;
+    	delete newProps.onExpand;
+    	delete newProps.onRightClick;
+    	delete newProps.onLoad;
+    	delete newProps.searchInput;
+		return !_isEqual(oldProps,newProps);
+    	
     }
 	componentWillReceiveProps(nextProps) {//已加载组件，收到新的参数时调用
     	let t = this;
