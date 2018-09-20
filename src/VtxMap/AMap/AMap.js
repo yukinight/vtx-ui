@@ -694,7 +694,7 @@ class VortexAMap extends React.Component{
         t.heatmap.setOptions(option);
         t.heatmap.setDataSet({
             max: cg.max,
-            data: d.data
+            data: d.data || []
         })
         if(cg.visible){
             t.heatmap.show();
