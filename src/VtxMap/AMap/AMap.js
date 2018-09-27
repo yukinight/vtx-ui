@@ -2259,8 +2259,10 @@ class VortexAMap extends React.Component{
         //关闭moveTo定时
         let t = this;
         for(let i in t.GM.allParam){
-            if(t.GM.allParam.type == 'point'){
-                t.GM.getGraphic[i].stopMove();
+            if(t.GM.allParam[i].geometryType == 'point'){
+                if(t.GM.getGraphic[i]){
+                    t.GM.getGraphic[i].stopMove();
+                }
             }
         }
     }
