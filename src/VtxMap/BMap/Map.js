@@ -1107,7 +1107,7 @@ class BaiduMap extends React.Component{
         t.heatmap.setOptions(option);
         t.heatmap.setDataSet({
             max: cg.max,
-            data: d.data
+            data: d.data || []
         });
         if(cg.visible){
             t.heatmap.show();
@@ -1392,7 +1392,7 @@ class BaiduMap extends React.Component{
         if(ids.length > 0){
             let allLayers = [];
             for(let i = 0 ; i < ids.length ; i++){
-                switch(t.GM.getGraphicParam(ids[i]).geometryType){
+                switch((t.GM.getGraphicParam(ids[i]) || {}).geometryType){
                     case 'point':
                         allLayers.push(t.GM.getGraphic(ids[i]).getPosition());
                     break;
@@ -2458,7 +2458,9 @@ class BaiduMap extends React.Component{
     componentWillUnmount() {
         //关闭moveTo定时
         let t = this;
-        t.state.gis.clearOverlays();
+        if(t.state.gis){
+            t.state.gis.clearOverlays();
+        }
         t.state.gis = null;
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
