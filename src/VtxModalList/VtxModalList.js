@@ -247,8 +247,10 @@ class VtxModalList extends React.Component{
         });
         t.repeteList[index] = {
             isRepete: true,//是否重复
+            // ...(t.repeteList[index] || {}),//记录 重复验证信息
+            // ...reg,
             ...(t.repeteList[index] || {}),//记录 重复验证信息
-            ...reg,
+            ...((t.repeteList[index]?(t.repeteList[index].isRepete?reg:{}):reg)),
             mld,
             type: ty,
             elem: e
