@@ -13,6 +13,8 @@ import ComboGrid from './routes/comboGrid';
 import VtxModal from './routes/modal';
 import Upload from './routes/upload';
 import ZTree from './routes/ztree';
+import ImportFile from './routes/importFile';
+import ExportFile from './routes/exportFile';
 
 function RouterConfig({ history }) {
   return (
@@ -30,6 +32,8 @@ function RouterConfig({ history }) {
         <Route path="/combogrid" component={ComboGrid} />  
         <Route path="/modal" component={VtxModal} />  
         <Route path="/upload" component={Upload} />  
+        <Route path="/import" component={ImportFile} />  
+        <Route path="/export" component={ExportFile} />  
     </Router>
   );
 }

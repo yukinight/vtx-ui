@@ -30,7 +30,7 @@ class VtxImport extends React.Component{
         this.fileKey = props.fileKey || 'file';
         this.accept = props.accept || 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,text/csv';
         // console.log('useFormData',this.useFormData);
-        this.uploadURL = props.uploadURL || 'http://localhost:8989/';
+        this.uploadURL = props.uploadURL;
         this.state = {
             visible:true,
             uploading:false,
@@ -45,6 +45,7 @@ class VtxImport extends React.Component{
         }
     }
     closeModal(){
+        this.fileInput.value = '';
         if(typeof this.props.close === 'function'){
             this.props.close();
         }
