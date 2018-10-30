@@ -12,20 +12,13 @@ const styles = {
     uploadCt: 'vtx-ui-upload-uploadct'
 }
 
-// 默认上传文件接口
-const defaultUploadURL = 'http://192.168.1.207:18084/cloudFile/common/uploadFile';
-// 默认下载文件地址，与ID挂钩
-const defaultDownloadURL = 'http://192.168.1.207:18084/cloudFile/common/downloadFile?id=';
-// 默认nginx代理地址，兼容IE10以下的跨域情况
-const proxyUploadURL = `http://${document.location.host}/uploadFilesProxy/`;
-
 class VortexUpload extends React.Component{
     constructor(props){
         super(props); 
         let t = this;
         // 初始化上传下载的地址
-        this.uploadURL = props.action || defaultUploadURL;
-        this.downLoadURL = props.downLoadURL || defaultDownloadURL;
+        this.uploadURL = props.action;
+        this.downLoadURL = props.downLoadURL;
         // 可在外部配置的属性，具体文档参考AntUI
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
         'disabled','withCredentials','beforeUpload'];
@@ -39,8 +32,8 @@ class VortexUpload extends React.Component{
         let t = this;
         let props = this.props;
         // 重置上传下载的地址
-        t.uploadURL = props.action || defaultUploadURL;
-        t.downLoadURL = props.downLoadURL || defaultDownloadURL;
+        t.uploadURL = props.action;
+        t.downLoadURL = props.downLoadURL;
         let config = {
             action: t.uploadURL,
             fileList: t.state.fileList,
@@ -94,16 +87,6 @@ class VortexUpload extends React.Component{
             }
         }
 
-        // 判断浏览器是否<IE10, IE10以下需用代理跨域上传文件，其他使用CORS进行跨域上传文件
-        // let matchRes = navigator.userAgent.match(/MSIE (\d+)/);
-        // if(matchRes && matchRes[1]<10){
-        //判断是否IE
-        if(!!window.ActiveXObject || "ActiveXObject" in window){
-            // 未配置上传地址使用默认地址，需切换到代理
-            if(!props.action){
-                config.action = proxyUploadURL;
-            }
-        }
         
         // 继承相关配置
         for(let p of  t.configurableProperty){
