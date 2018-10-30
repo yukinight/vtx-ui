@@ -93,7 +93,7 @@ class VtxSearchMap extends React.Component {
             modal1Visible: props.modal1Visible || false,
             isShowOther: props.isShowOther || false,
             otherText: props.otherText || '显示服务区域',
-            isShowOtherGraph: false
+            isShowOtherGraph: props.isShowOther || false
         }
     }
     //经纬度回调
@@ -411,9 +411,9 @@ class VtxSearchMap extends React.Component {
             let {otherGraph} = this.props;
             if(otherGraph){
                 mapPoints = [...mapPoints,...(otherGraph.point || [])];
-                mapLines=[...(otherGraph.polyline || [])];
-                mapPolygons=[...(otherGraph.polygon || [])];
-                mapCircles=[...(otherGraph.circle || [])];
+                mapLines=[...mapLines,...(otherGraph.polyline || [])];
+                mapPolygons=[...mapPolygons,...(otherGraph.polygon || [])];
+                mapCircles=[...mapCircles,...(otherGraph.circle || [])];
             }
         }
         return (
