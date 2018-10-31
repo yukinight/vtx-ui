@@ -165,6 +165,7 @@ class VtxSearchMap extends React.Component {
     }
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
+        let t = this;
         let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
         if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
             editGraphic = {...this.props.editParam,id: 'drawnGraph'};
@@ -183,11 +184,11 @@ class VtxSearchMap extends React.Component {
                 }
             }],
         },()=>{
-            this.setState({
+            t.setState({
                 isDoEdit: true,
                 editGraphicId
             },()=>{
-                this.setState({
+                t.setState({
                     isDoEdit: false
                 })
             })
@@ -426,7 +427,6 @@ class VtxSearchMap extends React.Component {
               maskClosable={false}
               onCancel={this.closeModal.bind(this)} 
               footer={null}
-              // closable={false}
             >
                 <div className={styles.searchMap}>
                     {/*地图操作分类*/}
@@ -562,12 +562,15 @@ class VtxSearchMap extends React.Component {
             t.mapLoaded = false;
             t.isinit = true;
         }
+        if(nextProps.editParam){
+            t.mapLoaded = false;
+        }
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter || '',
            mapType: nextProps.mapType || 'bmap',
            graphicType: nextProps.graphicType ||'point',
-           isDraw: nextProps.graphicType!=='point',
+           isDraw: nextProps.graphicType!=='point' && !nextProps.editParam,
            editGraphicId: ''
         },()=>{
             t.initSearchMap();

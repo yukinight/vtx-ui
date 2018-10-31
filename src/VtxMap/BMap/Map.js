@@ -1570,6 +1570,23 @@ class BaiduMap extends React.Component{
                     t.state.drawIds.rectangle.splice(t.state.drawIds.rectangle.indexOf(id),1);
                 }
             break;
+            default:
+                if(t.state.pointIds.indexOf(id) > -1){
+                    t.state.pointIds.splice(t.state.pointIds.indexOf(id),1);
+                }
+                if(t.state.lineIds.indexOf(id) > -1){
+                    t.state.lineIds.splice(t.state.lineIds.indexOf(id),1);
+                }
+                if(t.state.polygonIds.indexOf(id) > -1){
+                    t.state.polygonIds.splice(t.state.polygonIds.indexOf(id),1);
+                }
+                if(t.state.circleIds.indexOf(id) > -1){
+                    t.state.circleIds.splice(t.state.circleIds.indexOf(id),1);
+                }
+            break;
+        }
+        if(id == t.state.editId){
+            t.state.editId = '';
         }
         if(ids.indexOf(id) != -1){
             ids.splice(ids.indexOf(id),1);
