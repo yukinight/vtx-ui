@@ -502,10 +502,16 @@ function VerificationComponent(props){
 function LayoutComponent(props) {
     let {children,name,require,width,className,type = 'default',style={}} = props;
     width = type == 'title'?100:width;
+    let s = {};
+    if(width){
+        s = {...style,width:(width+'%')};
+    }else{
+        s = {...style}
+    }
     return (
         <div 
             className={`${name?'vtx-ui-modallist-list_pl':'vtx-ui-modallist-list_p0'} ${type == 'title'?'vtx-ui-modallist-list-title':''} ${className}`}
-            style={{...style,width:(width+'%')}}
+            style={s}
         >
             {
                 name?
