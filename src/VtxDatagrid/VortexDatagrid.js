@@ -36,7 +36,7 @@ class VortexDatagrid extends React.Component{
             nowrap:this.ifNowrap(),
             bodyHeight:null,
             // columnConfig: this.columnHandler(),
-            columnsVisibility:props.columns.map(item=>({title:item.title,visible:true})),
+            columnsVisibility:props.columns.map(item=>({title:item.title,key:item.key,visible:true})),
         }
         this.resetHeight = this.resetHeight.bind(this);
     }
@@ -132,12 +132,12 @@ class VortexDatagrid extends React.Component{
 
         return columnConfig;
     }
-    changeColumnVisibility(title,visible){
+    changeColumnVisibility(key,visible){
         this.setState({
             columnsVisibility: this.state.columnsVisibility.map(item=>{
-                if(item.title==title){
+                if(item.key==key){
                     return {
-                        title,
+                        ...item,
                         visible
                     }
                 }
@@ -194,12 +194,12 @@ class VortexDatagrid extends React.Component{
 
     getNewProps(){
         let t = this;
-        let deletedTitles = t.state.columnsVisibility.filter((item)=>!item.visible).map(item=>item.title);
+        let deletedTitles = t.state.columnsVisibility.filter((item)=>!item.visible).map(item=>item.key);
 
         let newProps = {
             ...t.props,
             columns: t.columnHandler().filter((item)=>{
-                return deletedTitles.indexOf(item.title)==-1
+                return deletedTitles.indexOf(item.key)==-1
             }),
         }
         // 自适应处理
@@ -253,7 +253,7 @@ class VortexDatagrid extends React.Component{
                             {
                                 t.state.columnsVisibility.map((item,index)=>
                                     <Checkbox key={index} checked={item.visible} onChange={(e)=>{
-                                        t.changeColumnVisibility(item.title,e.target.checked)
+                                        t.changeColumnVisibility(item.key,e.target.checked)
                                     }}>
                                         {item.title}
                                     </Checkbox>
