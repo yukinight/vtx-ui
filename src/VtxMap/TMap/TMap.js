@@ -704,8 +704,8 @@ class TMap extends React.Component{
                 let cg = null;
                 if(!!item.markerContent){
                     cg = {
-                        markerContentX: item.config.markerContentX || gc.options.offset.x,
-                        markerContentY: item.config.markerContentY || gc.options.offset.y,
+                        markerContentX: item.config.markerContentX || gc.getIcon().options.iconSize.x,
+                        markerContentY: item.config.markerContentY || gc.getIcon().options.iconSize.y,
                         //暂时不设置旋转角度,后期维护设置吧
                         // deg: item.config.deg,
                         zIndex: item.config.zIndex || gc.options.zIndexOffset
