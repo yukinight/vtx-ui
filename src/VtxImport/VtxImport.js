@@ -61,7 +61,7 @@ class VtxImport extends React.Component{
         let postArray = [];
         for(let k in postData){
             if(postData[k]!==undefined && postData[k]!==null && postData[k]!==''){
-                postArray.push(`${k}=${postData[k]}`)
+                postArray.push(`${k}=${encodeURIComponent(postData[k])}`)
             } 
         }
         return postArray.length>0?`${postUrl}?${postArray.join('&')}`:postUrl;

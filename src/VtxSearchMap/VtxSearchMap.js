@@ -93,25 +93,25 @@ class VtxSearchMap extends React.Component {
             modal1Visible: props.modal1Visible || false,
             isShowOther: props.isShowOther || false,
             otherText: props.otherText || '显示服务区域',
-            isShowOtherGraph: false
+            isShowOtherGraph: props.isShowOther || false
         }
     }
     //经纬度回调
-    callback(){
-        if('callback' in this.props && typeof(this.props.callback) === 'function'){
+    callback(fun = 'callback'){
+        if(fun in this.props && typeof(this.props[fun]) === 'function'){
             let {editGraphicId} = this.state;
             switch (this.state.graphicType){
                 case 'point':
                     let {locationPoint} = this.state;
                     if(this.map.getGraphic('locationPoint')){
                         let p = this.map.getGraphic(locationPoint[0].id).geometry;
-                        this.props.callback([p.x,p.y]);
+                        this.props[fun]([p.x,p.y]);
                     }else{
                         return [];
                     }
                     break;
                 case 'circle':
-                    this.props.callback(this.state.graphicValue?{
+                    this.props[fun](this.state.graphicValue?{
                         x:this.state.graphicValue.geometry.x,
                         y:this.state.graphicValue.geometry.y,
                         radius:this.state.graphicValue.geometry.radius,
@@ -121,19 +121,19 @@ class VtxSearchMap extends React.Component {
                 case 'polygon':
                     if(this.map.getGraphic(editGraphicId)){
                         let p = this.map.getGraphic(editGraphicId);
-                        this.props.callback({
+                        this.props[fun]({
                             rings: distinct(p.geometry.rings),
                             area: this.map.getPolygonArea(distinct(p.geometry.rings))
                         });
                     }else{
-                        this.props.callback(this.state.graphicValue?{
+                        this.props[fun](this.state.graphicValue?{
                             rings: distinct(this.state.graphicValue.geometry.rings),
                             area: this.state.graphicValue.area
                         }:null);
                     }
                     break;
                 case 'rectangle':
-                    this.props.callback(this.state.graphicValue?{
+                    this.props[fun](this.state.graphicValue?{
                         rings: distinct(this.state.graphicValue.geometry.rings),
                         area: this.state.graphicValue.area
                     }:null);
@@ -141,12 +141,12 @@ class VtxSearchMap extends React.Component {
                 case 'polyline':
                     if(this.map.getGraphic(editGraphicId)){
                         let p = this.map.getGraphic(editGraphicId);
-                        this.props.callback({
+                        this.props[fun]({
                             paths:p.geometry.paths,
                             length: this.map.calculateDistance(p.geometry.paths)
                         });
                     }else{
-                        this.props.callback(this.state.graphicValue?{
+                        this.props[fun](this.state.graphicValue?{
                             paths:this.state.graphicValue.geometry.paths,
                             length: this.map.calculateDistance(this.state.graphicValue.geometry.paths)
                         }:null);
@@ -165,6 +165,7 @@ class VtxSearchMap extends React.Component {
     }
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
+        let t = this;
         let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
         if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
             editGraphic = {...this.props.editParam,id: 'drawnGraph'};
@@ -183,11 +184,11 @@ class VtxSearchMap extends React.Component {
                 }
             }],
         },()=>{
-            this.setState({
+            t.setState({
                 isDoEdit: true,
                 editGraphicId
             },()=>{
-                this.setState({
+                t.setState({
                     isDoEdit: false
                 })
             })
@@ -411,9 +412,9 @@ class VtxSearchMap extends React.Component {
             let {otherGraph} = this.props;
             if(otherGraph){
                 mapPoints = [...mapPoints,...(otherGraph.point || [])];
-                mapLines=[...(otherGraph.polyline || [])];
-                mapPolygons=[...(otherGraph.polygon || [])];
-                mapCircles=[...(otherGraph.circle || [])];
+                mapLines=[...mapLines,...(otherGraph.polyline || [])];
+                mapPolygons=[...mapPolygons,...(otherGraph.polygon || [])];
+                mapCircles=[...mapCircles,...(otherGraph.circle || [])];
             }
         }
         return (
@@ -426,7 +427,6 @@ class VtxSearchMap extends React.Component {
               maskClosable={false}
               onCancel={this.closeModal.bind(this)} 
               footer={null}
-              // closable={false}
             >
                 <div className={styles.searchMap}>
                     {/*地图操作分类*/}
@@ -456,9 +456,7 @@ class VtxSearchMap extends React.Component {
                                         isEndEdit: false
                                     })
                                 });
-                                if('editDraw' in this.props && typeof(this.props.editDraw) == 'function'){
-                                    this.props.editDraw();
-                                }
+                                this.callback('editDraw');
                             }} icon={'edit'}>重新绘制</Button>:null
                         }
                         {
@@ -531,7 +529,7 @@ class VtxSearchMap extends React.Component {
                     </div>
                     <div className={styles.bottom}>
                         {/*经纬度返回按钮*/}
-                        <Button type="primary" onClick={this.callback.bind(this)} icon={'check'}>确定</Button>
+                        <Button type="primary" onClick={()=>{this.callback()}} icon={'check'}>确定</Button>
                         <Button onClick={this.closeModal.bind(this)} icon={'close'}>关闭</Button>
                     </div>
                 </div>
@@ -564,12 +562,15 @@ class VtxSearchMap extends React.Component {
             t.mapLoaded = false;
             t.isinit = true;
         }
+        if(nextProps.editParam){
+            t.mapLoaded = false;
+        }
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter || '',
            mapType: nextProps.mapType || 'bmap',
            graphicType: nextProps.graphicType ||'point',
-           isDraw: nextProps.graphicType!=='point',
+           isDraw: nextProps.graphicType!=='point' && !nextProps.editParam,
            editGraphicId: ''
         },()=>{
             t.initSearchMap();

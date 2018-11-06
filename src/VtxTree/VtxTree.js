@@ -505,6 +505,8 @@ class VtxTree extends React.Component {
     	let t = this;
     	let oldProps = {...t.props};
     	let newProps = {...nextProps};
+    	let oldState = {...t.state};
+    	let newState = {...nextState};
     	delete oldProps.onClick;
     	delete oldProps.onCheck;
     	delete oldProps.onLoadData;
@@ -520,7 +522,10 @@ class VtxTree extends React.Component {
     	delete newProps.onRightClick;
     	delete newProps.onLoad;
     	delete newProps.searchInput;
-		return !_isEqual(oldProps,newProps);
+
+    	delete oldState.onLoad;
+    	delete newState.onLoad;
+		return !_isEqual(oldProps,newProps) || !_isEqual(oldState,newState);
     	
     }
 	componentWillReceiveProps(nextProps) {//已加载组件，收到新的参数时调用
