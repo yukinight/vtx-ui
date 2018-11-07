@@ -57,6 +57,7 @@ class VtxSearchMap extends React.Component {
         this.map = null;//Map组件的ref对象
         this.mapLoaded = false;
         this.isDrawStatus = false;
+        this.isClickMap = false;
         this.apid = [];//所有点id,除编辑点外
         this.state={
             //列表和地图宽度切换的动画需要
@@ -322,15 +323,19 @@ class VtxSearchMap extends React.Component {
         }
     }
     closeModal(e){
-        if('closeModal' in this.props){
-            this.props.closeModal();
+        if(this.isDrawStatus && this.isClickMap){
+            message.warning('请双击结束图元编辑');
         }else{
-            this.setState({
-                modal1Visible: false
-            })
-        }
-        if(this.props.clearDrawnGraph){
+            if('closeModal' in this.props){
+                this.props.closeModal();
+            }else{
+                this.setState({
+                    modal1Visible: false
+                })
+            }
+            // if(this.props.clearDrawnGraph){
             this.clearDrawnGraph();
+            // }
         }
     }
     clearDrawnGraph(){
@@ -373,6 +378,7 @@ class VtxSearchMap extends React.Component {
             isDraw:this.state.isDraw,
             drawEnd:(obj)=>{
                 this.isDrawStatus = false;
+                this.isClickMap = false;
                 let objparam = {
                     graphicValue:obj,
                     isDraw:false
@@ -527,6 +533,9 @@ class VtxSearchMap extends React.Component {
                                 editGraphicId={editGraphicId}
                                 editGraphicChange={()=>{}}
                                 clickGraphic={this.clickGraphic.bind(this)}
+                                clickMap={()=>{
+                                    t.isClickMap = true;
+                                }}
                                 {...drawProps}
                             />
                         </div>
