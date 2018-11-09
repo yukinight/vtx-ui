@@ -164,13 +164,13 @@ class TMap extends React.Component{
     }
     createMap(){
         let t = this;
-        const {mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         window.VtxMap = {};
         window.VtxMap[mapId] = t.state.gis = new T.Map(mapId,{
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
             //必须有中心点,不传默认在北京(不设置中心点,报错)
-            center: mapCenter?new T.LngLat(mapCenter[0], mapCenter[1])
+            center: mapCenter?new T.LngLat(mapCenter[0] || 116.40769, mapCenter[1] || 39.906705)
                                 :new T.LngLat(116.40769, 39.89945),
             minZoom: minZoom || 1,
             maxZoom: maxZoom || 18
@@ -704,16 +704,16 @@ class TMap extends React.Component{
                 let cg = null;
                 if(!!item.markerContent){
                     cg = {
-                        markerContentX: item.config.markerContentX || gc.getIcon().options.iconSize.x,
-                        markerContentY: item.config.markerContentY || gc.getIcon().options.iconSize.y,
+                        markerContentX: (item.config || {}).markerContentX || gc.getIcon().options.iconSize.x,
+                        markerContentY: (item.config || {}).markerContentY || gc.getIcon().options.iconSize.y,
                         //暂时不设置旋转角度,后期维护设置吧
                         // deg: item.config.deg,
-                        zIndex: item.config.zIndex || gc.options.zIndexOffset
+                        zIndex: (item.config || {}).zIndex || gc.options.zIndexOffset
                     };
                     //设置点的标记添加顺序
                     // gc.setZindex(cg.zIndex);
                     gc.setZIndexOffset(cg.zIndex);
-                    if(!item.config.isAnimation){
+                    if(!(item.config || {}).isAnimation){
                         //修改经纬度
                         gc.setLngLat(new T.LngLat(item.longitude,item.latitude));
                     }
@@ -727,17 +727,17 @@ class TMap extends React.Component{
                     gc.showLabel();
                 }else{
                     cg = {
-                        width: item.config.width || gc.getIcon().options.iconSize.x,
-                        height: item.config.width || gc.getIcon().options.iconSize.y,
-                        markerContentX: item.config.markerContentX || -gc.getIcon().options.iconAnchor.x,
-                        markerContentY: item.config.markerContentY || -gc.getIcon().options.iconAnchor.y,
+                        width: (item.config || {}).width || gc.getIcon().options.iconSize.x,
+                        height: (item.config || {}).width || gc.getIcon().options.iconSize.y,
+                        markerContentX: (item.config || {}).markerContentX || -gc.getIcon().options.iconAnchor.x,
+                        markerContentY: (item.config || {}).markerContentY || -gc.getIcon().options.iconAnchor.y,
                         //暂时不设置旋转角度,后期维护设置吧
-                        deg: item.config.deg,
-                        zIndex: item.config.zIndex || gc.options.zIndexOffset,
-                        labelClass: item.config.labelContent || 'label-content',
-                        BAnimationType: item.config.BAnimationType
+                        deg: (item.config || {}).deg,
+                        zIndex: (item.config || {}).zIndex || gc.options.zIndexOffset,
+                        labelClass: (item.config || {}).labelContent || 'label-content',
+                        BAnimationType: (item.config || {}).BAnimationType
                     };
-                    if(!item.config.isAnimation){
+                    if(!(item.config || {}).isAnimation){
                         //修改经纬度
                         gc.setLngLat(new T.LngLat(item.longitude,item.latitude));
                     }
@@ -746,9 +746,9 @@ class TMap extends React.Component{
                         if(gc.label){
                             this.state.gis.removeOverLay(gc.label);
                         }
-                        cg.labelPixelX= item.config.labelPixelX?item.config.labelPixelX - (cg.width/2):gc.getLabel().options.offset.x;
-                        cg.labelPixelY= item.config.labelPixelY?item.config.labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
-                        cg.labelContent= item.config.labelContent || gc.getLabel().options.text;
+                        cg.labelPixelX= (item.config || {}).labelPixelX?(item.config || {}).labelPixelX - (cg.width/2):gc.getLabel().options.offset.x;
+                        cg.labelPixelY= (item.config || {}).labelPixelY?(item.config || {}).labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
+                        cg.labelContent= (item.config || {}).labelContent || gc.getLabel().options.text;
                         let labelClass = item.labelClass || 'label-content';
                         //更新label
                         gc.label = new T.Label({
@@ -771,8 +771,8 @@ class TMap extends React.Component{
                     gc.getElement().style['-ms-transform'] = ` rotate(${cg.deg}deg)`;
                 }
                 //动画效果会延迟执行经纬度的切换
-                if(item.config.isAnimation){
-                    t.moveTo(item.id,[item.longitude,item.latitude],item.config.animationDelay,item.config.autoRotation);
+                if((item.config || {}).isAnimation){
+                    t.moveTo(item.id,[item.longitude,item.latitude],(item.config || {}).animationDelay,(item.config || {}).autoRotation);
                 }
                 this.GM.setGraphicParam(
                     item.id,
