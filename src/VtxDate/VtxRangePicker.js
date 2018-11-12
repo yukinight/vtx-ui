@@ -40,7 +40,19 @@ function VtxRangePicker(props) {
         placeholder: placeholder?[placeholder,placeholder] : ['请选择时间','请选择时间'],
         size: size || 'default',
 
-        onChange: onChange,
+        onChange: (date,dateString)=>{
+            //防止,时间和日期之间切换选择后,前大后小的bug
+            let d1=date[0],d2=date[1],ds1=dateString[0],ds2=dateString[1];
+            let d = [],ds = [];
+            if(d1.valueOf() <= d2.valueOf()){
+                d = [d1,d2];
+                ds = [ds1,ds2];
+            }else{
+                d = [d2,d1];
+                ds = [ds2,ds1];
+            }
+            onChange(d,ds);
+        },
         onOpenChange: onOpenChange,
         disabledTime: disabledTime,
         onOk: onOk
