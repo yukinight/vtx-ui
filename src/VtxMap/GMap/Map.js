@@ -3357,7 +3357,7 @@ class ArcgisMap extends React.Component{
         let t = this;
         let _map = this.props;
         return (
-            <div id={_map.mapId} className={'map'}></div>
+            <div id={_map.mapId} style={{width:'100%',height:'100%',backgroundColor: '#f1f1f1'}}></div>
         )
     }
 

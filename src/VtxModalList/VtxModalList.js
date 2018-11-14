@@ -110,6 +110,9 @@ class VtxModalList extends React.Component{
         let ty = (mld.layout || {}).type || 'default',
             maxNum = (mld.layout || {}).maxNum;
         if(ty == 'ctext'){
+            t.repeteList[index] = {
+                type: 'ctext'
+            }
             return (
                 <LayoutComponent 
                     key={index} 

@@ -56,6 +56,8 @@ class VtxSearchMap extends React.Component {
         super(props);
         this.map = null;//Map组件的ref对象
         this.mapLoaded = false;
+        this.isDrawStatus = false;
+        this.isClickMap = false;
         this.apid = [];//所有点id,除编辑点外
         this.state={
             //列表和地图宽度切换的动画需要
@@ -321,18 +323,23 @@ class VtxSearchMap extends React.Component {
         }
     }
     closeModal(e){
-        if('closeModal' in this.props){
-            this.props.closeModal();
+        if(this.isDrawStatus && this.isClickMap){
+            message.warning('请双击结束图元编辑');
         }else{
-            this.setState({
-                modal1Visible: false
-            })
-        }
-        if(this.props.clearDrawnGraph){
+            if('closeModal' in this.props){
+                this.props.closeModal();
+            }else{
+                this.setState({
+                    modal1Visible: false
+                })
+            }
+            // if(this.props.clearDrawnGraph){
             this.clearDrawnGraph();
+            // }
         }
     }
     clearDrawnGraph(){
+        this.isDrawStatus = true;
         this.setState({
             isDraw:true,
             graphicValue:null,
@@ -370,6 +377,8 @@ class VtxSearchMap extends React.Component {
         let drawProps = this.state.graphicType=='point' || t.isinit?null:{
             isDraw:this.state.isDraw,
             drawEnd:(obj)=>{
+                this.isDrawStatus = false;
+                this.isClickMap = false;
                 let objparam = {
                     graphicValue:obj,
                     isDraw:false
@@ -444,8 +453,9 @@ class VtxSearchMap extends React.Component {
                             this.state.graphicType=='point'?<Button  onClick={this.correction.bind(this)} icon={'environment-o'}>校正</Button>:null
                         }
                         {
-                            this.state.graphicType!='point'?<Button onClick={()=>{
-                                 this.setState({
+                            this.state.graphicType!='point'?<Button disabled={this.isDrawStatus} onClick={()=>{
+                                this.isDrawStatus = true;
+                                this.setState({
                                     isDraw:true,
                                     graphicValue:null,
                                     editGraphic: null,
@@ -523,6 +533,9 @@ class VtxSearchMap extends React.Component {
                                 editGraphicId={editGraphicId}
                                 editGraphicChange={()=>{}}
                                 clickGraphic={this.clickGraphic.bind(this)}
+                                clickMap={()=>{
+                                    t.isClickMap = true;
+                                }}
                                 {...drawProps}
                             />
                         </div>
@@ -565,6 +578,7 @@ class VtxSearchMap extends React.Component {
         if(nextProps.editParam){
             t.mapLoaded = false;
         }
+        t.isDrawStatus = nextProps.graphicType!=='point' && !nextProps.editParam;
         this.setState({
            modal1Visible: nextProps.modal1Visible,
            mapCenter: nextProps.mapCenter || '',
