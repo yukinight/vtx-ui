@@ -73,9 +73,9 @@ class VtxTreeSelect extends React.Component{
                         }
                     }
                 });
-                t.props.onChange({allValue: value,allLabel: label,value: v, label: l,treeNodes});
+                t.props.onChange({allValue: value,allLabel: label,value: v, label: l,treeNodes, extra});
             }else{
-                t.props.onChange({allValue: value,allLabel: label,value: value, label: label,treeNodes});
+                t.props.onChange({allValue: value,allLabel: label,value: value, label: label,treeNodes, extra});
             }
         }
         this.setState({
