@@ -683,7 +683,7 @@ class ArcgisMap extends React.Component{
             switch(services[im].type){
                 case 'gis':
                     for(let i = 0 ; i < url.length ; i++){
-                        let basemap = new esri.layers.ArcGISTiledMapServiceLayer(url[i]);
+                        let basemap = new esri.layers[services[im].gisServer || 'ArcGISTiledMapServiceLayer'](url[i]);
                         servs.push(basemap);
                     }
                 break;
