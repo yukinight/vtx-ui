@@ -739,6 +739,11 @@ class TMap extends React.Component{
                         labelClass: (item.config || {}).labelContent || 'label-content',
                         BAnimationType: (item.config || {}).BAnimationType
                     };
+                    gc.setIcon(new T.Icon({
+                        iconUrl: item.url || `${configUrl.mapServerURL}/images/touming.png`,
+                        iconSize: new T.Point(cg.width,cg.height),
+                        iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
+                    }));
                     if(!(item.config || {}).isAnimation){
                         //修改经纬度
                         gc.setLngLat(new T.LngLat(item.longitude,item.latitude));
@@ -774,7 +779,7 @@ class TMap extends React.Component{
                 }
                 //动画效果会延迟执行经纬度的切换
                 if((item.config || {}).isAnimation){
-                    t.moveTo(item.id,[item.longitude,item.latitude],(item.config || {}).animationDelay,(item.config || {}).autoRotation);
+                    t.moveTo(item.id,[item.longitude,item.latitude],(item.config || {}).animationDelay,(item.config || {}).autoRotation,item.url,item.urlleft);
                 }
                 this.GM.setGraphicParam(
                     item.id,
@@ -2009,6 +2014,9 @@ class TMap extends React.Component{
                     let gg = gc.getLngLat();
                     let tx = gg.lng + rx,ty = gg.lat + ry;
                     let lglt = new T.LngLat(tx,ty);
+                    if(t.movePoints[i].url){
+                        gc.getIcon().setIconUrl(t.movePoints[i].url);
+                    }
                     gc.setLngLat(lglt);
                     t.GM.setGraphicParam(id,{...t.GM.getGraphicParam(id),deg: ddeg});
                     //旋转角度
@@ -2033,7 +2041,7 @@ class TMap extends React.Component{
         },10);
     }
     /*公共方法*/
-    moveTo(id,lnglat,delay,autoRotation){
+    moveTo(id,lnglat,delay,autoRotation,urlright,urlleft){
         delay = delay || 3;
         let t = this,timer = 10;
         delay = eval(delay)*1000;
@@ -2043,11 +2051,17 @@ class TMap extends React.Component{
         if(s.equals(e)){
             return false;
         }else{
-            let ddeg = 0;
+            let ddeg = 0,url= null;
             //计算角度,旋转
             if(autoRotation){
                 //自己实现旋转
                 ddeg = t.rotateDeg(gc.getLngLat(),lnglat);
+                if(urlleft && (ddeg < -90 && ddeg > -270)){
+                    ddeg += 180;
+                    url = urlleft;
+                }else{
+                    url = urlright;
+                }
             }
             //拆分延迟移动定位
             let rx = (e.lng - s.lng)/count, ry = (e.lat - s.lat)/count;
@@ -2055,7 +2069,7 @@ class TMap extends React.Component{
             for(let i = 0 ; i < t.movePoints.length ;i++){
                 if(t.movePoints[i].id == id){
                     t.movePoints.splice(i,1,{
-                        id,rx,ry,ddeg,
+                        id,rx,ry,ddeg,url,
                         waitTime: 0,
                         deleteTime: delay
                     });
@@ -2064,7 +2078,7 @@ class TMap extends React.Component{
             }
             if(!isHave){
                 t.movePoints.push({
-                    id,rx,ry,ddeg,
+                    id,rx,ry,ddeg,url,
                     waitTime: 0,
                     deleteTime: delay
                 });
