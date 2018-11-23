@@ -343,7 +343,7 @@ class VtxSearchMap extends React.Component {
         this.setState({
             isDraw:true,
             graphicValue:null,
-            isEndEdit: true
+            isEndEdit: this.state.graphicType !== 'point'
         },()=>{
             this.setState({isEndEdit: false})
         });

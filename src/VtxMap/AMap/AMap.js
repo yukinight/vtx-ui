@@ -887,7 +887,7 @@ class VortexAMap extends React.Component{
                     item.config = {};
                 }
                 //获取原有的图元
-                let gc = this.GM.getGraphic(item.id);
+                let gc = this.GM.getGraphic(item.id),isuserUrlLeft = false;
                 let cg = {
                     labelContent: item.config.labelContent || gc.getLabel(),
                     markerContentX: item.config.markerContentX || gc.getOffset().getX(),
@@ -927,7 +927,12 @@ class VortexAMap extends React.Component{
                         let delay = item.config.animationDelay || 3;
                         let speed = distance/delay*3600/1000;
                         if(cg.autoRotation){
-                            gc.setAngle(t.rotateDeg(gc.getPosition(),[item.longitude,item.latitude]));
+                            let ddeg = t.rotateDeg(gc.getPosition(),[item.longitude,item.latitude]);
+                            if(item.urlleft && (ddeg < -90 && ddeg > -270)){
+                                ddeg += 180;
+                                isuserUrlLeft = true;
+                            }
+                            gc.setAngle(ddeg);
                         }
                         gc.moveTo(new AMap.LngLat(item.longitude,item.latitude),speed,function(k){
                             return k;
@@ -945,8 +950,12 @@ class VortexAMap extends React.Component{
                 if(!!item.markerContent){
                     gc.setContent(item.markerContent);
                 }else{
-                    if(item.url){
-                        gc.setIcon(item.url);
+                    if(isuserUrlLeft){
+                        gc.setIcon(item.urlleft);
+                    }else{
+                        if(item.url){
+                            gc.setIcon(item.url);
+                        }
                     }
                 }
                 this.GM.setGraphicParam(

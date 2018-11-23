@@ -599,7 +599,7 @@ class BaiduMap extends React.Component{
                 }
                 //动画效果会延迟执行经纬度的切换
                 if(cg.isAnimation){
-                    t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation);
+                    t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation,item.url,item.urlleft);
                 }else{
                     //修改经纬度
                     gc.setPosition(new BMap.Point(item.longitude,item.latitude));
@@ -1998,7 +1998,7 @@ class BaiduMap extends React.Component{
             }
         },10);
     }
-    moveTo(id,lnglat,delay,autoRotation){
+    moveTo(id,lnglat,delay,autoRotation,urlright,urlleft){
             delay = delay || 3;
         let t = this,timer = 10,
             gc = t.GM.getGraphic(id);
@@ -2008,9 +2008,19 @@ class BaiduMap extends React.Component{
         if(s.equals(e)){
             return false;
         }else{
+            let url= null;
             //计算角度,旋转
             if(autoRotation){
                 let ddeg = t.rotateDeg(gc.getPosition(),lnglat);
+                if(urlleft && (ddeg < -90 && ddeg > -270)){
+                    ddeg += 180;
+                    url = urlleft;
+                }else{
+                    url = urlright;
+                }
+                let gcicon = gc.getIcon();
+                gcicon.setImageUrl(url);
+                gc.setIcon(gcicon);
                 gc.setRotation(ddeg);
             }
             //拆分延迟移动定位

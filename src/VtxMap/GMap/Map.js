@@ -683,7 +683,7 @@ class ArcgisMap extends React.Component{
             switch(services[im].type){
                 case 'gis':
                     for(let i = 0 ; i < url.length ; i++){
-                        let basemap = new esri.layers.ArcGISTiledMapServiceLayer(url[i]);
+                        let basemap = new esri.layers[services[im].gisServer || 'ArcGISTiledMapServiceLayer'](url[i]);
                         servs.push(basemap);
                     }
                 break;
@@ -1041,15 +1041,15 @@ class ArcgisMap extends React.Component{
                 t.dealLabelGraphics(item.id,label);
                 //动画效果会延迟执行经纬度的切换
                 if(cg.isAnimation){
-                    t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation);
+                    t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation,item.url,item.urlleft);
                 }else{
                     //gometry 位置信息修改
                     if(gc.geometry){
                         gc.geometry.setLatitude(item.latitude);
                         gc.geometry.setLongitude(item.longitude);
                         //设置完点位后  需要刷新下点位的显示范围
-                        gc._extent.update(item.longitude,item.latitude,item.longitude,item.latitude,{ wkid: t.wkid });
-                        gc._extent._parts[0].extent = gc._extent.centerAt(position);
+                        gc._extent.update(new esri.geometry.Extent(item.longitude,item.latitude,item.longitude,item.latitude,{ wkid: t.wkid }));
+                        // gc._extent._parts[0].extent = gc._extent.centerAt(position);
                     }
                 }
                 //刷新缓存数据
@@ -1200,9 +1200,9 @@ class ArcgisMap extends React.Component{
             //添加新的点位
             gc.geometry.addPath([...item.paths]);
             let {_extent} = t.dealData(item.paths); 
-            //设置完点位后  需要刷新下点位的显示范围
-            gc._extent.update(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid });
-            gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
+            //设置完点位后  需要刷新下点位的显示范围/
+            gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid }));
+            // gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
             //处理颜色和透明度  使用rgba处理透明度
             let color = new esri.Color(cg.color);
             color.a = cg.pellucidity;
@@ -1374,8 +1374,8 @@ class ArcgisMap extends React.Component{
             gc.geometry.addRing([...item.rings,item.rings[0]]);
             let {_extent} = t.dealData(item.rings);
             //设置完点位后  需要刷新下点位的显示范围
-            gc._extent.update(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid });
-            gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
+            gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid }));
+            // gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
 
             //线类型
             let lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
@@ -3210,9 +3210,8 @@ class ArcgisMap extends React.Component{
                     gc.geometry.setLatitude(ty);
                     gc.geometry.setLongitude(tx);
                     //设置完点位后  需要刷新下点位的显示范围
-                    gc._extent.update(tx,ty,tx,ty,{ wkid: t.wkid });
-                    gc._extent._parts[0].extent = gc._extent.centerAt(lglt);
-                    gc.symbol.setAngle(ddeg);
+                    gc._extent.update(new esri.geometry.Extent(tx,ty,tx,ty,{ wkid: t.wkid }));
+                    // gc._extent._parts[0].extent = gc._extent.centerAt(lglt);
                     gc._graphicsLayer.refresh();
                     if(t.Label[id] && t.Label[id].add){
                         let tl = t.state.gis.toScreen(lglt);
@@ -3240,7 +3239,7 @@ class ArcgisMap extends React.Component{
         },10);
     }
     //点位移动动画效果
-    moveTo(id,lnglat,delay,autoRotation){
+    moveTo(id,lnglat,delay,autoRotation,urlright,urlleft){
         delay = delay || 3;
         let t = this,timer = 10;
         delay = eval(delay)*1000;
@@ -3250,11 +3249,20 @@ class ArcgisMap extends React.Component{
         if(t.equalsPoint(s,e)){
             return false;
         }else{
-            let ddeg = 0;
+            let ddeg = 0,url= null;
             //计算角度,旋转
             if(autoRotation){
                 //自己实现旋转
                 ddeg = t.rotateDeg(gc.geometry,lnglat);
+                if(urlleft && (ddeg < -90 && ddeg > -270)){
+                    ddeg += 180;
+                    url = urlleft;
+                }else{
+                    url = urlright;
+                }
+                gc.symbol.setUrl(url);
+                gc.symbol.setAngle(ddeg);
+                gc._graphicsLayer.refresh();
             }
             //拆分延迟移动定位
             let rx = (e.x - s.x)/count, ry = (e.y - s.y)/count;
@@ -3262,7 +3270,7 @@ class ArcgisMap extends React.Component{
             for(let i = 0 ; i < t.movePoints.length ;i++){
                 if(t.movePoints[i].id == id){
                     t.movePoints.splice(i,1,{
-                        id,rx,ry,ddeg,
+                        id,rx,ry,
                         waitTime: 0,
                         deleteTime: delay
                     });
@@ -3271,7 +3279,7 @@ class ArcgisMap extends React.Component{
             }
             if(!isHave){
                 t.movePoints.push({
-                    id,rx,ry,ddeg,
+                    id,rx,ry,
                     waitTime: 0,
                     deleteTime: delay
                 });
