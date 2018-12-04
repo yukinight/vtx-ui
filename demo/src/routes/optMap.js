@@ -19,7 +19,10 @@ const Map = (props)=>{
     return (
         <div style={{height:'100%'}}>
             <div className={style.btCT}>
-                
+                <button onClick={()=>{dispatch({type:'optMap/fetch',payload:{mapType:'bmap'}})}}>百度</button>
+                <button onClick={()=>{dispatch({type:'optMap/fetch',payload:{mapType:'amap'}})}}>高德</button>
+                <button onClick={()=>{dispatch({type:'optMap/fetch',payload:{mapType:'tmap'}})}}>tmap</button>
+                <button onClick={()=>{dispatch({type:'optMap/fetch',payload:{mapType:'gmap'}})}}>acgis</button>
             </div>
             <VtxOptMap {...mapProps}/>
         </div>

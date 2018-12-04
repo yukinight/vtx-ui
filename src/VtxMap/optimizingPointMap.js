@@ -1,6 +1,6 @@
 import React from 'react';
 import Map from './Map';
-import Immutable from 'immutable';
+import _isEqual from 'lodash/isEqual';
 
 class OptimizingPointMap extends React.Component{
     constructor(props){
@@ -11,15 +11,24 @@ class OptimizingPointMap extends React.Component{
         this.state= {
             filterPoints:[]
         }
+        this.zoomEnd = this.zoomEnd.bind(this);
+        this.moveEnd = this.moveEnd.bind(this);
+        this.resetPoints = this.resetPoints.bind(this);
+
+        this.resetDelay = {
+            timer:null,
+            eType:null
+        }
     }
     
     resetPoints(props, eType){
         const t = this;
         // 延时优化，只处理最后一次操作
-        if(t.resetDelay){
-            clearTimeout(t.resetDelay);
+        if(t.resetDelay.timer){
+            clearTimeout(t.resetDelay.timer);
         }
-        t.resetDelay = setTimeout(()=>{
+        t.resetDelay.eType = t.resetDelay.eType=='zoom'||eType=='zoom' ?'zoom':eType;
+        t.resetDelay.timer = setTimeout(()=>{
             let mcfg = t.map.getMapExtent();
             const param = {
                 mapHeight:mcfg.mapSize.height,
@@ -28,16 +37,16 @@ class OptimizingPointMap extends React.Component{
                 maxLat:mcfg.northEast.lat,
                 minLng:mcfg.southWest.lng,
                 maxLng:mcfg.northEast.lng,
-                eType,
+                eType:t.resetDelay.eType,
                 allPoints:props.mapPoints,
                 reservedPoints:props.reservedPoints
             }
             t.setState({
                 filterPoints:t.MPP.pointFilter(param)
-            },()=>{
-                t.resetDelay = null;
-            })  
-        },100);
+            });
+            t.resetDelay.timer = null;
+            t.resetDelay.eType = null;
+        },200);
         
     }
     componentDidMount(){
@@ -47,13 +56,10 @@ class OptimizingPointMap extends React.Component{
         })
     }
     componentWillReceiveProps(nextProps){
-        if(this.mapLoaded && (!this.deepEqual(this.props.reservedPoints, nextProps.reservedPoints) || !this.deepEqual(this.props.mapPoints, nextProps.mapPoints))){
+        if(this.mapLoaded && (!_isEqual(this.props.reservedPoints, nextProps.reservedPoints) || !_isEqual(this.props.mapPoints, nextProps.mapPoints))){
             // 外部点数据改变，更新内部点数据
             this.resetPoints(nextProps);
         }
-    }
-    deepEqual(a,b){
-        return Immutable.is(Immutable.fromJS(a),Immutable.fromJS(b));
     }
     zoomEnd(obj){
         this.resetPoints(this.props,'zoom');
@@ -71,8 +77,8 @@ class OptimizingPointMap extends React.Component{
         // console.log('优化后剩余点数：'+this.state.filterPoints.length)  
         const newProps = {
             ...this.props,
-            zoomEnd:this.zoomEnd.bind(this),
-            moveEnd:this.moveEnd.bind(this),
+            zoomEnd:this.zoomEnd,
+            moveEnd:this.moveEnd,
             mapPoints:this.state.filterPoints,
             getMapInstance:(p)=>{
                 if(p){

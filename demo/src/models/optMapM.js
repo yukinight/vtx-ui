@@ -26,9 +26,10 @@ export default {
     namespace:'optMap',
     state:{
         mapId:'optmap',
+        mapType:'bmap',
         mapPoints:genPointList(),
         mapCenter: [117.468021,38.890092],
-        gridSpacing:50,
+        gridSpacing:60,
         reservedPoints:[
             {
                 id:`fsfsd`,
