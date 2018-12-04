@@ -24,10 +24,10 @@ export default class SelectZTree extends React.Component{
     }
     componentWillReceiveProps(nextProps){
         if(!_isEqual(this.props.data,nextProps.data)){
-            this.getKeyNodesMapping();
+            this.getKeyNodesMapping(nextProps.data);
         }
     }
-    getKeyNodesMapping(){
+    getKeyNodesMapping(nodes){
         const t = this;
         t.keyNodesMapping = {};
         (function genNodes(nodes) {
@@ -38,7 +38,7 @@ export default class SelectZTree extends React.Component{
                     genNodes(item.children)
                 }
             })
-        })(this.props.data||[]);
+        })(nodes||this.props.data||[]);
     }
     clear(){
         if(this.tree){
@@ -90,7 +90,8 @@ export default class SelectZTree extends React.Component{
         // 可配参数
         const {
             treeCheckable=false,treeDefaultExpandAll=false,multiple=false,
-            showSearch=false,dropdownStyle={},style={},disabled=false
+            showSearch=false,dropdownStyle={},style={},disabled=false,
+            refreshFlag=null
         } = t.props;
         const value_arr = (function(val){
             if(Array.isArray(val)){
@@ -103,10 +104,14 @@ export default class SelectZTree extends React.Component{
                 return [];
             }
         })(value);
-        const name_arr = value_arr.filter(k=>k in t.keyNodesMapping).map(item=>t.keyNodesMapping[item].name);
+        const selectedNodes = value_arr.filter(k=>k in t.keyNodesMapping).map(item=>({
+            id: item,
+            name:t.keyNodesMapping[item].name
+        }));
         // ztree配置
         const treeProps = {
             data,//树的数据
+            refreshFlag,
             isShowSearchInput:showSearch,
             multiple,
             checkable:treeCheckable,
@@ -116,7 +121,7 @@ export default class SelectZTree extends React.Component{
                 if(instance)t.tree = instance;
             },
             onClick({selectedNodes,selectedKeys,selectedNames }){
-                console.log(selectedNodes,selectedKeys,selectedNames)
+                // console.log(selectedNodes,selectedKeys,selectedNames)
                 if(!treeCheckable){
                     t.props.onChange && t.props.onChange({
                         nodes:selectedNodes,
@@ -132,7 +137,7 @@ export default class SelectZTree extends React.Component{
                 }
             },
             onCheck({checkedNodes,checkedKeys,checkedNames }){
-                console.log({checkedNodes,checkedKeys,checkedNames })
+                // console.log({checkedNodes,checkedKeys,checkedNames })
                 if(treeCheckable){
                     t.props.onChange && t.props.onChange({
                         nodes:checkedNodes,
@@ -153,13 +158,13 @@ export default class SelectZTree extends React.Component{
         // 多选组件
         const MultiSelect = <div className='ant-input vtx-ui-ztree-select-mselect' style={{height:'auto',minHeight:'28px',...style}}>
             {
-                name_arr.length>0?[
-                    name_arr.map((item,index)=><Tag key={item} closable={!disabled} 
+                selectedNodes.length>0?[
+                    selectedNodes.map((item,index)=><Tag key={item.id} closable={!disabled} 
                     onClick={(e)=>{e.stopPropagation();}}
                     afterClose={() => {
-                        t.clearKey(item);
+                        t.clearKey(item.id);
                     }}>
-                        {name_arr[index]}
+                        {item.name}
                     </Tag>),
                     
                     (disabled? null:<Icon key={'icon'} className='close-icon' type="close-circle" onClick={(e)=>{
