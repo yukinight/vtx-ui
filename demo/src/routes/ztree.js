@@ -14,7 +14,7 @@ function getRandomNodes(){
             subnodes.push({
                 id:`${i}-${j}`,
                 key:`${i}-${j}`,
-                name:`${i}-${j}`,
+                name:`n${i}-${j}`,
                 isLeaf:true,
                 icon:'./resources/images/yc.png',
             });
@@ -35,12 +35,13 @@ export default class Test extends React.Component{
     constructor(props){
         super();
         this.state={
-            treeNodes:getRandomNodes(),
+            treeNodes:[],
             selectedKeys:[2],
             expandedKeys:[1,5],
             checkedKeys:[1],
 
-            selectVal:["0-1"]
+            selectVal:["0-1"],
+            refreshFlag:1
         }
     }
     render(){
@@ -52,7 +53,7 @@ export default class Test extends React.Component{
             data:t.state.treeNodes,//树的数据
             // defaultExpandAll:true,//默认是否全展开，配置expandedKeys后此参数失效
             multiple:true,//是否可以点选多个节点
-            // refreshFlag,
+            refreshFlag:t.state.refreshFlag,
             isShowSearchInput:true,
             // disableCheckboxAll:true,
             selectedKeys:t.state.selectedKeys,//已选中节点的key集合
@@ -87,7 +88,7 @@ export default class Test extends React.Component{
             data:t.state.treeNodes,
             showSearch:true,
             multiple:true,
-            treeCheckable:false,
+            treeCheckable:true,
             style:{width:'200px'},
             dropdownStyle:{
                 height:'300px'
@@ -97,7 +98,7 @@ export default class Test extends React.Component{
             // treeDefaultExpandAll:true,
 
             onChange({nodes,keys,leafKeys,names}){
-                console.log(leafKeys)
+                console.log(nodes,keys,leafKeys,names)
                 t.setState({selectVal:leafKeys})
             },
             value:t.state.selectVal
@@ -109,7 +110,8 @@ export default class Test extends React.Component{
                 <div style={{position:'fixed',right:'10px',top:'10px',zIndex:'2'}}>
                     <button  onClick={()=>{
                         this.setState({
-                            treeNodes:getRandomNodes()
+                            treeNodes:getRandomNodes(),
+                            refreshFlag:t.state.refreshFlag+1
                         })
                     }}>random Nodes</button>
                     <button onClick={()=>{
