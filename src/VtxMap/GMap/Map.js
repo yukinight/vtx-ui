@@ -10,7 +10,7 @@ const {Set} = Immutable;
 class ArcgisMap extends React.Component{
     constructor(props){
         super(props);
-        this.wkid = props.wkid || 4326;//wkid 坐标系对应,全局使用.
+        this.wkid = parseInt(props.wkid) || 4326;//wkid 坐标系对应,全局使用.
         this.zIndexGraphics = [];//需要放在最后的图元,zoom和pan时刷新dom到最后
         this.htmlPointsId = 'vtx_gmap_html_points';//html点位容器id class管理
         this.pointCollectionId = 'vtx_gmap_html_pointCollection';//海量点canvas点位容器id class管理
@@ -650,10 +650,10 @@ class ArcgisMap extends React.Component{
             center: mapCenter || [120.404,30.915]
         };
         if(minZoom){
-            options.minZoom = minZoom;
+            options.minZoom = parseInt(minZoom);
         }
         if(maxZoom){
-            options.maxZoom = maxZoom;
+            options.maxZoom = parseInt(maxZoom);
         }
         if(!window.VtxMap){
             window.VtxMap = {};
@@ -1816,7 +1816,7 @@ class ArcgisMap extends React.Component{
         if(z == zoom){
             return false;
         }
-        t.state.gis.setZoom(zoom);
+        t.state.gis.setZoom(parseInt(zoom));
     }
     //将制定图元展示在视野内 (强制改变地图中心位置)
     /*
