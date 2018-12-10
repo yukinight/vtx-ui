@@ -71,6 +71,8 @@ class VtxModalList extends React.Component{
     renderChildren(){
         let t = this;
         let chil = t.props.children;
+        //清空缓存,避免缓存数据
+        t.repeteList = {};
         if(!!chil){
             if(!chil.length){
                 return t.cloneComponent(this.props.children);
@@ -79,7 +81,7 @@ class VtxModalList extends React.Component{
                     return ary.map((item,index)=>{
                         if(!!item){
                             if(typeof(item) === 'string'){
-                                t.repeteList[`${key}${index}`] = {};
+                                // t.repeteList[`${key}${index}`] = {};
                                 return item;
                             }
                             if(item instanceof Array){
@@ -87,7 +89,7 @@ class VtxModalList extends React.Component{
                             }
                             return t.cloneComponent(item, `${key}${index}`);
                         }else{
-                            t.repeteList[`${key}${index}`] = {};
+                            // t.repeteList[`${key}${index}`] = {};
                         }
                     })
                 }

@@ -78,6 +78,8 @@ class VtxSearchMap extends React.Component {
             drawGraphID:'drawnGraph',
             /*地图Api参数*/
             mapCenter: props.mapCenter || '',
+            maxZoom: props.maxZoom,
+            minZoom: props.minZoom,
             mapType: props.mapType || 'bmap',
             setCenter: false,
             mapVisiblePoints: {
@@ -357,6 +359,7 @@ class VtxSearchMap extends React.Component {
             listPoint,listMess,
             /*地图参数*/
             mapZoomLevel,setZoomLevel,
+            maxzoom,minzoom,
             mapCenter,setCenter,mapType,
             mapVisiblePoints,setVisiblePoints,
             isDoEdit,editGraphicId,isEndEdit,
@@ -520,6 +523,8 @@ class VtxSearchMap extends React.Component {
                                 mapId={`searchMap${new Date().getTime()}`}
                                 setCenter={setCenter}
                                 mapCenter={mapCenter}
+                                minZoom={minZoom}
+                                maxZoom={maxZoom}
                                 mapZoomLevel={mapZoomLevel}
                                 setZoomLevel={setZoomLevel}
                                 mapPoints={mapPoints}
@@ -581,6 +586,8 @@ class VtxSearchMap extends React.Component {
         t.isDrawStatus = nextProps.graphicType!=='point' && !nextProps.editParam;
         this.setState({
            modal1Visible: nextProps.modal1Visible,
+           maxZoom: nextProps.maxZoom,
+           minZoom: nextProps.minZoom,
            mapCenter: nextProps.mapCenter || '',
            mapType: nextProps.mapType || 'bmap',
            graphicType: nextProps.graphicType ||'point',

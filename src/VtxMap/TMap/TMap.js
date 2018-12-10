@@ -73,7 +73,12 @@ class TMap extends React.Component{
                                 resolve();
                             });
                         });
-                        Promise.all([Heatmap,PointCollection]).then(()=>{
+                        let components = new Promise((resolve,reject)=>{
+                            $.getScript(`${configUrl.mapServerURL}/T_toolComponents.js`,()=>{
+                                resolve();
+                            })
+                        });
+                        Promise.all([Heatmap,PointCollection,components]).then(()=>{
                             resolve(window.T);
                         })
                     })
