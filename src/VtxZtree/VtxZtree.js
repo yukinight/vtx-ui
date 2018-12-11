@@ -1,6 +1,7 @@
 import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import _merge from 'lodash/merge';
+import _debounce from 'lodash/debounce';
 import './VtxZtree.less';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
@@ -24,6 +25,7 @@ export default class VtxZtree extends React.Component{
         this.searchTimeOutId = null; 
         this.loadPromise = this.loadTreeResource();
         this.loadComplete = false;
+        this.fuzzySearch = _debounce(this.fuzzySearch.bind(this),300);
         this.state={
             searchVal:''
         };
@@ -243,7 +245,8 @@ export default class VtxZtree extends React.Component{
         var metaChar = '[\\[\\]\\\\\^\\$\\.\\|\\?\\*\\+\\(\\)]'; //js meta characters
         var rexMeta = new RegExp(metaChar, 'gi');//regular expression to match meta characters
         
-        searchNodeLazy(keyworld);
+        // searchNodeLazy(keyworld);
+        ztreeFilter(t.zTreeObj,keyworld);
 
         // -----------------------------内部函数----------------------------------
         // keywords filter function 
@@ -325,15 +328,15 @@ export default class VtxZtree extends React.Component{
             }
         }
 
-        function searchNodeLazy(_keywords) {
-            if (t.searchTimeOutId) { 
-                //clear pending task
-                clearTimeout(t.searchTimeOutId);
-            }
-            t.searchTimeOutId = setTimeout(function() {
-                ztreeFilter(t.zTreeObj,_keywords); //lazy load ztreeFilter function 
-            }, 500);
-        }
+        // function searchNodeLazy(_keywords) {
+        //     if (t.searchTimeOutId) { 
+        //         //clear pending task
+        //         clearTimeout(t.searchTimeOutId);
+        //     }
+        //     t.searchTimeOutId = setTimeout(function() {
+        //         ztreeFilter(t.zTreeObj,_keywords); //lazy load ztreeFilter function 
+        //     }, 500);
+        // }
     }
     // 清空搜索框数据（供外部调用）
     clearSearch(){
@@ -376,20 +379,10 @@ export default class VtxZtree extends React.Component{
                 {
                     this.props.isShowSearchInput?<div className={style.searchBox}>
                         <Input value={t.state.searchVal} onChange={(e)=>{
-                            const newSearch = e.target.value.trim();
-                            if(newSearch!==t.state.searchVal.trim()){
-                                if(newSearch!==''){
-                                    t.fuzzySearch(newSearch);
-                                }
-                                else{
-                                    t.clearSearch();
-                                }
-                            }
-                            this.setState({
+                            t.setState({
                                 searchVal:e.target.value
                             })
-                            
-                            
+                            t.fuzzySearch(e.target.value.trim());
                         }}/>
                     </div>:null
                 }
