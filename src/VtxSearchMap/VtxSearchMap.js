@@ -360,6 +360,7 @@ class VtxSearchMap extends React.Component {
             /*地图参数*/
             mapZoomLevel,setZoomLevel,
             maxZoom,minZoom,
+            wkid,mapServer,
             mapCenter,setCenter,mapType,
             mapVisiblePoints,setVisiblePoints,
             isDoEdit,editGraphicId,isEndEdit,
@@ -520,6 +521,8 @@ class VtxSearchMap extends React.Component {
                             <VtxMap 
                                 getMapInstance={(map)=>{if(map)this.map = map}}
                                 mapType={mapType}
+                                mapServer={mapServer}
+                                wkid={wkid}
                                 mapId={`searchMap${new Date().getTime()}`}
                                 setCenter={setCenter}
                                 mapCenter={mapCenter}
