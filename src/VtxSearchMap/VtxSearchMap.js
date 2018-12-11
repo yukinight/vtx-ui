@@ -359,7 +359,7 @@ class VtxSearchMap extends React.Component {
             listPoint,listMess,
             /*地图参数*/
             mapZoomLevel,setZoomLevel,
-            maxzoom,minzoom,
+            maxZoom,minZoom,
             mapCenter,setCenter,mapType,
             mapVisiblePoints,setVisiblePoints,
             isDoEdit,editGraphicId,isEndEdit,
