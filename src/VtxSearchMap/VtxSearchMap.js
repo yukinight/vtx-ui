@@ -81,6 +81,7 @@ class VtxSearchMap extends React.Component {
             maxZoom: props.maxZoom,
             minZoom: props.minZoom,
             mapType: props.mapType || 'bmap',
+            mapServer: props.mapServer,
             setCenter: false,
             mapVisiblePoints: {
                 fitView: [],
@@ -593,6 +594,7 @@ class VtxSearchMap extends React.Component {
            minZoom: nextProps.minZoom,
            mapCenter: nextProps.mapCenter || '',
            mapType: nextProps.mapType || 'bmap',
+           mapServer: nextProps.mapServer,
            graphicType: nextProps.graphicType ||'point',
            isDraw: nextProps.graphicType!=='point' && !nextProps.editParam,
            editGraphicId: ''
