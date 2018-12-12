@@ -798,7 +798,7 @@ class ArcgisMap extends React.Component{
         let t = this;
         let psids = [...t.state.pointIds];
         //添加绘制点
-        if(type){
+        if(type && type !== 'defined'){
             psids = [...t.state.drawIds[type]];
         }
         mapPoints.map((item,index)=>{
