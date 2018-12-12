@@ -59,6 +59,7 @@ class VtxSearchMap extends React.Component {
         this.isDrawStatus = false;
         this.isClickMap = false;
         this.apid = [];//所有点id,除编辑点外
+        this.loadExtent = null;
         this.state={
             //列表和地图宽度切换的动画需要
             isShowList: false,
@@ -80,6 +81,7 @@ class VtxSearchMap extends React.Component {
             mapCenter: props.mapCenter || '',
             maxZoom: props.maxZoom,
             minZoom: props.minZoom,
+            wkid: props.wkid,
             mapType: props.mapType || 'bmap',
             mapServer: props.mapServer,
             setCenter: false,
@@ -171,33 +173,39 @@ class VtxSearchMap extends React.Component {
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
         let t = this;
-        let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
-        if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
-            editGraphic = {...this.props.editParam,id: 'drawnGraph'};
-            editGraphicId = 'drawnGraph';
-        }
-        this.isinit = false;
-        this.setState({
-            editGraphic,
-            locationPoint: [{
-                id: 'locationPoint',
-                longitude: lglt.nowCenter.lng,
-                latitude: lglt.nowCenter.lat,
-                url: `${configUrl.mapServerURL}/images/defaultMarker.png`,
-                config: {
-                    zIndex: 1000
-                }
-            }],
-        },()=>{
-            t.setState({
-                isDoEdit: true,
-                editGraphicId
+        if(this.props.mapType !== 'gmap' || this.map.state.gis.extent){
+            let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
+            if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
+                editGraphic = {...this.props.editParam,id: 'drawnGraph'};
+                editGraphicId = 'drawnGraph';
+            }
+            this.isinit = false;
+            this.setState({
+                editGraphic,
+                locationPoint: [{
+                    id: 'locationPoint',
+                    longitude: lglt.nowCenter.lng,
+                    latitude: lglt.nowCenter.lat,
+                    url: `${configUrl.mapServerURL}/images/defaultMarker.png`,
+                    config: {
+                        zIndex: 1000
+                    }
+                }],
             },()=>{
                 t.setState({
-                    isDoEdit: false
+                    isDoEdit: true,
+                    editGraphicId
+                },()=>{
+                    t.setState({
+                        isDoEdit: false
+                    })
                 })
             })
-        })
+        }else{
+            t.loadExtent = setTimeout(()=>{
+                t.drawLocationPoint()
+            },50)
+        }
     }
     //校正定位的点位位置到当前的中心点
     correction(){
@@ -592,6 +600,7 @@ class VtxSearchMap extends React.Component {
            modal1Visible: nextProps.modal1Visible,
            maxZoom: nextProps.maxZoom,
            minZoom: nextProps.minZoom,
+           wkid: nextProps.wkid,
            mapCenter: nextProps.mapCenter || '',
            mapType: nextProps.mapType || 'bmap',
            mapServer: nextProps.mapServer,
@@ -635,6 +644,13 @@ class VtxSearchMap extends React.Component {
                 }
             }
         },100);
+    }
+    componentWillUnmount() {
+        //关闭moveTo定时
+        let t = this;
+        if(t.loadExtent){
+            clearInterval(t.loadExtent);
+        }
     }
 }
 
