@@ -79,9 +79,9 @@ class ArcgisMap extends React.Component{
                 // $.getScript('http://222.92.212.126:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/init.js',()=>{
                 $.getScript(`${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/init.js`,()=>{
                     let Heatmap = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/gisheatmap.js`,()=>{
+                        // $.getScript(`${configUrl.mapServerURL}/gisheatmap.js`,()=>{
                             resolve();
-                        });
+                        // });
                     });
                     let PointCollection = new Promise((resolve,reject)=>{
                         $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
@@ -170,7 +170,9 @@ class ArcgisMap extends React.Component{
             let changeLabel = ()=>{
                 for(let i in t.Label){
                     if(t.Label[i]){
-                        let tl = t.state.gis.toScreen(t.Label[i].position);
+                        let position = t.GM.getGraphic(i).geometry;
+                        let tl = t.state.gis.toScreen(position);
+                        // let tl = t.state.gis.toScreen(t.Label[i].position);
                         //渲染優化
                         if(!(tl.y < -50 || tl.x < -50 || tl.y > t.state.gis.height || tl.x > t.state.gis.width)){
                             t.Label[i].html.css({
@@ -798,7 +800,7 @@ class ArcgisMap extends React.Component{
         let t = this;
         let psids = [...t.state.pointIds];
         //添加绘制点
-        if(type && type !== 'defined'){
+        if(type){
             psids = [...t.state.drawIds[type]];
         }
         mapPoints.map((item,index)=>{
@@ -1077,7 +1079,7 @@ class ArcgisMap extends React.Component{
     addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
-        if(type && type !== 'defined'){
+        if(type){
             lsids = [...t.state.drawIds[type]];
         }
         //遍历添加线(图元)
@@ -3129,8 +3131,9 @@ class ArcgisMap extends React.Component{
     dealLabelGraphics(id,label){
         let t = this;
         if(label){
+            let position = (t.GM.getGraphic(id) || {}).geometry || label.position;
             //经纬度转top和left
-            let tl = t.state.gis.toScreen(label.position),lbl = {...label};
+            let tl = t.state.gis.toScreen(position),lbl = {...label};
             //渲染優化
             if(!(tl.y < -50 || tl.x < -50 || tl.y > t.state.gis.height || tl.x > t.state.gis.width)){
                 //设置label的位置(通过定位来实现)
