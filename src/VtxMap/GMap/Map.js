@@ -1077,7 +1077,7 @@ class ArcgisMap extends React.Component{
     addLine(mapLines,type){
         let t = this;
         let lsids = [...t.state.lineIds];
-        if(type){
+        if(type && type !== 'defined'){
             lsids = [...t.state.drawIds[type]];
         }
         //遍历添加线(图元)
