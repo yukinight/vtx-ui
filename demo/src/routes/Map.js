@@ -92,7 +92,6 @@ class MapDemo extends React.Component{
                 <button onClick={()=>{this.switchMap('bmap')}}>百度地图</button>
                 <button onClick={()=>{this.switchMap('amap')}}>高德地图</button>
                 <button onClick={()=>{this.switchMap('tmap')}}>天地图</button>
-                <button onClick={()=>{this.switchMap('gmap')}}>arcgis地图</button>
                 <div className={styles.action}>
                     <div onClick={()=>{dispatch({type: 'bmap/updateState',payload: {visible: !visible}})}}>弹框测试</div>
                     <div onClick={()=>{dispatch({type: 'bmap/addPoint'})}}>添加点</div>
