@@ -281,9 +281,11 @@ class VortexAMap extends React.Component{
             //恢复鼠标默认样式
             t.state.gis.setDefaultCursor();
             t.ruler.turnOff();
-            t.props.mapRangingTool({
-                distance,lnglats
-            });
+            if(typeof(t.props.mapRangingTool) ==="function"){
+                t.props.mapRangingTool({
+                    distance,lnglats
+                });
+            }
         });
         //绘制图元类
         t.mousetool = new AMap.MouseTool(t.state.gis);
@@ -348,7 +350,8 @@ class VortexAMap extends React.Component{
                 let nowXY = t.state.gis.lnglatToPixel(t.state.gis.getCenter());
                 $(`#${t.pointCollectionId}`).css({
                     top: t.htmlXY.y - nowXY.y,
-                    left: t.htmlXY.x - nowXY.x
+                    left: t.htmlXY.x - nowXY.x,
+                    display: 'none'
                 });
             }
         })
@@ -1610,7 +1613,7 @@ class VortexAMap extends React.Component{
                     px:0,py:0,isCount: true,
                     ...t.state.gis.lnglatToPixel(t.state.gis.getCenter())
                 };
-                $(`#${t.pointCollectionId}`).css({top: '0px',left: '0px'});
+                $(`#${t.pointCollectionId}`).css({top: '0px',left: '0px',display: 'none'});
                 t.updatePointCollection(t.props.mapPointCollection);
                 if(t.stopMove){
                     let obj = t.getMapExtent();
@@ -1627,7 +1630,7 @@ class VortexAMap extends React.Component{
         if(typeof(t.props.moveEnd) ==="function"){
             t.state.gis.on('moveend', function(e) {
                 t.htmlXY.isCount = false;
-                $(`#${t.pointCollectionId}`).css({top: '0px',left: '0px'});
+                $(`#${t.pointCollectionId}`).css({top: '0px',left: '0px',display: 'block'});
                 t.updatePointCollection(t.props.mapPointCollection);
                 if(t.stopMove){
                     let obj = t.getMapExtent();
