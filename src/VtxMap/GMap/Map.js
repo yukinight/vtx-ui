@@ -10,6 +10,7 @@ const {Set} = Immutable;
 class ArcgisMap extends React.Component{
     constructor(props){
         super(props);
+        this.grwkid = 4326;//wkid 坐标系对应,全局使用.
         this.wkid = parseInt(props.wkid) || 4326;//wkid 坐标系对应,全局使用.
         this.zIndexGraphics = [];//需要放在最后的图元,zoom和pan时刷新dom到最后
         this.htmlPointsId = 'vtx_gmap_html_points';//html点位容器id class管理
@@ -211,7 +212,7 @@ class ArcgisMap extends React.Component{
                             [t.rangingTool.points[t.rangingTool.points.length-1].longitude,
                             t.rangingTool.points[t.rangingTool.points.length-1].latitude],
                             t.state.gis,
-                            t.wkid
+                            t.grwkid
                         );
                     }else{
                         t.rangingTool.line.paths = [];
@@ -351,7 +352,7 @@ class ArcgisMap extends React.Component{
                             [t.rangingTool.points[t.rangingTool.points.length-1].longitude,
                             t.rangingTool.points[t.rangingTool.points.length-1].latitude],
                             t.state.gis,
-                            t.wkid
+                            t.grwkid
                         );
                         // 实时计算距离
                         distance += t.rangingTool.distance;
@@ -660,7 +661,7 @@ class ArcgisMap extends React.Component{
         if(!window.VtxMap){
             window.VtxMap = {};
         }
-        let fullExtent = mapServer.fullExtent || {
+        let fullExtent = (mapServer || {}).fullExtent || {
             xmin : -180.0,ymin : -90.0,xmax : 180.0,ymax : 90.0
         };
         let map = window.VtxMap[mapId] = t.state.gis = new GMap(t.props.mapId,{
@@ -703,7 +704,7 @@ class ArcgisMap extends React.Component{
                             "format": services[im].format || "format/png",
                             "compressionQuality": 0,
                             "spatialReference": new esri.SpatialReference({
-                              "wkid": t.wkid || 4326
+                              "wkid": t.grwkid || 4326
                             }),
                             "rows": 256,
                             "cols": 256,
@@ -711,10 +712,10 @@ class ArcgisMap extends React.Component{
                             "lods": mapServer.lods || []
                         });
                         let tileExtent = new esri.geometry.Extent(mapServer.fullExtent.xmin, mapServer.fullExtent.ymin, mapServer.fullExtent.xmax, mapServer.fullExtent.ymax, new esri.SpatialReference({
-                            wkid: t.wkid
+                            wkid: t.grwkid
                         }));
                         let inTileExtent = new esri.geometry.Extent(mapServer.initialExtent.xmin, mapServer.initialExtent.ymin, mapServer.initialExtent.xmax, mapServer.initialExtent.ymax, new esri.SpatialReference({
-                            wkid: t.wkid
+                            wkid: t.grwkid
                         }));
                         let layerInfo = new esri.layers.WMTSLayerInfo({
                             tileInfo: tileInfo,
@@ -754,7 +755,7 @@ class ArcgisMap extends React.Component{
                     // "format": "tiles",
                     "compressionQuality": 0,
                     "spatialReference": new esri.SpatialReference({
-                      "wkid": t.wkid || 4326
+                      "wkid": t.grwkid || 4326
                     }),
                     "rows": 256,
                     "cols": 256,
@@ -762,10 +763,10 @@ class ArcgisMap extends React.Component{
                     "lods": defaultWmtsMapLayers.lods || []
                 });
                 let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
-                    wkid: t.wkid
+                    wkid: t.grwkid
                 }));
                 let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
-                    wkid: t.wkid
+                    wkid: t.grwkid
                 }));
                 for(let i = 0 ; i < url.length ; i++){
                     let dlayerInfo = new esri.layers.WMTSLayerInfo({
@@ -845,7 +846,7 @@ class ArcgisMap extends React.Component{
             let position = new esri.geometry.Point({
                 longitude: item.longitude,
                 latitude: item.latitude,
-                spatialReference:{ wkid: t.wkid }
+                spatialReference:{ wkid: t.grwkid }
             });
             let marker = null,label = null;
             if(item.markerContent){
@@ -981,7 +982,7 @@ class ArcgisMap extends React.Component{
                 let position = new esri.geometry.Point({
                     longitude: item.longitude,
                     latitude: item.latitude,
-                    spatialReference:{ wkid: t.wkid }
+                    spatialReference:{ wkid: t.grwkid }
                 });
                 //label对象
                 let label = null;
@@ -1042,12 +1043,7 @@ class ArcgisMap extends React.Component{
                 }else{
                     t.pointAnimation(item.id,null);
                 }
-                //删除原有的label  下面从新加载
-                if(t.Label[item.id]){
-                    t.Label[item.id].html.remove();
-                }
-                //刷新点位
-                t.dealLabelGraphics(item.id,label);
+                
                 //动画效果会延迟执行经纬度的切换
                 if(cg.isAnimation){
                     t.moveTo(item.id,[item.longitude,item.latitude],cg.animationDelay,cg.autoRotation,item.url,item.urlleft);
@@ -1057,14 +1053,20 @@ class ArcgisMap extends React.Component{
                         gc.geometry.setLatitude(item.latitude);
                         gc.geometry.setLongitude(item.longitude);
                         //设置完点位后  需要刷新下点位的显示范围
-                        gc._extent.update(item.longitude,item.latitude,item.longitude,item.latitude,new esri.SpatialReference({ wkid: t.wkid }));
+                        gc._extent.update(item.longitude,item.latitude,item.longitude,item.latitude,new esri.SpatialReference({ wkid: t.grwkid }));
                         if(gc._extent._parts && gc._extent._parts[0]){
-                            gc._extent._parts[0].extent.update(item.longitude,item.latitude,item.longitude,item.latitude,new esri.SpatialReference({ wkid: t.wkid }));
+                            gc._extent._parts[0].extent.update(item.longitude,item.latitude,item.longitude,item.latitude,new esri.SpatialReference({ wkid: t.grwkid }));
                         }
-                        // gc._extent.update(new esri.geometry.Extent(item.longitude,item.latitude,item.longitude,item.latitude,{ wkid: t.wkid }));
+                        // gc._extent.update(new esri.geometry.Extent(item.longitude,item.latitude,item.longitude,item.latitude,{ wkid: t.grwkid }));
                         // gc._extent._parts[0].extent = gc._extent.centerAt(position);
                     }
                 }
+                //删除原有的label  下面从新加载
+                if(t.Label[item.id]){
+                    t.Label[item.id].html.remove();
+                }
+                //刷新点位
+                t.dealLabelGraphics(item.id,label);
                 //刷新缓存数据
                 t.GM.setGraphicParam(
                     item.id,
@@ -1120,7 +1122,7 @@ class ArcgisMap extends React.Component{
             //处理线的点数组
             let linePath = new esri.geometry.Polyline({
                 paths: [[...item.paths]],
-                spatialReference: { wkid: t.wkid}
+                spatialReference: { wkid: t.grwkid}
             });
             //线类型
             let style = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
@@ -1214,8 +1216,8 @@ class ArcgisMap extends React.Component{
             gc.geometry.addPath([...item.paths]);
             let {_extent} = t.dealData(item.paths); 
             //设置完点位后  需要刷新下点位的显示范围/
-            gc._extent.update(_extent.longitude,_extent.latitude,_extent.longitude,_extent.latitude,new esri.SpatialReference({ wkid: t.wkid }));
-            // gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid }));
+            gc._extent.update(_extent.longitude,_extent.latitude,_extent.longitude,_extent.latitude,new esri.SpatialReference({ wkid: t.grwkid }));
+            // gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.grwkid }));
             // gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
             //处理颜色和透明度  使用rgba处理透明度
             let color = new esri.Color(cg.color);
@@ -1292,7 +1294,7 @@ class ArcgisMap extends React.Component{
             let polygonPath = esri.geometry.Polygon({
                 //添加最后一个点,使面闭合
                 rings: [[...item.rings,item.rings[0]]],
-                spatialReference: { wkid: t.wkid}
+                spatialReference: { wkid: t.grwkid}
             });
             //线类型
             let lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
@@ -1388,8 +1390,8 @@ class ArcgisMap extends React.Component{
             gc.geometry.addRing([...item.rings,item.rings[0]]);
             let {_extent} = t.dealData(item.rings);
             //设置完点位后  需要刷新下点位的显示范围
-            gc._extent.update(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,new esri.SpatialReference({ wkid: t.wkid }));
-            // gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.wkid }));
+            gc._extent.update(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,new esri.SpatialReference({ wkid: t.grwkid }));
+            // gc._extent.update(new esri.geometry.Extent(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,{ wkid: t.grwkid }));
             // gc._extent._parts[0].extent = {...gc._extent._parts[0].extent,..._extent};
 
             //线类型
@@ -1821,7 +1823,7 @@ class ArcgisMap extends React.Component{
             if(c.lng == gt[0] && c.lat == gt[1]){
                 return false;
             }
-            t.state.gis.centerAt(new esri.geometry.Point(gt[0],gt[1]));
+            t.state.gis.centerAt(new esri.geometry.Point(gt[0],gt[1],new esri.SpatialReference({wkid: t.wkid})));
         }
     }
     //设置地图比例尺
@@ -1870,7 +1872,7 @@ class ArcgisMap extends React.Component{
         let {_extent} = t.dealData(obj);
         //避免偏移引起的点位漏看
         _extent = t.dealExtendBounds(_extent,100);
-        let ext = new esri.geometry.Extent({..._extent,spatialReference:{ wkid: t.wkid }});
+        let ext = new esri.geometry.Extent({..._extent,spatialReference:{ wkid: t.grwkid }});
         if(!type || type == 'all' || type == 'zoom'){
             t.state.gis.setExtent(ext);
         }else if(type == 'center'){
@@ -2369,7 +2371,7 @@ class ArcgisMap extends React.Component{
                     position = new esri.geometry.Point({
                         longitude: t.mouseNowPosition.x - t.mouseNowPosition.px,
                         latitude: t.mouseNowPosition.y - t.mouseNowPosition.py,
-                        spatialReference:{ wkid: t.wkid }
+                        spatialReference:{ wkid: t.grwkid }
                     });
                 //圆中心点的移动
                 if(eid == 'vtx-circleMove'){
@@ -2383,7 +2385,7 @@ class ArcgisMap extends React.Component{
                         new esri.geometry.Point({
                             longitude: t.mouseNowPosition.x - t.mouseNowPosition.px - t.circleEditPXY.px,
                             latitude: t.mouseNowPosition.y - t.mouseNowPosition.py - t.circleEditPXY.py,
-                            spatialReference:{ wkid: t.wkid }
+                            spatialReference:{ wkid: t.grwkid }
                         })
                     );
                     t.state.gis.graphics.refresh();
@@ -2415,7 +2417,7 @@ class ArcgisMap extends React.Component{
                         new esri.geometry.Point({
                             longitude: e.graphic.geometry.x - t.circleEditPXY.px,
                             latitude: e.graphic.geometry.y - t.circleEditPXY.py,
-                            spatialReference:{ wkid: t.wkid }
+                            spatialReference:{ wkid: t.grwkid }
                         })
                     );
                     t.state.gis.graphics.refresh();
@@ -2488,7 +2490,7 @@ class ArcgisMap extends React.Component{
                     position = new esri.geometry.Point({
                         longitude: t.mouseNowPosition.x - t.mouseNowPosition.px,
                         latitude: t.mouseNowPosition.y - t.mouseNowPosition.py,
-                        spatialReference:{ wkid: t.wkid }
+                        spatialReference:{ wkid: t.grwkid }
                     }),
                     radius = t.calculatePointsDistance(
                         [cgc.geometry.center.x,cgc.geometry.center.y],
@@ -2514,7 +2516,7 @@ class ArcgisMap extends React.Component{
                     position = new esri.geometry.Point({
                         longitude: t.mouseNowPosition.x - t.mouseNowPosition.px,
                         latitude: t.mouseNowPosition.y - t.mouseNowPosition.py,
-                        spatialReference:{ wkid: t.wkid }
+                        spatialReference:{ wkid: t.grwkid }
                     }),
                     radius = t.calculatePointsDistance(
                         [cgc.geometry.center.x,cgc.geometry.center.y],
@@ -2722,7 +2724,7 @@ class ArcgisMap extends React.Component{
                         [e.geometry._extent.xmin,e.geometry._extent.ymin],
                         [e.geometry._extent.xmax,e.geometry._extent.ymax],
                         t.state.gis,
-                        t.wkid
+                        t.grwkid
                     )/2;
                     radius = Math.sqrt(Math.pow(radius,2)*2)/2;
                     t.addCircle([{
@@ -3021,7 +3023,7 @@ class ArcgisMap extends React.Component{
             pixelSw.y += bound;
         let newNe = t.state.gis.toMap(pixelNe),
             newSw = t.state.gis.toMap(pixelSw);
-        return new esri.geometry.Extent(newSw.x,newSw.y,newNe.x,newNe.y, new esri.SpatialReference({ wkid: t.wkid }));
+        return new esri.geometry.Extent(newSw.x,newSw.y,newNe.x,newNe.y, new esri.SpatialReference({ wkid: t.grwkid }));
     }
     //聚合功能公共方法(获取图元集合)
     clusterToolFunction(arg){
@@ -3056,7 +3058,7 @@ class ArcgisMap extends React.Component{
         let t = this;
         let {_extent:_et} = t.dealData(areaRestriction);
         t.areaRestriction = new esri.geometry.Extent({
-            ..._et,spatialReference: {wkid: t.wkid}
+            ..._et,spatialReference: {wkid: t.grwkid}
         });
     }
     //关闭区域限制
@@ -3101,7 +3103,7 @@ class ArcgisMap extends React.Component{
     }
     //计算2点间距离 单位m 精确到2位小数
     calculatePointsDistance(fp,ep){
-        return getDistance(fp,ep,this.state.gis,this.state.wkid);
+        return getDistance(fp,ep,this.state.gis,this.state.grwkid);
     }
     //计算多个点的距离(常用于线计算)
     calculateDistance(ps){
@@ -3226,9 +3228,9 @@ class ArcgisMap extends React.Component{
                     gc.geometry.setLatitude(ty);
                     gc.geometry.setLongitude(tx);
                     //设置完点位后  需要刷新下点位的显示范围
-                    gc._extent.update(tx,ty,tx,ty,new esri.SpatialReference({ wkid: t.wkid }));
+                    gc._extent.update(tx,ty,tx,ty,new esri.SpatialReference({ wkid: t.grwkid }));
                     if(gc._extent._parts && gc._extent._parts[0]){
-                        gc._extent._parts[0].extent.update(tx,ty,tx,ty,new esri.SpatialReference({ wkid: t.wkid }));
+                        gc._extent._parts[0].extent.update(tx,ty,tx,ty,new esri.SpatialReference({ wkid: t.grwkid }));
                     }
                     // gc._extent._parts[0].extent = gc._extent.centerAt(lglt);
                     gc._graphicsLayer.refresh();
@@ -3398,7 +3400,7 @@ class ArcgisMap extends React.Component{
     //已加载组件，收到新的参数时调用
     componentWillReceiveProps(nextProps) {
         let t = this;
-        t.wkid = nextProps.wkid || 4326;
+        t.grwkid = nextProps.grwkid || 4326;
         //新参数处理方法
         let initData = ()=>{
             let t = this;

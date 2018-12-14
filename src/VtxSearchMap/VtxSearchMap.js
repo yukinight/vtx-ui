@@ -60,6 +60,7 @@ class VtxSearchMap extends React.Component {
         this.isClickMap = false;
         this.apid = [];//所有点id,除编辑点外
         this.loadExtent = null;
+        this.mapId = `searchMap${new Date().getTime()}`;
         this.state={
             //列表和地图宽度切换的动画需要
             isShowList: false,
@@ -532,7 +533,7 @@ class VtxSearchMap extends React.Component {
                                 mapType={mapType}
                                 mapServer={mapServer}
                                 wkid={wkid}
-                                mapId={`searchMap${new Date().getTime()}`}
+                                mapId={t.mapId}
                                 setCenter={setCenter}
                                 mapCenter={mapCenter}
                                 minZoom={minZoom}
