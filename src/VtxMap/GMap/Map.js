@@ -679,6 +679,7 @@ class ArcgisMap extends React.Component{
         t.addMapLayers(mapServer);
         t.htmlPointsId = `${mapId}_${t.htmlPointsId}`;
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
+        t.setCenter(mapCenter);
     }
     //处理图层
     addMapLayers(mapServer = {}){
@@ -1872,7 +1873,7 @@ class ArcgisMap extends React.Component{
         let {_extent} = t.dealData(obj);
         //避免偏移引起的点位漏看
         _extent = t.dealExtendBounds(_extent,100);
-        let ext = new esri.geometry.Extent({..._extent,spatialReference:{ wkid: t.grwkid }});
+        let ext = new esri.geometry.Extent({..._extent,spatialReference:{ wkid: t.wkid }});
         if(!type || type == 'all' || type == 'zoom'){
             t.state.gis.setExtent(ext);
         }else if(type == 'center'){
