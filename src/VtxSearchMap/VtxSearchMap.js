@@ -197,9 +197,11 @@ class VtxSearchMap extends React.Component {
                     isDoEdit: true,
                     editGraphicId
                 },()=>{
-                    t.setState({
-                        isDoEdit: false
-                    })
+                    setTimeout(()=>{
+                        t.setState({
+                            isDoEdit: false
+                        })
+                    },100)
                 })
             })
         }else{
