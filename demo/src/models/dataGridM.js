@@ -18,7 +18,8 @@ export default {
     currentPage:1,
     pageSize:20,
     totalItems:199,
-    selectedRowKeys:[]
+    selectedRowKeys:[],
+    defaultVisibleCols:null
   },
 
   subscriptions: {

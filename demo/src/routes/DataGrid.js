@@ -5,7 +5,7 @@ import styles from './DataGrid.less';
 import {VtxDatagrid} from 'vtx-ui';
 
 function IndexPage(props) {
-  const {dispatch, tableData,test,currentPage,pageSize,totalItems,selectedRowKeys} = props;
+  const {dispatch, tableData,defaultVisibleCols,test,currentPage,pageSize,totalItems,selectedRowKeys} = props;
 
   const columns = [{
     title: 'Name',
@@ -35,7 +35,7 @@ function IndexPage(props) {
     width:200,
     nowrap:true,
     render:(text, record)=>(record.editMode? <Input value={record.address} onChange={(e)=>{
-      dispatch({type:'example/editRow',payload:{
+      dispatch({type:'datagrid/editRow',payload:{
         key:record.key,
         address: e.target.value
       }});
@@ -51,14 +51,14 @@ function IndexPage(props) {
         {
           record.editMode ? 
           <a onClick={()=>{
-            dispatch({type:'example/editRow',payload:{
+            dispatch({type:'datagrid/editRow',payload:{
               key: record.key,
               editMode:false
             }})
           }}>保存</a>
           :
           <a onClick={()=>{
-            dispatch({type:'example/editRow',payload:{
+            dispatch({type:'datagrid/editRow',payload:{
               key: record.key,
               editMode:true
             }})
@@ -110,6 +110,7 @@ function IndexPage(props) {
   let vProps = {
     columns,
     dataSource:tableData,
+    defaultVisibleCols,
     indexColumn:true, //用了这个属性column里的width不能用百分比
     indexTitle:'#序号#',
     startIndex:(currentPage-1)*pageSize+1, //后端分页
@@ -122,10 +123,23 @@ function IndexPage(props) {
       type:'checkbox',
       selectedRowKeys,
       onChange(keys){
-        dispatch({type:'example/fetch',payload:{
-            selectedRowKeys:keys
-          }})
+        dispatch({type:'datagrid/fetch',payload:{
+            selectedRowKeys:keys,
+        }})
       }
+    },
+    // 分页切换
+    onChange(pagination, filters, sorter){
+      // 获取下一页数据
+      dispatch({type:'datagrid/getTableData',payload:{
+        currentPage:pagination.current,
+        pageSize: pagination.pageSize
+      }})
+
+      // 清空勾选行
+      dispatch({type:'datagrid/fetch',payload:{
+          selectedRowKeys:[]
+      }})
     },
     pagination:{
         showSizeChanger: true,
@@ -134,22 +148,6 @@ function IndexPage(props) {
         current:currentPage,  //后端分页数据配置参数1
         total:totalItems, //后端分页数据配置参数2
         pageSize, //后端分页数据配置参数3
-        // 当前页码改变的回调
-        onChange(page, pageSize){
-          console.log(page,pageSize)
-          dispatch({type:'example/getTableData',payload:{
-            currentPage:page,
-            pageSize
-          }})
-        },
-        // pageSize 变化的回调
-        onShowSizeChange(current, size){
-          console.log(current,size)
-          dispatch({type:'example/getTableData',payload:{
-            currentPage:current,
-            pageSize: size
-          }})
-        },
         showTotal: total => `合计 ${total} 条`
     }
   }
