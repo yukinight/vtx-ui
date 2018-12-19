@@ -623,6 +623,7 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
             //事件监听
             event();
+            t.setCenter(t.props.mapCenter);
             //处理数据
             initData();
         }
@@ -640,6 +641,7 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
             //事件监听
             event();
+            t.setCenter(t.props.mapCenter);
             //处理数据
             initData();
         });
@@ -679,7 +681,6 @@ class ArcgisMap extends React.Component{
         t.addMapLayers(mapServer);
         t.htmlPointsId = `${mapId}_${t.htmlPointsId}`;
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
-        t.setCenter(mapCenter);
     }
     //处理图层
     addMapLayers(mapServer = {}){
