@@ -70,33 +70,42 @@ class VtxModalList extends React.Component{
     //处理props.children
     renderChildren(){
         let t = this;
-        let chil = t.props.children;
+        let chil = t.props.children,
+            newRepeteKeyList = [],
+            orl = {...t.repeteList};
         //清空缓存,避免缓存数据
-        t.repeteList = {};
         if(!!chil){
             if(!chil.length){
                 return t.cloneComponent(this.props.children);
             }else{
+                //复制子节点处理数据
                 let clone = (ary,key)=>{
                     return ary.map((item,index)=>{
                         if(!!item){
+                            let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
+                            // if(!modalListKey){
+                            //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
+                            // }
                             if(typeof(item) === 'string'){
-                                // t.repeteList[`${key}${index}`] = {};
+                                // t.repeteList[`${key}${modalListKey || index}`] = {};
                                 return item;
                             }
                             if(item instanceof Array){
-                                return clone(item,`${key}${index}`);
+                                return clone(item,`${key}${modalListKey || index}`);
                             }
-                            return t.cloneComponent(item, `${key}${index}`);
-                        }else{
-                            // t.repeteList[`${key}${index}`] = {};
+                            newRepeteKeyList.push(`${key}${modalListKey || index}`);
+                            return t.cloneComponent(item, `${key}${modalListKey || index}`);
                         }
                     })
                 }
-                // let elems = chil.map((item,index)=>{
-                //     return t.cloneComponent(item,index);
-                // });
-                return clone(chil,'root');
+                let cC = clone(chil,'root');
+                //清空验证缓存
+                for (let i in orl){
+                    if(!newRepeteKeyList.includes(i)){
+                        t.repeteList[i] = {};
+                    }
+                }
+                return cC;
             }
         }
     }
