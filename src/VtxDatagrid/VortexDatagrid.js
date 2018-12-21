@@ -15,9 +15,10 @@ import 'antd/lib/popover/style/css';
 
 import './VortexDatagrid.less';
 
+import _isEqual from 'lodash/isEqual';
+
 const styles = {
     autoHeightcontainer: 'vtx-ui-datagrid-autoheightcontainer',
-    nowrap: 'vtx-ui-datagrid-nowrap',
     ct: 'vtx-ui-datagrid-ct',
     nowrapOverflow: 'vtx-ui-datagrid-nowrapoverflow',
     titleSelectionContainer: 'vtx-ui-datagrid-titleselectioncontainer',
@@ -33,10 +34,13 @@ class VortexDatagrid extends React.Component{
         this.headFootHeight = props.headFootHeight || 115;
         this.state = {
             autoFit:props.autoFit,
-            nowrap:this.ifNowrap(),
             bodyHeight:null,
             // columnConfig: this.columnHandler(),
-            columnsVisibility:props.columns.map(item=>({title:item.title,key:item.key,visible:true})),
+            columnsVisibility:props.columns.map(item=>({
+                title:item.title,
+                key:item.key,
+                visible:Array.isArray(props.defaultVisibleCols)?props.defaultVisibleCols.indexOf(item.key)>-1:true,
+            })),
         }
         this.resetHeight = this.resetHeight.bind(this);
     }
@@ -65,6 +69,18 @@ class VortexDatagrid extends React.Component{
             window.removeEventListener('resize',t.resetHeight,false);
         }
     }
+    componentWillReceiveProps(nextProps){
+        // 默认显示隐藏列变化
+        if(Array.isArray(nextProps.defaultVisibleCols) && !_isEqual(this.props.defaultVisibleCols,nextProps.defaultVisibleCols)){
+            this.setState({
+                columnsVisibility: nextProps.columns.map(item=>({
+                    title:item.title,
+                    key:item.key,
+                    visible:nextProps.defaultVisibleCols.indexOf(item.key)>-1
+                }))
+            })
+        }
+    }
     componentDidUpdate(prevProps, prevState) {//重新渲染结束
         let t = this;
         if(t.state.bodyHeight != document.getElementById(this.id).scrollHeight - this.headFootHeight){
@@ -75,19 +91,16 @@ class VortexDatagrid extends React.Component{
             }
         }
     }
-    // 表格是否有不允许换行的列
-    ifNowrap(){
-        let columns = this.props.columns;
-        for(let i=0,len=columns.length;i<len;i++){
-            if(columns[i].nowrap)return true;
-        }
-        return false;
-    }
-    // 封装column配置项
+    // 表格column配置项修改
     columnHandler(props){
         let t = this;
         props = props || this.props;
-        let columnConfig = props.columns.map((col,index)=>{
+        
+        let deletedColKeys = t.state.columnsVisibility.filter((item)=>!item.visible).map(item=>item.key);
+
+        let columnConfig = props.columns.filter((item)=>{
+            return deletedColKeys.indexOf(item.key)==-1
+        }).map((col,index)=>{
             let newCol = {...col};
             // let title = newCol.title;
             // newCol.preTitle = title;
@@ -119,6 +132,7 @@ class VortexDatagrid extends React.Component{
             }
             return newCol;
         })
+        
         // 序列号处理
         if(props.indexColumn){
             columnConfig.unshift({
@@ -132,6 +146,7 @@ class VortexDatagrid extends React.Component{
 
         return columnConfig;
     }
+    // 隐藏/显示列
     changeColumnVisibility(key,visible){
         this.setState({
             columnsVisibility: this.state.columnsVisibility.map(item=>{
@@ -145,6 +160,7 @@ class VortexDatagrid extends React.Component{
             })
         })
     }
+    // 快捷生成表格按钮列
     generateButtons(btList, rowData, text, index){
         let btnList = typeof btList === "function" ?
             btList(text, rowData,index) : btList;
@@ -191,16 +207,13 @@ class VortexDatagrid extends React.Component{
             </span>
         )
     }
-
+    // 获取经过处理的表格最新props
     getNewProps(){
         let t = this;
-        let deletedTitles = t.state.columnsVisibility.filter((item)=>!item.visible).map(item=>item.key);
 
         let newProps = {
             ...t.props,
-            columns: t.columnHandler().filter((item)=>{
-                return deletedTitles.indexOf(item.key)==-1
-            }),
+            columns: t.columnHandler(),
         }
         // 自适应处理
         if(newProps.autoFit){
@@ -238,9 +251,6 @@ class VortexDatagrid extends React.Component{
         let containerClasses = [styles.ct];
         if(t.state.autoFit){
             containerClasses.push(styles.autoHeightcontainer);
-        }
-        if(t.state.nowrap){
-            containerClasses.push(styles.nowrap);
         }
 
         return (

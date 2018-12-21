@@ -623,6 +623,7 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
             //事件监听
             event();
+            t.setCenter(t.props.mapCenter);
             //处理数据
             initData();
         }
@@ -640,6 +641,7 @@ class ArcgisMap extends React.Component{
             $(`#${t.props.mapId}_zoom_slider`).css({display: 'none'});
             //事件监听
             event();
+            t.setCenter(t.props.mapCenter);
             //处理数据
             initData();
         });
@@ -679,7 +681,6 @@ class ArcgisMap extends React.Component{
         t.addMapLayers(mapServer);
         t.htmlPointsId = `${mapId}_${t.htmlPointsId}`;
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
-        t.setCenter(mapCenter);
     }
     //处理图层
     addMapLayers(mapServer = {}){
@@ -2721,38 +2722,40 @@ class ArcgisMap extends React.Component{
                     }
                 }
                 if(t.drawParam.geometryType == 'circle'){
-                    let radius = getDistance(
-                        [e.geometry._extent.xmin,e.geometry._extent.ymin],
-                        [e.geometry._extent.xmax,e.geometry._extent.ymax],
-                        t.state.gis,
-                        t.grwkid
-                    )/2;
-                    radius = Math.sqrt(Math.pow(radius,2)*2)/2;
-                    t.addCircle([{
-                        id: t.drawParam.data.id,
-                        longitude: (e.geometry._extent.xmin+e.geometry._extent.xmax)/2,
-                        latitude: (e.geometry._extent.ymin+e.geometry._extent.ymax)/2,
-                        radius: radius,
-                        config: {
-                            ...t.drawParam.parameter
-                        }
-                    }],t.drawParam.geometryType);
-                    param = {
-                        area: Math.PI*Math.pow(radius,2),
-                        attributes: {
+                    if(e.geometry._extent){
+                        let radius = getDistance(
+                            [e.geometry._extent.xmin,e.geometry._extent.ymin],
+                            [e.geometry._extent.xmax,e.geometry._extent.ymax],
+                            t.state.gis,
+                            t.grwkid
+                        )/2;
+                        radius = Math.sqrt(Math.pow(radius,2)*2)/2;
+                        t.addCircle([{
                             id: t.drawParam.data.id,
+                            longitude: (e.geometry._extent.xmin+e.geometry._extent.xmax)/2,
+                            latitude: (e.geometry._extent.ymin+e.geometry._extent.ymax)/2,
+                            radius: radius,
                             config: {
                                 ...t.drawParam.parameter
                             }
-                        },
-                        geometry: {
-                            type: t.drawParam.geometryType,
-                            x: (e.geometry._extent.xmin+e.geometry._extent.xmax)/2,
-                            y: (e.geometry._extent.ymin+e.geometry._extent.ymax)/2, 
-                            radius
-                        },
-                        geometryType: t.drawParam.geometryType,
-                        mapLayer: t.GM.getGraphic(t.drawParam.data.id)
+                        }],t.drawParam.geometryType);
+                        param = {
+                            area: Math.PI*Math.pow(radius,2),
+                            attributes: {
+                                id: t.drawParam.data.id,
+                                config: {
+                                    ...t.drawParam.parameter
+                                }
+                            },
+                            geometry: {
+                                type: t.drawParam.geometryType,
+                                x: (e.geometry._extent.xmin+e.geometry._extent.xmax)/2,
+                                y: (e.geometry._extent.ymin+e.geometry._extent.ymax)/2, 
+                                radius
+                            },
+                            geometryType: t.drawParam.geometryType,
+                            mapLayer: t.GM.getGraphic(t.drawParam.data.id)
+                        }
                     }
                 }
                 // t.GM.setGraphicParam(t.drawParam.data.id,param);
