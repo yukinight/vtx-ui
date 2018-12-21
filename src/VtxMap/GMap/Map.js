@@ -1463,9 +1463,9 @@ class ArcgisMap extends React.Component{
             if(item.config){
                 cg = {...cg,...item.config};
             }
-            let center = new esri.geometry.Point(item.longitude,item.latitude);
+            let center = new esri.geometry.Point(parseFloat(item.longitude),parseFloat(item.latitude));
             //创建圆 位置对象
-            let position = new esri.geometry.Circle({center:center,radius: item.radius});
+            let position = new esri.geometry.Circle({center:center,radius: parseFloat(item.radius)});
             //线类型
             let lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
             switch(cg.lineType){
@@ -1480,7 +1480,7 @@ class ArcgisMap extends React.Component{
             let lineColor = new esri.Color(cg.lineColor);
             lineColor.a = cg.lineOpacity;
             //生成线类型对象
-            let lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,cg.lineWidth);
+            let lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,parseFloat(cg.lineWidth));
             //创建面对象
             let circleSymbol = new esri.symbol.SimpleFillSymbol();
             //添加边框线数据
@@ -1501,9 +1501,9 @@ class ArcgisMap extends React.Component{
                 geometryType: 'circle',
                 geometry: {
                     type: 'circle',
-                    x: item.longitude,
-                    y: item.latitude,
-                    radius: item.radius
+                    x: parseFloat(item.longitude),
+                    y: parseFloat(item.latitude),
+                    radius: parseFloat(item.radius)
                 }
             });
         });
@@ -1551,9 +1551,9 @@ class ArcgisMap extends React.Component{
             if(item.config){
                 cg = {...cg,...item.config};
             }
-            let center = new esri.geometry.Point(item.longitude,item.latitude);
+            let center = new esri.geometry.Point(parseFloat(item.longitude),parseFloat(item.latitude));
             //创建圆 位置对象
-            let position = new esri.geometry.Circle({center:center,radius: item.radius});
+            let position = new esri.geometry.Circle({center:center,radius: parseFloat(item.radius)});
             //线类型
             let lineStyle = esri.symbol.SimpleLineSymbol.STYLE_SOLID;
             switch(cg.lineType){
@@ -1568,7 +1568,7 @@ class ArcgisMap extends React.Component{
             let lineColor = new esri.Color(cg.lineColor);
             lineColor.a = cg.lineOpacity;
             //生成线类型对象
-            let lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,cg.lineWidth);
+            let lineSymbol = new esri.symbol.SimpleLineSymbol(lineStyle,lineColor,parseFloat(cg.lineWidth));
             //创建面对象
             let circleSymbol = new esri.symbol.SimpleFillSymbol();
             //添加边框线数据
@@ -1586,9 +1586,9 @@ class ArcgisMap extends React.Component{
                 geometryType: 'circle',
                 geometry: {
                     type: 'circle',
-                    x: item.longitude,
-                    y: item.latitude,
-                    radius: item.radius
+                    x: parseFloat(item.longitude),
+                    y: parseFloat(item.latitude),
+                    radius: parseFloat(item.radius)
                 }
             });
         });
