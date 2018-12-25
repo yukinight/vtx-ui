@@ -174,7 +174,8 @@ class VtxSearchMap extends React.Component {
     //绘制定位点(以当前的中心点位参照 => 同时开启点位编辑)
     drawLocationPoint(){
         let t = this;
-        if(this.props.mapType !== 'gmap' || this.map.state.gis.extent){
+        //判断arcgis,是: 判断中心点是否已经确定,确定,继续走逻辑.不确认.轮询等待
+        if(this.props.mapType !== 'gmap' || (this.map.state.gis.extent && this.map.state.gis.extent.xmax < 180)){
             let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
             if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
                 editGraphic = {...this.props.editParam,id: 'drawnGraph'};
