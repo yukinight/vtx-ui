@@ -1,5 +1,5 @@
 import React from 'react';
-import './VtxModalList.less';
+import './VtxModalList.css';
 import Tooltip from 'antd/lib/tooltip';
 import 'antd/lib/tooltip/style/css';
 import Icon from 'antd/lib/icon';

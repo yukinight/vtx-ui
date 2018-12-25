@@ -5,7 +5,7 @@ import 'antd/lib/icon/style/css';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
 
-import './stateInput.less';
+import './stateInput.css';
 const styles = {
     error: 'vtx-ui-input-error',
     normal: 'vtx-ui-input-normal'

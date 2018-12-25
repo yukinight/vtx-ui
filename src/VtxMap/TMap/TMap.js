@@ -1,5 +1,5 @@
 import React from 'react';
-import './TMap.less';
+import './TMap.css';
 import {graphicManage,getMaxMin,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;

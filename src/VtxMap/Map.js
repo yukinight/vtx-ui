@@ -3,7 +3,7 @@ import AMap from './AMap/AMap';
 import BMap from './BMap/Map';
 import TMap from './TMap/TMap';
 import GMap from './GMap/Map';
-import './Map.less';
+import './Map.css';
 
 class VtxMap extends React.Component {
     constructor(props){

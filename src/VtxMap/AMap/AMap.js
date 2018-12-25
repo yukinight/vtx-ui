@@ -1,5 +1,5 @@
 import React from 'react';
-import './AMap.less';
+import './AMap.css';
 import {graphicManage,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 //公共地址配置

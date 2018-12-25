@@ -4,7 +4,7 @@ import 'moment/locale/zh-cn';
 moment.locale('zh-cn');
 import DatePicker from 'antd/lib/date-picker';
 import 'antd/lib/date-picker/style/css';
-import './common.less';
+import './common.css';
 
 const cm_style = {
     error: 'vtx-ui-date-error'

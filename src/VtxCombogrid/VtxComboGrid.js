@@ -12,7 +12,7 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 
 import VtxDatagrid from '../VtxDatagrid';
-import './VtxComboGrid.less';
+import './VtxComboGrid.css';
 
 const styles = {
     cbBox: 'vtx-ui-combogrid-cbbox',

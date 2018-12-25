@@ -1,5 +1,5 @@
 import React from 'react';
-import './VtxSearchMap.less';
+import './VtxSearchMap.css';
 const styles = {
     searchModal: 'vtx-ui-searchmap-searchmodal',
     searchMap: 'vtx-ui-searchmap-searchmap',

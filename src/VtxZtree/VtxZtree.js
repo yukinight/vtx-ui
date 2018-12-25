@@ -2,7 +2,7 @@ import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import _merge from 'lodash/merge';
 import _debounce from 'lodash/debounce';
-import './VtxZtree.less';
+import './VtxZtree.css';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
 import CONFIG from '../default';

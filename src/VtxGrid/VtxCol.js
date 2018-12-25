@@ -4,7 +4,7 @@ import Col from 'antd/lib/col';
 import 'antd/lib/col/style/css';
 import Tooltip from 'antd/lib/tooltip';
 import 'antd/lib/tooltip/style/css';
-import './VtxGrid.less';
+import './VtxGrid.css';
 const styles = {
     Lists: 'vtx-ui-grid-lists',
     colon: 'vtx-ui-grid-colon',

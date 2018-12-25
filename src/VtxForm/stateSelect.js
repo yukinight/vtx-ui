@@ -3,7 +3,7 @@ import React from 'react';
 import Select from 'antd/lib/select';
 import 'antd/lib/select/style/css';
 
-import './stateSelect.less';
+import './stateSelect.css';
 const styles = {
     error: 'vtx-ui-select-error',
     normal: 'vtx-ui-select-normal'

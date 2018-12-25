@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './VtxYearPicker.less';
+import './VtxYearPicker.css';
 import VtxYearPicker_t from './VtxYearPicker_t';
 import moment from 'moment';
 import 'moment/locale/zh-cn';

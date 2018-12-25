@@ -1,6 +1,7 @@
 const fs = require('fs');  
 const path = require('path');  
 const program = require('commander');
+var exec = require('child_process').exec;
  
 program
   .version('0.0.1')
@@ -11,7 +12,7 @@ let folderName = 'lib';
 if(program.args.length>0){
     folderName = program.args[0];
 }
-//解析需要遍历的文件夹，我这以E盘根目录为例  
+
 let srcFilePath = path.resolve('./src');  
 let libFilePath = path.resolve(`./${folderName}`); 
 //调用文件遍历方法  
@@ -47,7 +48,10 @@ function fileDisplay(srcFilePath){
                                 readable=fs.createReadStream(_src);//创建读取流
                                 writable=fs.createWriteStream(_dst);//创建写入流
                                 readable.pipe(writable);
-                            }                         
+                            }
+                            if(/\.less$/.test(filename)){
+                                exec(`lessc ${_src} > ${_dst.replace('.less','.css')}`);
+                            }                 
                         }  
                         if(isDir){  
                             fileDisplay(filedir);//递归，如果是文件夹，就继续遍历该文件夹下面的文件  
