@@ -348,7 +348,9 @@ export default class VtxZtree extends React.Component{
     }
     // 获取所有已被勾选的节点
     getCheckedNodes(){
-        return this.zTreeObj.getCheckedNodes(true).map(item=>{
+        return this.zTreeObj.getNodesByFilter((node)=>{
+            return node.checked;
+        }).map(item=>{
             return {
                 ...item,
                 name:item.oldname||item.name // 搜索树会改变节点的name
