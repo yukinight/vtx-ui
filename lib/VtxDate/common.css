@@ -1,0 +1,20 @@
+.vtx-ui-date-error {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 18px;
+}
+.vtx-ui-date-error .ant-calendar-picker-input,
+.vtx-ui-date-error .ant-time-picker-input {
+  border-color: red;
+}
+.vtx-ui-date-error:after {
+  content: attr(data-errorMsg);
+  color: red;
+  display: block;
+  font-size: 10px;
+  line-height: 18px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
