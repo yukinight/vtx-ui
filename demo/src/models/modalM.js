@@ -4,7 +4,8 @@ export default {
         namespace: 'vtxModal',
     
         state: {
-            visible: false        
+            visible: false,
+            visible2:false,   
         },
     
         subscriptions: {

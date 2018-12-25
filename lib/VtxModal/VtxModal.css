@@ -1,0 +1,50 @@
+.vtx-ui-modal-normal .ant-modal {
+  /* top: 50%;
+        transform: translateY(-50%);
+        -ms-transform: translateY(-50%); */
+}
+.vtx-ui-modal-normal .ant-modal .ant-modal-content {
+  /*height: 100%;*/
+}
+.vtx-ui-modal-normal .ant-modal .ant-modal-content .ant-modal-body {
+  /*height: e('calc(100% - 96px)');*/
+  overflow: auto;
+  background-color: #fbfbfb;
+}
+.vtx-ui-modal-normal .vtx-ui-modal-title {
+  position: relative;
+  width: 100%;
+}
+.vtx-ui-modal-normal .vtx-ui-modal-title .vtx-ui-modal-title_name {
+  width: 100%;
+  color: #108EE2;
+}
+.vtx-ui-modal-normal .vtx-ui-modal-title .vtx-ui-modal-close {
+  position: absolute;
+  top: -13px;
+  right: -16px;
+}
+.vtx-ui-modal-normal .vtx-ui-modal-title .vtx-ui-modal-close p {
+  width: 48px;
+  height: 48px;
+  text-align: center;
+  line-height: 48px;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+  font-weight: 700;
+  text-decoration: none;
+  -webkit-transition: color 0.3s ease;
+  transition: color 0.3s ease;
+  color: rgba(0, 0, 0, 0.43);
+  outline: 0;
+  display: inline-block;
+}
+.vtx-ui-modal-normal .vtx-ui-modal-title .vtx-ui-modal-close p:hover {
+  color: #444;
+  text-decoration: none;
+}

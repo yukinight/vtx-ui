@@ -1,5 +1,5 @@
 import React from 'react';
-import './VtxTree.less';
+import './VtxTree.css';
 const styles = {
 	normal: 'vtx-ui-tree-normal',
 	searchInput: 'vtx-ui-tree-searchInput',

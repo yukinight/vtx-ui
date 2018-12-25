@@ -8,7 +8,7 @@ import 'antd/lib/tag/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import Ztree from '../VtxZtree/VtxZtree';
-import './ztreeSelect.less';
+import './ztreeSelect.css';
 import _isEqual from 'lodash/isEqual';
 
 export default class SelectZTree extends React.Component{

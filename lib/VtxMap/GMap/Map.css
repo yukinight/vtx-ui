@@ -1,0 +1,88 @@
+.map {
+  width: 100%;
+  height: 100%;
+  background-color: #f1f1f1;
+}
+.vtx_gmap_html_points,
+.vtx_gmap_html_pointCollection {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+.esriSimpleSlider {
+  z-index: 10000000 !important;
+}
+.label-content {
+  /*margin-left: 0;
+    width: 100px;
+    line-height: 25px;
+    text-align: center;
+    position: relative;
+    left: -43px;
+    background-color: #fff;
+    opacity: 1;
+    border-radius: 5px;
+    color: #5DD0EE;
+    word-break: break-all;
+    white-space: normal;
+    padding: 2px 8px;*/
+  display: inline-block;
+  padding: 5px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #fff;
+  opacity: 1;
+  color: #5DD0EE;
+}
+.vtx-g-rangingPoint {
+  width: 7px;
+  height: 7px;
+  background-color: #fff;
+  border: 2px solid #ff0000;
+  display: inline-block;
+  border-radius: 7px;
+}
+.vtx-g-rangingDistance {
+  position: relative;
+  top: -36px;
+  left: 15px;
+  height: 30px;
+  line-height: 28px;
+  background-color: #fff;
+  border: 1px solid #ff0000;
+  font-size: 12px;
+  word-break: keep-all;
+  padding: 0px 3px;
+}
+.vtx-g-rang-exit {
+  width: 9px;
+  height: 9px;
+  background-color: #fff;
+  border: 2px solid #ff0000;
+  color: #ff0000;
+  line-height: 7px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.vtx-g-rang-showRangTool {
+  line-height: 18px;
+  font-size: 12px;
+  border: 1px solid #ff0000;
+  word-break: keep-all;
+  background-color: #fff;
+  padding: 0px 5px;
+}
+.zoom_slider_show_scale {
+  padding: 1px 8px;
+  font-size: 12px;
+  text-align: center;
+}
+.zoom_slider_show_bottom {
+  width: 100%;
+  height: 3px;
+  border: 1px solid #000;
+  border-bottom: 3px solid #000;
+  border-top: 0px;
+}

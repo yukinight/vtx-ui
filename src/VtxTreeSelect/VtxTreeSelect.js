@@ -1,5 +1,5 @@
 import React from 'react';
-import './VtxTreeSelect.less';
+import './VtxTreeSelect.css';
 const styles = {
     error: 'vtx-ui-tree-select-error',
     dis_none: 'vtx-ui-tree-select-dis_none'

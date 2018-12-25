@@ -8,7 +8,7 @@ import DatePicker from 'antd/lib/date-picker';
 import 'antd/lib/date-picker/style/css';
 const {MonthPicker} = DatePicker;
 
-import './common.less';
+import './common.css';
 const cm_style = {
     error: 'vtx-ui-date-error'
 }

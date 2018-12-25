@@ -1,0 +1,79 @@
+/*修正antd-ui样式问题,antd-ui更新后可以删除*/
+/*.vtxtreeselect{
+    display: absolute;
+    top: 0;*/
+.ant-select-tree li.filter-node > span:nth-child(2) {
+  font-weight: 700 !important;
+}
+.ant-select-tree li .ant-select-tree-node-content-wrapper {
+  width: inherit;
+  max-width: calc(100% - 24px);
+}
+.ant-select-tree li span.ant-select-tree-node-content-wrapper {
+  display: inline-block;
+  padding: 1px 5px;
+  border-radius: 2px;
+  margin: 0;
+  cursor: pointer;
+  text-decoration: none;
+  vertical-align: top;
+  color: rgba(0, 0, 0, 0.65);
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.ant-select-tree li span.ant-select-tree-node-content-wrapper:hover {
+  background-color: #ecf6fd !important;
+}
+.ant-select-tree li span.ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+  background-color: #d2eafb !important;
+}
+.ant-select-tree-treenode-disabled > span,
+.ant-select-tree-treenode-disabled > a,
+.ant-select-tree-treenode-disabled > a span {
+  color: rgba(0, 0, 0, 0.25) !important;
+  cursor: not-allowed !important;
+}
+.ant-select-tree-title .stNode {
+  display: inherit;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ant-select-tree-title .stNode .icf {
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.ant-select-tree-title .stNode .imgs {
+  width: 16px;
+  height: 16px;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+.ant-select-tree-title .disable {
+  color: rgba(0, 0, 0, 0.25) !important;
+  cursor: not-allowed !important;
+}
+/*}*/
+.vtx-ui-tree-select-error {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 18px;
+}
+.vtx-ui-tree-select-error span .ant-select-selection {
+  border-color: red !important;
+}
+.vtx-ui-tree-select-error:after {
+  content: attr(data-errorMsg);
+  color: red;
+  display: block;
+  font-size: 10px;
+  line-height: 18px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.vtx-ui-tree-select-dis_none {
+  display: none;
+}

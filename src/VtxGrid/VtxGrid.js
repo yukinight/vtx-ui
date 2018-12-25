@@ -5,7 +5,7 @@ import { Link } from 'dva/router';
 import VtxRow from './VtxRow.js';
 import VtxCol from './VtxCol.js';
 
-import './VtxGrid.less';
+import './VtxGrid.css';
 const styles = {
     Lists: 'vtx-ui-grid-lists',
     colon: 'vtx-ui-grid-colon',

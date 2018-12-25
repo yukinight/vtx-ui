@@ -1,5 +1,5 @@
 import React from 'react';
-import './VtxModal.less';
+import './VtxModal.css';
 const styles = {
     normal: 'vtx-ui-modal-normal',
     title: 'vtx-ui-modal-title',

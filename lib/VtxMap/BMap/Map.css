@@ -1,0 +1,26 @@
+.label-content {
+  /*margin-left: 0;
+    width: 100px;
+    line-height: 25px;
+    text-align: center;
+    position: relative;
+    left: -43px;
+    background-color: #fff;
+    opacity: 1;
+    border-radius: 5px;
+    color: #5DD0EE;
+    word-break: break-all;
+    white-space: normal;
+    padding: 2px 8px;*/
+  display: inline-block;
+  padding: 5px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #fff;
+  opacity: 1;
+  color: #5DD0EE;
+}
+.BMapLabel:hover {
+  z-index: 100 !important;
+}

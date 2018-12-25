@@ -1,0 +1,6 @@
+.vtx-ui-upload-uploadct {
+  overflow: hidden;
+}
+.vtx-ui-upload-uploadct .ant-upload-list-item-info:before {
+  height: 0 !important;
+}

@@ -13,7 +13,7 @@ import 'antd/lib/checkbox/style/css';
 import Popover from 'antd/lib/popover';
 import 'antd/lib/popover/style/css';
 
-import './VortexDatagrid.less';
+import './VortexDatagrid.css';
 
 import _isEqual from 'lodash/isEqual';
 

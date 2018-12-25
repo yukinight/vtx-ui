@@ -2,7 +2,7 @@ import React from 'react';
 import _isEqual from 'lodash/isEqual';
 import _merge from 'lodash/merge';
 import _debounce from 'lodash/debounce';
-import './VtxZtree.less';
+import './VtxZtree.css';
 import Input from 'antd/lib/input';
 import 'antd/lib/input/style/css';
 import CONFIG from '../default';
@@ -213,7 +213,10 @@ export default class VtxZtree extends React.Component{
         for(let i=0,len=checkedKeys.length;i<len;i++){
             const node = this.zTreeObj.getNodesByParam('key',checkedKeys[i]).pop();
             if(node){
-                this.zTreeObj.checkNode(node,checkedFlag,false);
+                // 隐藏节点的勾选状态也要改变
+                node.checked = checkedFlag;
+                this.zTreeObj.updateNode(node);
+                // this.zTreeObj.checkNode(node,checkedFlag,false);
             }
         }
     }
@@ -348,7 +351,9 @@ export default class VtxZtree extends React.Component{
     }
     // 获取所有已被勾选的节点
     getCheckedNodes(){
-        return this.zTreeObj.getCheckedNodes(true).map(item=>{
+        return this.zTreeObj.getNodesByFilter((node)=>{
+            return node.checked;
+        }).map(item=>{
             return {
                 ...item,
                 name:item.oldname||item.name // 搜索树会改变节点的name

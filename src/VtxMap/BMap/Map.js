@@ -1,5 +1,5 @@
 import React from 'react';
-import './Map.less';
+import './Map.css';
 import {graphicManage,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;

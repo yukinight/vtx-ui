@@ -1,0 +1,20 @@
+.vtx-ui-input-error,
+.vtx-ui-input-normal {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 18px;
+}
+.vtx-ui-input-error input {
+  border-color: red;
+}
+.vtx-ui-input-error:after {
+  content: attr(data-errormsg);
+  color: red;
+  display: block;
+  font-size: 10px;
+  line-height: 18px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}

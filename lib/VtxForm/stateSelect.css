@@ -1,0 +1,20 @@
+.vtx-ui-select-error,
+.vtx-ui-select-normal {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 18px;
+}
+.vtx-ui-select-error:after {
+  content: attr(data-errormsg);
+  color: red;
+  display: block;
+  font-size: 10px;
+  line-height: 18px;
+  height: 18px;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.vtx-ui-select-error div:global(.ant-select-selection) {
+  border: 1px solid red;
+}

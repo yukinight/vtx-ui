@@ -1,41 +1,42 @@
 {
   "name": "vtx-ui",
-  "version": "0.4.5",
+  "version": "0.4.6",
   "description": "vtx-ui",
   "main": "lib/index.js",
   "scripts": {
     "build": "rimraf lib && babel src --out-dir lib && node styleProcessor.js",
     "prepublish": "npm run build"
   },
-  "files":[
+  "files": [
     "lib",
-    "example",
+    "demo",
     "src"
   ],
   "dependencies": {
   },
   "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.1",
-    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-loader": "^6.2.7",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-transform-remove-console":"^6.8.5",
+    "babel-plugin-transform-remove-console": "^6.8.5",
+    "babel-plugin-transform-runtime": "^6.9.0",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
-    "babel-cli": "^6.14.0",
-    "babel-core": "^6.18.2",
-    "babel-loader": "^6.2.7",
-    "babel-polyfill": "^6.9.1",
-    "rimraf":"^2.6.2"
+    "less": "^3.9.0",
+    "rimraf": "^2.6.2"
   },
-  "peerDependencies":{
+  "peerDependencies": {
     "antd": "^2.13.7",
-    "react": "^15.4.0",
-    "react-dom": "^15.4.0",
-    "immutable":"^3.8.2",
+    "immutable": "^3.8.2",
+    "lodash": "^4.17.10",
     "moment": "2.20.1",
-    "lodash": "^4.17.10"
-  },  
+    "react": "^15.4.0",
+    "react-dom": "^15.4.0"
+  },
   "author": "ztq",
   "license": "MIT"
 }

@@ -11,29 +11,41 @@ class DraggableModal extends React.Component{
             init_y: 0,
             x_move: 0,
             y_move: 0,
-            documentMouseMove: null,
-            documentMouseUp:null,
         }
-        this.startDrag = this.startDrag.bind(this);        
+        this.initSucceed = false; //是否已完成初始化拖拽事件
+        this.startDrag = this.startDrag.bind(this);
+        this.initEvent = this.initEvent.bind(this);
     }
+    // 初始化弹框的拖拽事件
+    initEvent(){
+        if(!this.drag)return;
+        let modalHead = ReactDOM.findDOMNode(this.drag).parentNode.previousSibling;
+        if(modalHead.className.indexOf('ant-modal-header')!==-1){
+            modalHead.style.cursor = 'move';
+            modalHead.onmousedown = this.startDrag;
+            this.initSucceed = true;
+        }
+    }
+    // 开始拖拽：绑定事件
     startDrag(e){  
         e.preventDefault();
         this.setState({
-            documentMouseUp: document.onmouseup,
-            documentMouseMove: document.onmousemove,
             init_x: e.clientX - this.state.x_move,
             init_y: e.clientY - this.state.y_move,
         });
-        document.onmousemove = (e)=>{
+        const mousemove = (e)=>{
             this.setState({
                 x_move: e.clientX - this.state.init_x ,
                 y_move: e.clientY - this.state.init_y ,
             })   
         }
-        document.onmouseup = (e)=>{
-            document.onmousemove = this.state.documentMouseMove;
-            document.onmouseup = this.state.documentMouseUp;
+        const mouseup = (e)=>{
+            document.removeEventListener('mousemove',mousemove);
+            document.removeEventListener('mouseup',mouseup);
         }
+
+        document.addEventListener('mousemove',mousemove);
+        document.addEventListener('mouseup',mouseup);
     }
    
     render(){
@@ -56,12 +68,23 @@ class DraggableModal extends React.Component{
         )
     }
     componentDidMount(){        
-        let modalHead = ReactDOM.findDOMNode(this.drag).parentNode.previousSibling;
-        if(modalHead.className.indexOf('ant-modal-header')!==-1){
-            modalHead.style.cursor = 'move';
-            modalHead.onmousedown = this.startDrag;
+        this.initEvent();
+    }
+    componentDidUpdate(){
+        if(!this.initSucceed){
+            this.initEvent();
         }
-    }  
+    }
+    componentWillReceiveProps(nextProps){
+        if(!this.props.visible && nextProps.visible && !nextProps.remainPosition){
+            this.setState({
+                init_x: 0,
+                init_y: 0,
+                x_move: 0,
+                y_move: 0,
+            })
+        }
+    }
 }
 
 
