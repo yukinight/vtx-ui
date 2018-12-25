@@ -213,7 +213,10 @@ export default class VtxZtree extends React.Component{
         for(let i=0,len=checkedKeys.length;i<len;i++){
             const node = this.zTreeObj.getNodesByParam('key',checkedKeys[i]).pop();
             if(node){
-                this.zTreeObj.checkNode(node,checkedFlag,false);
+                // 隐藏节点的勾选状态也要改变
+                node.checked = checkedFlag;
+                this.zTreeObj.updateNode(node);
+                // this.zTreeObj.checkNode(node,checkedFlag,false);
             }
         }
     }
