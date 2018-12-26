@@ -734,15 +734,18 @@ class TMap extends React.Component{
                     gc.showLabel();
                 }else{
                     cg = {
-                        width: (item.config || {}).width || gc.getIcon().options.iconSize.x,
-                        height: (item.config || {}).width || gc.getIcon().options.iconSize.y,
-                        markerContentX: (item.config || {}).markerContentX || -gc.getIcon().options.iconAnchor.x,
-                        markerContentY: (item.config || {}).markerContentY || -gc.getIcon().options.iconAnchor.y,
+                        width: (item.config || {}).width || 33,
+                        height: (item.config || {}).width || 33,
+                        markerContentX: (item.config || {}).markerContentX || -16.5,
+                        markerContentY: (item.config || {}).markerContentY || -33,
                         //暂时不设置旋转角度,后期维护设置吧
                         deg: (item.config || {}).deg,
-                        zIndex: (item.config || {}).zIndex || gc.options.zIndexOffset,
+                        zIndex: (item.config || {}).zIndex || 100,
                         labelClass: (item.config || {}).labelContent || 'label-content',
-                        BAnimationType: (item.config || {}).BAnimationType
+                        labelContent: '',
+                        BAnimationType: (item.config || {}).BAnimationType,
+                        labelPixelX: 0,
+                        labelPixelY: 33,
                     };
                     gc.setIcon(new T.Icon({
                         iconUrl: item.url || `${configUrl.mapServerURL}/images/touming.png`,
@@ -758,9 +761,12 @@ class TMap extends React.Component{
                         if(gc.label){
                             this.state.gis.removeOverLay(gc.label);
                         }
-                        cg.labelPixelX= (item.config || {}).labelPixelX?(item.config || {}).labelPixelX - (cg.width/2):gc.getLabel().options.offset.x;
-                        cg.labelPixelY= (item.config || {}).labelPixelY?(item.config || {}).labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
-                        cg.labelContent= (item.config || {}).labelContent || gc.getLabel().options.text;
+                        // cg.labelPixelX= (item.config || {}).labelPixelX?(item.config || {}).labelPixelX - (cg.width/2):gc.getLabel().options.offset.x;
+                        // cg.labelPixelY= (item.config || {}).labelPixelY?(item.config || {}).labelPixelY + (cg.markerContentY + cg.height/2):gc.getLabel().options.offset.y;
+                        // cg.labelContent= (item.config || {}).labelContent || gc.getLabel().options.text;
+                        cg.labelPixelX= (item.config || {}).labelPixelX?(item.config || {}).labelPixelX - (cg.width/2):cg.labelPixelX - cg.width/2;
+                        cg.labelPixelY= (item.config || {}).labelPixelY?(item.config || {}).labelPixelY + (cg.markerContentY + cg.height/2):cg.labelPixelY + (cg.markerContentY + cg.height/2);
+                        cg.labelContent= (item.config || {}).labelContent || '';
                         let labelClass = item.labelClass || 'label-content';
                         //更新label
                         gc.label = new T.Label({
