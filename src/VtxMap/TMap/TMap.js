@@ -748,7 +748,7 @@ class TMap extends React.Component{
                         labelPixelY: 33,
                     };
                     gc.setIcon(new T.Icon({
-                        iconUrl: item.url || `${configUrl.mapServerURL}/images/touming.png`,
+                        iconUrl: item.url || `${configUrl.mapServerURL}/images/defaultMarker.png`,
                         iconSize: new T.Point(cg.width,cg.height),
                         iconAnchor: new T.Point(-cg.markerContentX,-cg.markerContentY)
                     }));
