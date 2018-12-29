@@ -3557,35 +3557,35 @@ class ArcgisMap extends React.Component{
                 t.heatMapOverlay(heatMapData);
             }
             //图元编辑调用
-            if(isDoEdit){
+            if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
                 t.doEdit(editGraphicId);
             }
             //关闭图元编辑
-            if(isEndEdit){
+            if((typeof(isEndEdit) == 'boolean' && isEndEdit) || (isEndEdit && isEndEdit !== t.props.isEndEdit)){
                 t.endEdit();
             }
             //开启图元绘制
-            if(isDraw){
+            if((typeof(isDraw) == 'boolean' && isDraw) || (isDraw && isDraw !== t.props.isDraw)){
                 t.draw(mapDraw);
             }
             //关闭图元绘制
-            if(isCloseDraw){
+            if((typeof(isCloseDraw) == 'boolean' && isCloseDraw) || (isCloseDraw && isCloseDraw !== t.props.isCloseDraw)){
                 t.closeDraw();
             }
             //设置中心点
-            if(setCenter){
+            if((typeof(setCenter) == 'boolean' && setCenter) || (setCenter && setCenter !== t.props.setCenter)){
                 t.setCenter(mapCenter);
             }
             //设置点聚合
-            if(setCluster){
+            if((typeof(setCluster) == 'boolean' && setCluster) || (setCluster && setCluster !== t.props.setCluster)){
                 t.cluster(mapCluster);
             }
             //设置比例尺
-            if(setZoomLevel){
+            if((typeof(setZoomLevel) == 'boolean' && setZoomLevel) || (setZoomLevel && setZoomLevel !== t.props.setZoomLevel)){
                 t.setZoomLevel(mapZoomLevel);
             }
             //设置最优视野
-            if(setVisiblePoints){
+            if((typeof(setVisiblePoints) == 'boolean' && setVisiblePoints) || (setVisiblePoints && setVisiblePoints !== t.props.setVisiblePoints)){
                 switch(mapVisiblePoints.fitView){
                     case 'point':
                         t.setVisiblePoints(pointIds,mapVisiblePoints.type);
@@ -3608,7 +3608,7 @@ class ArcgisMap extends React.Component{
                 }
             }
             //测距工具调用
-            if(isRangingTool){
+            if((typeof(isRangingTool) == 'boolean' && isRangingTool) || (isRangingTool && isRangingTool !== t.props.isRangingTool)){
                 t.vtxRangingTool(mapRangingTool);
             }
             // //开关路况
@@ -3618,19 +3618,21 @@ class ArcgisMap extends React.Component{
             //     t.hideTrafficInfo();
             // }
             //设置区域限制
-            if(isSetAreaRestriction && areaRestriction && !!areaRestriction[0] && !!areaRestriction[1]){
+            if((typeof(isSetAreaRestriction) == 'boolean' && isSetAreaRestriction) 
+            || (isSetAreaRestriction && isSetAreaRestriction !== t.props.isSetAreaRestriction) 
+            && areaRestriction && !!areaRestriction[0] && !!areaRestriction[1]){
                 t.setAreaRestriction(areaRestriction);
             }
             //关闭区域限制
-            if(isClearAreaRestriction){
+            if((typeof(isClearAreaRestriction) == 'boolean' && isClearAreaRestriction) || (isClearAreaRestriction && isClearAreaRestriction !== t.props.isClearAreaRestriction)){
                 t.clearAreaRestriction();
             }
             //清空地图
-            if(isClearAll){
+            if((typeof(isClearAll) == 'boolean' && isClearAll) || (isClearAll && isClearAll !== t.props.isClearAll)){
                 t.clearAll();
             }
             //删除指定图元
-            if(isRemove){
+            if((typeof(isRemove) == 'boolean' && isRemove) || (isRemove && isRemove !== t.props.isRemove)){
                 mapRemove.map((item,index)=>{
                     t.removeGraphic(item.id,item.type);
                 });
