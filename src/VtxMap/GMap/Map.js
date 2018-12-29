@@ -706,7 +706,7 @@ class ArcgisMap extends React.Component{
                             "format": services[im].format || "format/png",
                             "compressionQuality": 0,
                             "spatialReference": new esri.SpatialReference({
-                              "wkid": t.grwkid || 4326
+                              "wkid": t.wkid || 4326
                             }),
                             "rows": 256,
                             "cols": 256,
@@ -714,10 +714,10 @@ class ArcgisMap extends React.Component{
                             "lods": mapServer.lods || []
                         });
                         let tileExtent = new esri.geometry.Extent(mapServer.fullExtent.xmin, mapServer.fullExtent.ymin, mapServer.fullExtent.xmax, mapServer.fullExtent.ymax, new esri.SpatialReference({
-                            wkid: t.grwkid
+                            wkid: t.wkid
                         }));
                         let inTileExtent = new esri.geometry.Extent(mapServer.initialExtent.xmin, mapServer.initialExtent.ymin, mapServer.initialExtent.xmax, mapServer.initialExtent.ymax, new esri.SpatialReference({
-                            wkid: t.grwkid
+                            wkid: t.wkid
                         }));
                         let layerInfo = new esri.layers.WMTSLayerInfo({
                             tileInfo: tileInfo,
@@ -757,7 +757,7 @@ class ArcgisMap extends React.Component{
                     // "format": "tiles",
                     "compressionQuality": 0,
                     "spatialReference": new esri.SpatialReference({
-                      "wkid": t.grwkid || 4326
+                      "wkid": t.wkid || 4326
                     }),
                     "rows": 256,
                     "cols": 256,
@@ -765,10 +765,10 @@ class ArcgisMap extends React.Component{
                     "lods": defaultWmtsMapLayers.lods || []
                 });
                 let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
-                    wkid: t.grwkid
+                    wkid: t.wkid
                 }));
                 let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
-                    wkid: t.grwkid
+                    wkid: t.wkid
                 }));
                 for(let i = 0 ; i < url.length ; i++){
                     let dlayerInfo = new esri.layers.WMTSLayerInfo({
