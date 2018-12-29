@@ -19,6 +19,7 @@ app.model(require('./models/treeSelectM').default);
 app.model(require('./models/comboGridM').default);
 app.model(require('./models/modalM').default);
 app.model(require('./models/uploadM').default);
+app.model(require('./models/modalListM').default);
 
 // 4. Router
 app.router(require('./router').default);
