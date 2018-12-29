@@ -4,8 +4,7 @@ const styles = {
     error: 'vtx-ui-tree-select-error',
     dis_none: 'vtx-ui-tree-select-dis_none'
 }
-import Immutable from 'immutable';
-const {Set} = Immutable;
+import _isEqual from 'lodash/isEqual';
 import TreeSelect from 'antd/lib/tree-select';
 import 'antd/lib/tree-select/style/css';
 import Tooltip from 'antd/lib/tooltip';
@@ -288,7 +287,8 @@ class VtxTreeSelect extends React.Component{
     }
     componentWillReceiveProps(nextProps) {//已加载组件，收到新的参数时调用
         let t = this;
-        if(!Immutable.is(Immutable.fromJS(t.props.data),Immutable.fromJS(nextProps.data))){
+        
+        if(!_isEqual(t.props.data,nextProps.data)){
             t.setState({
                 data: this.dealNonentityData(nextProps.data,nextProps.value,nextProps.labels)
             });
