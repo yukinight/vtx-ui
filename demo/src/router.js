@@ -15,6 +15,7 @@ import Upload from './routes/upload';
 import ZTree from './routes/ztree';
 import ImportFile from './routes/importFile';
 import ExportFile from './routes/exportFile';
+import ModalList from './routes/modalList';
 
 function RouterConfig({ history }) {
   return (
@@ -34,6 +35,7 @@ function RouterConfig({ history }) {
         <Route path="/upload" component={Upload} />  
         <Route path="/import" component={ImportFile} />  
         <Route path="/export" component={ExportFile} />  
+        <Route path="/modallist" component={ModalList} />  
     </Router>
   );
 }

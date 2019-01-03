@@ -1,5 +1,17 @@
 {
   "entry": "src/index.js",
+  "html": {
+    "template": "./public/index.ejs"
+  },
+  "hash":true,
+  "proxy": {
+    //用mock,需要不配置proxy
+    "/api": {
+      "target": "http://jsonplaceholder.typicode.com/",
+      "changeOrigin": true,
+      "pathRewrite": { "^/api" : "" }
+    }
+  },
   "extraBabelPlugins": [
     ["import", {"libraryName": "antd", "libraryDirectory": "lib", "style": "css" }, "antd"],
     ["import", {"libraryName": "vtx-ui", "camel2DashComponentName": false}, "vtx-ui"],

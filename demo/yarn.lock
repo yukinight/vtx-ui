@@ -9528,9 +9528,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-vtx-ui@latest:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/vtx-ui/-/vtx-ui-0.3.0.tgz#774408538efeb97784ca4147431d12dc03baaa3e"
+vtx-ui@^0.4.6:
+  version "0.4.6"
+  resolved "https://registry.yarnpkg.com/vtx-ui/-/vtx-ui-0.4.6.tgz#84e5e954cfa65934313170b9e7dc59d2d8931073"
 
 w3c-hr-time@^1.0.1:
   version "1.0.1"
