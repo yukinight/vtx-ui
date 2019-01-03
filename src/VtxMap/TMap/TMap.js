@@ -2271,7 +2271,7 @@ class TMap extends React.Component{
             t.addPointCollection(addedData);
             t.updatePointCollection(updatedData);
         }
-        if(isclearAllPointCollection){
+        if((typeof(isclearAllPointCollection) == 'boolean' && isclearAllPointCollection) || (isclearAllPointCollection && isclearAllPointCollection !== t.props.isclearAllPointCollection)){
             t.clearAllPointCollection();
         }
 
