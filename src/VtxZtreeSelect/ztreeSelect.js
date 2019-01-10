@@ -178,11 +178,11 @@ export default class SelectZTree extends React.Component{
 
         // 单选组件
         const SingleSelect = <Input ref={(t)=>{ if(t)t.input = t;}} 
-            value={value_arr}
+            value={selectedNodes.map(item=>item.name).join(', ')}
             style={style}
             readOnly={true}
             placeholder={t.props.placeholder}
-            suffix={(disabled||value_arr.length==0)?
+            suffix={(disabled||selectedNodes.length==0)?
                 null:<Icon type="close-circle" onClick={t.clear.bind(t)} style={{cursor:'pointer'}}/>
             }
         />
