@@ -1,6 +1,6 @@
 ## vtx-ui
 
-> 基于[ant-design](https://2x.ant.design/docs/react/introduce-cn)封装的自用工具
+> 基于[ant-design](https://2x.ant.design/docs/react/introduce-cn)封装的UI工具
 
 ### 安装
 
