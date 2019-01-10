@@ -12,8 +12,8 @@ function getRandomNodes(){
         let subnodes = [];
         for(let j=0;j<layer2;j++){
             subnodes.push({
-                id:`${i}-${j}`,
-                key:`${i}-${j}`,
+                id:`id${i}-${j}`,
+                key:`k${i}-${j}`,
                 name:`n${i}-${j}`,
                 isLeaf:true,
                 icon:'./resources/images/yc.png',
@@ -21,7 +21,8 @@ function getRandomNodes(){
         }
         nodes.push({
             name:"p"+i, 
-            key:i,
+            key:"k"+i,
+            id:"id"+i,
             icon:'./resources/images/zc.png',
             children:subnodes,
             attr:{ff:'22',sd:'sdg'}
@@ -87,8 +88,8 @@ export default class Test extends React.Component{
         const selectTreeProps = {
             data:t.state.treeNodes,
             showSearch:true,
-            multiple:true,
-            treeCheckable:true,
+            multiple:false,
+            treeCheckable:false,
             style:{width:'200px'},
             dropdownStyle:{
                 height:'300px'
