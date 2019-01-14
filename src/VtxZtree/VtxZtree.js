@@ -75,6 +75,9 @@ export default class VtxZtree extends React.Component{
                 expandSpeed:'normal'
             },
             callback:{
+                beforeClick(treeId, treeNode, clickFlag){
+                    return treeNode.selectable;
+                },
                 onClick(e,treeId,treeNode,clickFlag){
                     // console.log('点击节点信息',treeNode)
                     if(typeof props.onClick =='function'){
@@ -163,18 +166,20 @@ export default class VtxZtree extends React.Component{
                             checked = true;
                         }
                         return {
+                            chkDisabled,
+                            selectable:true,
                             ...item,
                             checked,
                             open,
-                            chkDisabled,
                             children:genNodes(item.children)
                         }
                     }
                     else{
                         return {
+                            chkDisabled,
+                            selectable:true,
                             ...item,
                             checked,
-                            chkDisabled,
                             open
                         }
                     }
