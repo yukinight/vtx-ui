@@ -72,7 +72,7 @@ function IndexPage(props) {
         </Popconfirm>
       </span>
     ),
-  },, {
+  }, {
     title: '封装Button',
     key: 'autoaction',
     // width:200,
@@ -127,6 +127,9 @@ function IndexPage(props) {
             selectedRowKeys:keys,
         }})
       }
+    },
+    colsVisibilityChange(columnStatus){
+      console.log(columnStatus)
     },
     // 分页切换
     onChange(pagination, filters, sorter){

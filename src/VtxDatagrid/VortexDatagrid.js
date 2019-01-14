@@ -148,17 +148,21 @@ class VortexDatagrid extends React.Component{
     }
     // 隐藏/显示列
     changeColumnVisibility(key,visible){
-        this.setState({
-            columnsVisibility: this.state.columnsVisibility.map(item=>{
-                if(item.key==key){
-                    return {
-                        ...item,
-                        visible
-                    }
+        const columnsVisibility = this.state.columnsVisibility.map(item=>{
+            if(item.key==key){
+                return {
+                    ...item,
+                    visible
                 }
-                return item;
-            })
+            }
+            return item;
         })
+        this.setState({
+            columnsVisibility
+        });
+        if(typeof this.props.colsVisibilityChange == 'function'){
+            this.props.colsVisibilityChange(columnsVisibility);
+        }
     }
     // 快捷生成表格按钮列
     generateButtons(btList, rowData, text, index){
