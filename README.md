@@ -12,22 +12,22 @@ $ yarn add vtx-ui
 ```
 
 ### 文档
-> - [VtxCombogrid](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxCombogrid.md)
-> - [VtxDatagrid](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxDatagrid.md)
-> - [VtxDate](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxDate.md)
-> - [VtxImport](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxImport.md)
-> - [VtxExport](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxExport.md)
-> - [VtxUpload](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxUpload.md)
-> - [VtxModal](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxModal.md)
-> - [VtxGrid](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxGrid.md)
-> - [VtxModalList](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxModalList.md)
-> - [VtxTree](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxTree.md)
-> - [VtxTreeSelect](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxTreeSelect.md)
-> - [VtxZtree](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxZtree.md)
-> - [VtxZtreeSelect](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxZtreeSelect.md)
-> - [VtxMap](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxMap.md)
-> - [VtxSearchMap](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxSearchMap.md)
-> - [VtxOptMap](https://github.com/yukinight/vtx-ui/blob/develop/docs/VtxOptMap.md)
+- [VtxCombogrid](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxCombogrid.md)
+- [VtxDatagrid](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxDatagrid.md)
+- [VtxDate](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxDate.md)
+- [VtxImport](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxImport.md)
+- [VtxExport](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxExport.md)
+- [VtxUpload](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxUpload.md)
+- [VtxModal](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxModal.md)
+- [VtxGrid](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxGrid.md)
+- [VtxModalList](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxModalList.md)
+- [VtxTree](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxTree.md)
+- [VtxTreeSelect](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxTreeSelect.md)
+- [VtxZtree](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxZtree.md)
+- [VtxZtreeSelect](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxZtreeSelect.md)
+- [VtxMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxMap.md)
+- [VtxSearchMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxSearchMap.md)
+- [VtxOptMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxOptMap.md)
 
 #### 全量导入引用方式（==不推荐==）：
 

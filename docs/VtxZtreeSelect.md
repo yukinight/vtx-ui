@@ -26,6 +26,8 @@
 | key      | 节点的id(整个树范围内的所有节点的 key 值不能重复,否则报错) | String          | \*         |
 | children | 当前节点下的子节点数据(数据类型与 VtxTree data相同)        | Array/[{},{}]   | 默认[]     |
 | isLeaf   | 设定当前节点为叶子节点                                     | Bealoon         |            |
+| chkDisabled      | 禁掉 checkbox                                                                                   | Bool          |         |
+| selectable      | 设置节点是否可被点击选中                                                                                   | Bool          |    true     |
 | icon     | 节点名称前的图片地址                                       | String/http地址 | 默认 --    |
 | iconSkin | 定义icon图标的样式，css类名class                           | String          |            |
 

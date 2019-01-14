@@ -897,7 +897,7 @@ class BaiduMap extends React.Component{
                 //更新变线透明度
                 gc.setStrokeOpacity(cg.lineOpacity);
                 //更新填充色透明度
-                gc.setStrokeOpacity(cg.pellucidity);
+                gc.setFillOpacity(cg.pellucidity);
                 //更新边线宽度
                 gc.setStrokeWeight(cg.lineWidth);
                 //更新边线类型
