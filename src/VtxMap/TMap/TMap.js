@@ -735,7 +735,7 @@ class TMap extends React.Component{
                 }else{
                     cg = {
                         width: (item.config || {}).width || 33,
-                        height: (item.config || {}).width || 33,
+                        height: (item.config || {}).height || 33,
                         markerContentX: (item.config || {}).markerContentX || -16.5,
                         markerContentY: (item.config || {}).markerContentY || -33,
                         //暂时不设置旋转角度,后期维护设置吧
