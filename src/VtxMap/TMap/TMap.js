@@ -83,6 +83,9 @@ class TMap extends React.Component{
                         //     })
                         // });
                         Promise.all([Heatmap,PointCollection/*,components*/]).then(()=>{
+                            if(t.waitInit){
+                                clearInterval(t.waitInit);
+                            }
                             t.waitInit = setInterval(()=>{
                                 if(T.Tool){
                                     clearInterval(t.waitInit);
@@ -2475,6 +2478,9 @@ class TMap extends React.Component{
         if(t.isLoading){
             receive();
         }else{
+            if(t.waitReceive){
+                clearInterval(t.waitReceive);
+            }
             t.waitReceive = setInterval(()=>{
                 if(t.isLoading){
                     clearInterval(t.waitReceive);
