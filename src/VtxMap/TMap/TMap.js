@@ -2470,17 +2470,17 @@ class TMap extends React.Component{
             if((typeof(isClearAreaRestriction) == 'boolean' && isClearAreaRestriction) || (isClearAreaRestriction && isClearAreaRestriction !== t.props.isClearAreaRestriction)){
                 t.clearAreaRestriction();
             }
-            //等等天地图初始化
-            if(t.isLoading){
-                receive();
-            }else{
-                t.waitReceive = setInterval(()=>{
-                    if(t.isLoading){
-                        clearInterval(t.waitReceive);
-                        receive();
-                    }
-                },100);
-            }
+        }
+        //等等天地图初始化
+        if(t.isLoading){
+            receive();
+        }else{
+            t.waitReceive = setInterval(()=>{
+                if(t.isLoading){
+                    clearInterval(t.waitReceive);
+                    receive();
+                }
+            },100);
         }
     }
     componentWillUnmount() {
