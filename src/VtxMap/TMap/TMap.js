@@ -2474,13 +2474,13 @@ class TMap extends React.Component{
                 t.clearAreaRestriction();
             }
         }
+        if(t.waitReceive){
+            clearInterval(t.waitReceive);
+        }
         //等等天地图初始化
         if(t.isLoading){
             receive();
         }else{
-            if(t.waitReceive){
-                clearInterval(t.waitReceive);
-            }
             t.waitReceive = setInterval(()=>{
                 if(t.isLoading){
                     clearInterval(t.waitReceive);
