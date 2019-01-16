@@ -30,6 +30,9 @@ class TMap extends React.Component{
         this.heatmap = null;//热力图对象
         this.animTimer = {};//点位跳动动画
         this.animCount = {};//点位跳动动画 位置记录
+        this.waitInit = null; //等加载定时
+        this.isLoading = false; //是否加载完
+        this.waitReceive = null;//等初始化,更新定时
         this.state={
             gis: null,//地图对象
             mapId: props.mapId,
@@ -55,6 +58,7 @@ class TMap extends React.Component{
         this.loadMapJs();
     }
     loadMapJs(){
+        let t = this;
         this.loadMapComplete = new Promise((resolve,reject)=>{
             if(window.T){
                 resolve(window.T);
@@ -73,13 +77,21 @@ class TMap extends React.Component{
                                 resolve();
                             });
                         });
-                        let components = new Promise((resolve,reject)=>{
-                            $.getScript(`${configUrl.mapServerURL}/T_toolComponents.js`,()=>{
-                                resolve();
-                            })
-                        });
-                        Promise.all([Heatmap,PointCollection,components]).then(()=>{
-                            resolve(window.T);
+                        // let components = new Promise((resolve,reject)=>{
+                        //     $.getScript(`${configUrl.mapServerURL}/T_toolComponents.js`,()=>{
+                        //         resolve();
+                        //     })
+                        // });
+                        Promise.all([Heatmap,PointCollection/*,components*/]).then(()=>{
+                            if(t.waitInit){
+                                clearInterval(t.waitInit);
+                            }
+                            t.waitInit = setInterval(()=>{
+                                if(T.Tool){
+                                    clearInterval(t.waitInit);
+                                    resolve(window.T);
+                                }
+                            },50)
                         })
                     })
                 })
@@ -735,7 +747,7 @@ class TMap extends React.Component{
                 }else{
                     cg = {
                         width: (item.config || {}).width || 33,
-                        height: (item.config || {}).width || 33,
+                        height: (item.config || {}).height || 33,
                         markerContentX: (item.config || {}).markerContentX || -16.5,
                         markerContentY: (item.config || {}).markerContentY || -33,
                         //暂时不设置旋转角度,后期维护设置吧
@@ -2235,6 +2247,8 @@ class TMap extends React.Component{
             t.mapLeft = document.getElementById(t.props.mapId).offsetLeft;
             t.mapTop = document.getElementById(t.props.mapId).offsetTop;
             t.init();
+            //初始化完成后,再走更新
+            t.isLoading = true;
         })
     }
     componentDidUpdate(prevProps, prevState) {//重新渲染结束
@@ -2242,221 +2256,237 @@ class TMap extends React.Component{
     }
     componentWillReceiveProps(nextProps,prevProps) {//已加载组件，收到新的参数时调用
         let t = this;
-        //点/线旧数据
-        let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
-        let {point,polyline,polygon,circle,rectangle} = drawIds;
-        //点/线新数据
-        let {
-            mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-            isOpenTrafficInfo,boundaryName,heatMapData,
-            mapVisiblePoints,setVisiblePoints,
-            setCenter,mapCenter,
-            setZoomLevel,mapZoomLevel,
-            setCluster,mapCluster,
-            isRangingTool,mapRangingTool,
-            isRemove,mapRemove,
-            mapDraw,isDraw,isCloseDraw,
-            editGraphicId,isDoEdit,isEndEdit,
-            mapPointCollection,isclearAllPointCollection,
-            isClearAll,
-            isSetAreaRestriction,areaRestriction,isClearAreaRestriction
-        } = nextProps;
+        let receive = ()=>{
+            //点/线旧数据
+            let {pointIds,lineIds,polygonIds,circleIds,drawIds} = t.state;
+            let {point,polyline,polygon,circle,rectangle} = drawIds;
+            //点/线新数据
+            let {
+                mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
+                isOpenTrafficInfo,boundaryName,heatMapData,
+                mapVisiblePoints,setVisiblePoints,
+                setCenter,mapCenter,
+                setZoomLevel,mapZoomLevel,
+                setCluster,mapCluster,
+                isRangingTool,mapRangingTool,
+                isRemove,mapRemove,
+                mapDraw,isDraw,isCloseDraw,
+                editGraphicId,isDoEdit,isEndEdit,
+                mapPointCollection,isclearAllPointCollection,
+                isClearAll,
+                isSetAreaRestriction,areaRestriction,isClearAreaRestriction
+            } = nextProps;
 
-        // 等待地图加载
-        if(!t.state.mapCreated)return;
-        /*添加海量点*/
-        if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
-            t.clearPointCollection(deletedDataIDs);
-            t.addPointCollection(addedData);
-            t.updatePointCollection(updatedData);
-        }
-        if((typeof(isclearAllPointCollection) == 'boolean' && isclearAllPointCollection) || (isclearAllPointCollection && isclearAllPointCollection !== t.props.isclearAllPointCollection)){
-            t.clearAllPointCollection();
-        }
+            // 等待地图加载
+            if(!t.state.mapCreated)return;
+            /*添加海量点*/
+            if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
+                t.clearPointCollection(deletedDataIDs);
+                t.addPointCollection(addedData);
+                t.updatePointCollection(updatedData);
+            }
+            if((typeof(isclearAllPointCollection) == 'boolean' && isclearAllPointCollection) || (isclearAllPointCollection && isclearAllPointCollection !== t.props.isclearAllPointCollection)){
+                t.clearAllPointCollection();
+            }
 
-        /*点数据处理
-            pointData[2]相同的点,执行刷新
-            pointData[1]的数据在idsForGraphicId中不存在的,执行新增
-            pointData[0]数据中多余的id,执行删除
-        */
-        if(mapPoints instanceof Array && !t.deepEqual(mapPoints,t.props.mapPoints)){
-            let oldMapPoints = t.props.mapPoints;
-            let newMapPoints = mapPoints;
-            //过滤编辑的图元
-            if(!!t.state.editId){
-                oldMapPoints = t.props.mapPoints.filter((item)=>{return item.id !== editGraphicId});
-                newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
+            /*点数据处理
+                pointData[2]相同的点,执行刷新
+                pointData[1]的数据在idsForGraphicId中不存在的,执行新增
+                pointData[0]数据中多余的id,执行删除
+            */
+            if(mapPoints instanceof Array && !t.deepEqual(mapPoints,t.props.mapPoints)){
+                let oldMapPoints = t.props.mapPoints;
+                let newMapPoints = mapPoints;
+                //过滤编辑的图元
+                if(!!t.state.editId){
+                    oldMapPoints = t.props.mapPoints.filter((item)=>{return item.id !== editGraphicId});
+                    newMapPoints = mapPoints.filter((item)=>{return item.id !== editGraphicId});
+                }
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'point');
+                }
+                //增加
+                t.addPoint([...ads,...otherads]);
+                //更新
+                t.updatePoint([...upds,...otherupds]);
             }
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPoints,newMapPoints,'id');
-            let {ads,otherupds} = t.dealAdd(addedData,[...pointIds,...point]);
-            let {upds,otherads} = t.dealUpdate(updatedData,[...pointIds,...point]);
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'point');
+            /*
+                线数据处理
+                先全删除,再新增
+            */
+            if(mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
+                let oldMapLines = t.props.mapLines;
+                let newMapLines = mapLines;
+                if(!!t.state.editId){
+                    oldMapLines = t.props.mapLines.filter((item)=>{return item.id !== editGraphicId});
+                    newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
+                }
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'line');
+                }
+                //增加
+                t.addLine([...ads,...otherads]);
+                //更新
+                t.updateLine([...upds,...otherupds]);          
             }
-            //增加
-            t.addPoint([...ads,...otherads]);
-            //更新
-            t.updatePoint([...upds,...otherupds]);
-        }
-        /*
-            线数据处理
-            先全删除,再新增
-        */
-        if(mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
-            let oldMapLines = t.props.mapLines;
-            let newMapLines = mapLines;
-            if(!!t.state.editId){
-                oldMapLines = t.props.mapLines.filter((item)=>{return item.id !== editGraphicId});
-                newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
+            //画其他特例线专用
+            if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.customizedBoundary,customizedBoundary,'id');
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'line');
+                }
+                t.updateLine(updatedData);
+                t.addLine(addedData);            
             }
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
-            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
-            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'line');
+            /*
+                面数据处理
+                先全删除,再新增
+            */
+            if(mapPolygons instanceof Array && !t.deepEqual(mapPolygons,t.props.mapPolygons)){
+                let oldMapPolygons = t.props.mapPolygons;
+                let newMapPolygons = mapPolygons;
+                if(!!t.state.editId){
+                    oldMapPolygons = t.props.mapPolygons.filter((item)=>{return item.id !== editGraphicId});
+                    newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
+                }
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'polygon');
+                }
+                //增加
+                t.addPolygon([...ads,...otherads]);
+                //更新
+                t.updatePolygon([...upds,...otherupds]);
             }
-            //增加
-            t.addLine([...ads,...otherads]);
-            //更新
-            t.updateLine([...upds,...otherupds]);          
-        }
-        //画其他特例线专用
-        if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.customizedBoundary,customizedBoundary,'id');
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'line');
+            /*
+                圆数据处理
+                先全删除,再新增
+            */
+            if(mapCircles instanceof Array && !t.deepEqual(mapCircles,t.props.mapCircles)){
+                let oldMapCircles = t.props.mapCircles;
+                let newMapCircles = mapCircles;
+                if(!!t.state.editId){
+                    oldMapCircles = t.props.mapCircles.filter((item)=>{return item.id !== editGraphicId});
+                    newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
+                }
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'circle');
+                }
+                //增加
+                t.addCircle([...ads,...otherads]);
+                //更新
+                t.updateCircle([...upds,...otherupds]);
             }
-            t.updateLine(updatedData);
-            t.addLine(addedData);            
-        }
-        /*
-            面数据处理
-            先全删除,再新增
-        */
-        if(mapPolygons instanceof Array && !t.deepEqual(mapPolygons,t.props.mapPolygons)){
-            let oldMapPolygons = t.props.mapPolygons;
-            let newMapPolygons = mapPolygons;
-            if(!!t.state.editId){
-                oldMapPolygons = t.props.mapPolygons.filter((item)=>{return item.id !== editGraphicId});
-                newMapPolygons = mapPolygons.filter((item)=>{return item.id !== editGraphicId});
+            // //绘制边界线
+            // if(boundaryName instanceof Array && !t.deepEqual(boundaryName,t.props.boundaryName)){
+            //     let newBDName = Set(boundaryName);
+            //     let oldBDName = Set(t.props.boundaryName);
+            //     let removedBoundaryName = oldBDName.subtract(newBDName).toJS();
+            //     let addedBoundaryName = newBDName.subtract(oldBDName).toJS();
+            //     t.removeBaiduBoundary(removedBoundaryName);
+            //     t.addBaiduBoundary(addedBoundaryName);
+            // }
+            // 获取热力图
+            if(heatMapData && !t.deepEqual(heatMapData,t.props.heatMapData)){
+                t.heatMapOverlay(heatMapData);
             }
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapPolygons,newMapPolygons,'id');
-            let {ads,otherupds} = t.dealAdd(addedData,[...rectangle,...polygon,...polygonIds]);
-            let {upds,otherads} = t.dealUpdate(updatedData,[...rectangle,...polygon,...polygonIds]);
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'polygon');
+            //图元编辑调用
+            if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
+                t.doEdit(editGraphicId);
             }
-            //增加
-            t.addPolygon([...ads,...otherads]);
-            //更新
-            t.updatePolygon([...upds,...otherupds]);
-        }
-        /*
-            圆数据处理
-            先全删除,再新增
-        */
-        if(mapCircles instanceof Array && !t.deepEqual(mapCircles,t.props.mapCircles)){
-            let oldMapCircles = t.props.mapCircles;
-            let newMapCircles = mapCircles;
-            if(!!t.state.editId){
-                oldMapCircles = t.props.mapCircles.filter((item)=>{return item.id !== editGraphicId});
-                newMapCircles = mapCircles.filter((item)=>{return item.id !== editGraphicId});
+            //是否关闭图元编辑
+            if((typeof(isEndEdit) == 'boolean' && isEndEdit) || (isEndEdit && isEndEdit !== t.props.isEndEdit)){
+                t.endEdit();
             }
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapCircles,newMapCircles,'id');
-            let {ads,otherupds} = t.dealAdd(addedData,[...circleIds,...circle]);
-            let {upds,otherads} = t.dealUpdate(updatedData,[...circleIds,...circle]);
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'circle');
+            /*设置指定图元展示*/
+            if((typeof(setVisiblePoints) == 'boolean' && setVisiblePoints) || (setVisiblePoints && setVisiblePoints !== t.props.setVisiblePoints)){
+                t.setVisiblePoints(mapVisiblePoints);
             }
-            //增加
-            t.addCircle([...ads,...otherads]);
-            //更新
-            t.updateCircle([...upds,...otherupds]);
-        }
-        // //绘制边界线
-        // if(boundaryName instanceof Array && !t.deepEqual(boundaryName,t.props.boundaryName)){
-        //     let newBDName = Set(boundaryName);
-        //     let oldBDName = Set(t.props.boundaryName);
-        //     let removedBoundaryName = oldBDName.subtract(newBDName).toJS();
-        //     let addedBoundaryName = newBDName.subtract(oldBDName).toJS();
-        //     t.removeBaiduBoundary(removedBoundaryName);
-        //     t.addBaiduBoundary(addedBoundaryName);
-        // }
-        // 获取热力图
-        if(heatMapData && !t.deepEqual(heatMapData,t.props.heatMapData)){
-            t.heatMapOverlay(heatMapData);
-        }
-        //图元编辑调用
-        if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
-            t.doEdit(editGraphicId);
-        }
-        //是否关闭图元编辑
-        if((typeof(isEndEdit) == 'boolean' && isEndEdit) || (isEndEdit && isEndEdit !== t.props.isEndEdit)){
-            t.endEdit();
-        }
-        /*设置指定图元展示*/
-        if((typeof(setVisiblePoints) == 'boolean' && setVisiblePoints) || (setVisiblePoints && setVisiblePoints !== t.props.setVisiblePoints)){
-            t.setVisiblePoints(mapVisiblePoints);
-        }
-        //绘制图元
-        if((typeof(isDraw) == 'boolean' && isDraw) || (isDraw && isDraw !== t.props.isDraw)){
-            t.draw(mapDraw);
-        }
-        //关闭绘制
-        if((typeof(isCloseDraw) == 'boolean' && isCloseDraw) || (isCloseDraw && isCloseDraw !== t.props.isCloseDraw)){
-            t.closeDraw();
-        }
-        //清空地图
-        if((typeof(isClearAll) == 'boolean' && isClearAll) || (isClearAll && isClearAll !== t.props.isClearAll)){
-            t.clearAll();
-        }
-        //设置中心点
-        if((typeof(setCenter) == 'boolean' && setCenter) || (setCenter && setCenter !== t.props.setCenter)){
-            if(!(t.getCurrentCenter().lng == mapCenter[0] && t.getCurrentCenter().lat == mapCenter[1])){
-                t.setCenter(mapCenter);
+            //绘制图元
+            if((typeof(isDraw) == 'boolean' && isDraw) || (isDraw && isDraw !== t.props.isDraw)){
+                t.draw(mapDraw);
             }
-        }
-        //设置比例尺
-        if((typeof(setZoomLevel) == 'boolean' && setZoomLevel) || (setZoomLevel && setZoomLevel !== t.props.setZoomLevel)){
-            if(!(t.getZoomLevel() == mapZoomLevel)){
-                t.setZoomLevel(mapZoomLevel);
+            //关闭绘制
+            if((typeof(isCloseDraw) == 'boolean' && isCloseDraw) || (isCloseDraw && isCloseDraw !== t.props.isCloseDraw)){
+                t.closeDraw();
+            }
+            //清空地图
+            if((typeof(isClearAll) == 'boolean' && isClearAll) || (isClearAll && isClearAll !== t.props.isClearAll)){
+                t.clearAll();
+            }
+            //设置中心点
+            if((typeof(setCenter) == 'boolean' && setCenter) || (setCenter && setCenter !== t.props.setCenter)){
+                if(!(t.getCurrentCenter().lng == mapCenter[0] && t.getCurrentCenter().lat == mapCenter[1])){
+                    t.setCenter(mapCenter);
+                }
+            }
+            //设置比例尺
+            if((typeof(setZoomLevel) == 'boolean' && setZoomLevel) || (setZoomLevel && setZoomLevel !== t.props.setZoomLevel)){
+                if(!(t.getZoomLevel() == mapZoomLevel)){
+                    t.setZoomLevel(mapZoomLevel);
+                }
+            }
+            // //是否打开路况
+            // if(isOpenTrafficInfo){
+            //     t.openTrafficInfo();
+            // }else{
+            //     t.hideTrafficInfo();
+            // }
+            //设置点聚合
+            if((typeof(setCluster) == 'boolean' && setCluster) || (setCluster && setCluster !== t.props.setCluster)){
+                t.cluster(mapCluster);
+            }
+            //测距工具调用
+            if((typeof(isRangingTool) == 'boolean' && isRangingTool) || (isRangingTool && isRangingTool !== t.props.isRangingTool)){
+                t.vtxRangingTool();
+            }
+            //单独删除操作
+            if((typeof(isRemove) == 'boolean' && isRemove) || (isRemove && isRemove !== t.props.isRemove)){
+                mapRemove.map((item,index)=>{
+                    t.removeGraphic(item.id,item.type);
+                });
+            }
+            //设置区域限制
+            if((typeof(isSetAreaRestriction) == 'boolean' && isSetAreaRestriction) 
+                || (isSetAreaRestriction && isSetAreaRestriction !== t.props.isSetAreaRestriction) 
+                && areaRestriction && !!areaRestriction[0] && !!areaRestriction[1]){
+                t.setAreaRestriction(areaRestriction);
+            }
+            //关闭区域限制
+            if((typeof(isClearAreaRestriction) == 'boolean' && isClearAreaRestriction) || (isClearAreaRestriction && isClearAreaRestriction !== t.props.isClearAreaRestriction)){
+                t.clearAreaRestriction();
             }
         }
-        // //是否打开路况
-        // if(isOpenTrafficInfo){
-        //     t.openTrafficInfo();
-        // }else{
-        //     t.hideTrafficInfo();
-        // }
-        //设置点聚合
-        if((typeof(setCluster) == 'boolean' && setCluster) || (setCluster && setCluster !== t.props.setCluster)){
-            t.cluster(mapCluster);
+        if(t.waitReceive){
+            clearInterval(t.waitReceive);
         }
-        //测距工具调用
-        if((typeof(isRangingTool) == 'boolean' && isRangingTool) || (isRangingTool && isRangingTool !== t.props.isRangingTool)){
-            t.vtxRangingTool();
-        }
-        //单独删除操作
-        if((typeof(isRemove) == 'boolean' && isRemove) || (isRemove && isRemove !== t.props.isRemove)){
-            mapRemove.map((item,index)=>{
-                t.removeGraphic(item.id,item.type);
-            });
-        }
-        //设置区域限制
-        if((typeof(isSetAreaRestriction) == 'boolean' && isSetAreaRestriction) 
-            || (isSetAreaRestriction && isSetAreaRestriction !== t.props.isSetAreaRestriction) 
-            && areaRestriction && !!areaRestriction[0] && !!areaRestriction[1]){
-            t.setAreaRestriction(areaRestriction);
-        }
-        //关闭区域限制
-        if((typeof(isClearAreaRestriction) == 'boolean' && isClearAreaRestriction) || (isClearAreaRestriction && isClearAreaRestriction !== t.props.isClearAreaRestriction)){
-            t.clearAreaRestriction();
+        //等等天地图初始化
+        if(t.isLoading){
+            receive();
+        }else{
+            t.waitReceive = setInterval(()=>{
+                if(t.isLoading){
+                    clearInterval(t.waitReceive);
+                    receive();
+                }
+            },100);
         }
     }
     componentWillUnmount() {
@@ -2464,6 +2494,12 @@ class TMap extends React.Component{
         let t = this;
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
+        }
+        if(t.waitReceive){
+            clearInterval(t.waitReceive);
+        }
+        if(t.waitInit){
+            clearInterval(t.waitInit);
         }
         //关闭animation定时
         for(let j in t.animTimer){
