@@ -16,6 +16,7 @@ export default class SelectZTree extends React.Component{
         super(props);
         this.input = null;
         this.tree = null;
+        this.treeRefreshFlag = 1;
         this.state = {
             popoverVisible:false,
         }
@@ -25,6 +26,9 @@ export default class SelectZTree extends React.Component{
     componentWillReceiveProps(nextProps){
         if(!_isEqual(this.props.data,nextProps.data)){
             this.getKeyNodesMapping(nextProps.data);
+        }
+        if(!_isEqual(this.props.expandedKeys,nextProps.expandedKeys)){
+            this.treeRefreshFlag++;
         }
     }
     getKeyNodesMapping(nodes){
@@ -89,9 +93,9 @@ export default class SelectZTree extends React.Component{
         const {data,value} = t.props;
         // 可配参数
         const {
-            treeCheckable=false,treeDefaultExpandAll=false,multiple=false,
-            showSearch=false,dropdownStyle={},style={},disabled=false,
-            refreshFlag=null
+            treeCheckable=false, treeDefaultExpandAll=false, multiple=false,
+            showSearch=false, dropdownStyle={}, style={}, disabled=false,
+            refreshFlag=null, expandedKeys
         } = t.props;
         const value_arr = (function(val){
             if(Array.isArray(val)){
@@ -117,6 +121,8 @@ export default class SelectZTree extends React.Component{
             checkable:treeCheckable,
             [treeCheckable?'checkedKeys':'selectedKeys']:value_arr,
             defaultExpandAll:treeDefaultExpandAll,
+            expandedKeys,
+            refreshFlag:t.treeRefreshFlag,
             ref(instance){
                 if(instance)t.tree = instance;
             },

@@ -10,13 +10,13 @@
 | treeCheckable        | 是否有复选框(有复选框自动开启多选)         | Boolean                                                                                                                                                    | False              |
 | multiple             | 是否可以复选                               | Boolean                                                                                                                                                    | False              |
 | treeDefaultExpandAll | 默认下拉树全部展开                         | Boolean                                                                                                                                                    | False              |
+| expandedKeys | 展开指定的树节点                        | Array     |               |
 | value                | onChange函数返回的value,用于展示选择的选项 | Array[String] <br/>   例:[' value', value]| \--                |
 | style                | 下拉树,选择框的样式                        | Object <br/>例:{width: ’200px’}                                                                                                                                 |                    |
 | dropdownStyle        | 下拉树,下拉框的样式                        | Object <br/>例:{height: ’300px’}                                                                                                                                | { height:’300px’ } |
 | showSearch           | 显示下拉树搜索框                           | Boolean                                                                                                                                                    | False              |
 | placeholder          | 选择框默认文字                             | String                                                                                                                                                     | \--                |
 | onChange             | 下拉树选中回调方法（单选和多选使用一样方法）| Function({nodes,keys,leafKeys,names })<br/> nodes:返回所有选中节点信息,<br/> keys:返回所有选中节点key,<br/> leafKeys:返回所有选中叶子节点key,<br/> Names:返回所有选中节点name, | \--                |
-|                      | 单选和多选使用一样方法,                    |                                                                                                                                                            |                    |
 
 #### VtxZtreeSelect 树子节点参数配置
 
