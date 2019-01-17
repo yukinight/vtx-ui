@@ -72,7 +72,10 @@ export default class VtxZtree extends React.Component{
             view:{
                 selectedMulti: !!props.multiple,
                 showIcon: true,
-                expandSpeed:'normal'
+                expandSpeed:'normal',
+                fontCss:(treeId, treeNode)=>{
+                    return treeNode.selectable?{}:{color:"#B9B9B9"}
+                },
             },
             callback:{
                 beforeClick(treeId, treeNode, clickFlag){
