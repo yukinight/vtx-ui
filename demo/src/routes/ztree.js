@@ -38,7 +38,7 @@ export default class Test extends React.Component{
         this.state={
             treeNodes:[],
             selectedKeys:[2],
-            expandedKeys:[1,5],
+            expandedKeys:['k1'],
             checkedKeys:[1],
 
             selectVal:["0-1"],
@@ -90,6 +90,7 @@ export default class Test extends React.Component{
             showSearch:true,
             multiple:false,
             treeCheckable:false,
+            expandedKeys:t.state.expandedKeys,
             style:{width:'200px'},
             dropdownStyle:{
                 height:'300px'
