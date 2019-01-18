@@ -4,6 +4,7 @@ import Tooltip from 'antd/lib/tooltip';
 import 'antd/lib/tooltip/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
+import _ from 'lodash';
 // import jq from 'jquery';
 
 class VtxModalList extends React.Component{
@@ -264,7 +265,7 @@ class VtxModalList extends React.Component{
             // ...(t.repeteList[index] || {}),//记录 重复验证信息
             // ...reg,
             ...(t.repeteList[index] || {}),//记录 重复验证信息
-            ...((t.repeteList[index]?(t.repeteList[index].isRepete?reg:{}):reg)),
+            ...((t.repeteList[index]?(t.repeteList[index].isRepete || !_.isEqual(t.repeteList[index].repete,reg)?reg:{}):reg)),
             mld,
             type: ty,
             elem: e
@@ -447,12 +448,12 @@ class VtxModalList extends React.Component{
                     if(ind >= t.allRecord){
                         let isRequest = true;
                         for(let i = 0 ; i < values.length; i++){
+                            t.repeteList[ii[i]] = {
+                                ...t.repeteList[ii[i]],
+                                isRepete: values[i].data.data,
+                                errorMsg: values[i].data.msg || ''
+                            }
                             if(!values[i].data.data){
-                                t.repeteList[ii[i]] = {
-                                    ...t.repeteList[ii[i]],
-                                    isRepete: values[i].data.data,
-                                    errorMsg: values[i].data.msg || ''
-                                }
                                 isRequest = false;
                             }
                         }
