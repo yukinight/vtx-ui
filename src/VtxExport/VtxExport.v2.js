@@ -12,19 +12,18 @@ import 'antd/lib/dropdown/style/css';
 class VtxExport extends React.Component{
     constructor(props){
         super(props);
-        this.downloadURL = props.downloadURL;
         this.exportButtonClick = this.exportButtonClick.bind(this);
     }
     exportButtonClick(param){
         let pass_val = typeof(this.props.getExportParams)=='function'? this.props.getExportParams(param.key):null;
-        pass_val && this.downLoadFile(this.downloadURL,pass_val);
+        this.props.downloadURL && pass_val && this.downLoadFile(this.props.downloadURL,pass_val);
     }
     downLoadFile(reqURL,pass_val){
         var formDom = document.createElement('form');
         formDom.style.display='none';
         formDom.setAttribute('target','');
         formDom.setAttribute('method','post');
-        formDom.setAttribute('action',this.downloadURL);
+        formDom.setAttribute('action',reqURL);
 
         document.body.appendChild(formDom);
 
