@@ -164,10 +164,6 @@ export default class VtxZtree extends React.Component{
                     const open = expandedKeys.indexOf(item.key)!=-1;
                     t.keyNameMapping[item.key] = item.name;
                     if(Array.isArray(item.children) && item.children.length>0){
-                        // 如果子节点全部被勾选，父节点自动勾选
-                        if(item.children.every(item=>checkedKeys.indexOf(item.key)!=-1)){
-                            checked = true;
-                        }
                         return {
                             chkDisabled,
                             selectable:true,
@@ -186,6 +182,23 @@ export default class VtxZtree extends React.Component{
                             open
                         }
                     }
+                }).map(item=>{
+                    if(Array.isArray(item.children) && item.children.length>0){
+                        const newNode = {...item};
+                        // 如果子节点全部被勾选，父节点自动勾选
+                        if(item.children.every(item=>item.checked)){
+                            newNode.checked = true;
+                        }
+                        // 如果配置了自动展开父节点，父节点自动展开
+                        if(props.autoExpandParent && item.children.some(item=>item.open)){
+                            newNode.open = true;
+                        }
+                        return newNode;
+                    }
+                    else{
+                        return item;
+                    }
+                    
                 })
             })(props.data);
         }
@@ -360,7 +373,8 @@ export default class VtxZtree extends React.Component{
     // 获取所有已被勾选的节点
     getCheckedNodes(){
         return this.zTreeObj.getNodesByFilter((node)=>{
-            return node.checked && !node.getCheckStatus().half;
+            // 节点被勾选（非半勾状态）
+            return node.checked && node.check_Child_State!=1;
         }).map(item=>{
             return {
                 ...item,
