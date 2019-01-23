@@ -12,6 +12,8 @@ class VtxExport extends React.Component{
     constructor(props){
         super(props);
         this.exportButtonClick = this.exportButtonClick.bind(this);
+        this.iframeName = `export_iframe_${Math.random()}`;
+        this.isExporting = false;
     }
     exportButtonClick(param){
         let pass_val = typeof(this.props.getExportParams)=='function'? this.props.getExportParams(param.key):null;
@@ -28,7 +30,7 @@ class VtxExport extends React.Component{
     downLoadFile(reqURL,postData){
         var formDom = document.createElement('form');
         formDom.style.display='none';
-        formDom.setAttribute('target','export_iframe');
+        formDom.setAttribute('target',this.iframeName);
         formDom.setAttribute('method','post');
         formDom.setAttribute('action',reqURL);
 
@@ -43,6 +45,7 @@ class VtxExport extends React.Component{
             formDom.appendChild(input);
         }
 
+        this.isExporting = true;
         formDom.submit();
         formDom.parentNode.removeChild(formDom);
     }
@@ -59,12 +62,12 @@ class VtxExport extends React.Component{
                         导出 <Icon type="down" />
                     </Button>
                 </Dropdown>  
-                <iframe name="export_iframe" style={{display:'none'}}
-                ref={(ifm)=>{if(ifm)this.iframe = ifm}} 
+                <iframe name={this.iframeName} style={{display:'none'}}
                 onLoad={()=>{
-                    if(typeof this.props.afterExport == 'function'){
+                    if(typeof this.props.afterExport == 'function' && this.isExporting){
                         this.props.afterExport();
                     }
+                    this.isExporting = false;
                 }}></iframe>
             </span>
         )
