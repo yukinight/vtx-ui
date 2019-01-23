@@ -405,12 +405,16 @@ export default class VtxZtree extends React.Component{
             <div className={this.props.isShowSearchInput?`${style.treeComponent} ${style.withSearchBox}`:style.treeComponent}>
                 {
                     this.props.isShowSearchInput?<div className={style.searchBox}>
-                        <Input value={t.state.searchVal} onChange={(e)=>{
-                            t.setState({
-                                searchVal:e.target.value
-                            })
-                            t.fuzzySearch(e.target.value.trim());
-                        }}/>
+                        <Input 
+                            value={t.state.searchVal} 
+                            placeholder={t.props.placeholder?t.props.placeholder:'请输入要查询的关键字'}
+                            onChange={(e)=>{
+                                t.setState({
+                                    searchVal:e.target.value
+                                })
+                                t.fuzzySearch(e.target.value.trim());
+                            }}
+                        />
                     </div>:null
                 }
                 
