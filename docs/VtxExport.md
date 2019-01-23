@@ -1,5 +1,8 @@
 ### VtxExport的Props配置
-> 保留VtxExport2是为了兼容老代码，建议大家使用<VtxExport mode='simple'/>取代VtxExport2
+
+```
+保留VtxExport2是为了兼容老代码，建议大家使用<VtxExport mode='simple' />取代<VtxExport2 />
+```
 
 | **参数**        | **说明**   | **类型** | **默认值** |
 |-----------------|----------------|----------|------------|
