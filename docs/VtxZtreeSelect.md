@@ -24,12 +24,11 @@
 |----------|------------------------------------------------------------|-----------------|------------|
 | name     | 节点的名称                                                 | String          | \*         |
 | key      | 节点的id(整个树范围内的所有节点的 key 值不能重复,否则报错) | String          | \*         |
-| children | 当前节点下的子节点数据(数据类型与 VtxTree data相同)        | Array/[{},{}]   | 默认[]     |
-| isLeaf   | 设定当前节点为叶子节点                                     | Bealoon         |            |
+| children | 当前节点下的子节点数据(数据类型与 VtxTree data相同)<br/> **注意：节点有children属性会被当作父节点（即使children是空数组），没有此属性则为子节点** | Array/[{},{}]   | 默认[]     |
 | chkDisabled      | 禁掉 checkbox                                                                                   | Bool          |         |
 | selectable      | 设置节点是否可被点击选中                                                                                   | Bool          |    true     |
 | icon     | 节点名称前的图片地址                                       | String/http地址 | 默认 --    |
-| iconSkin | 定义icon图标的样式，css类名class                           | String          |            |
+| iconSkin | 定义icon图标的样式<br/> **注意：如果iconSkin设为”test”, 在样式文件中实际的样式名应为”test_ico_docu”**                                             | String          |            |
 
 
 ---
