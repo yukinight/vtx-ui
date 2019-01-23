@@ -9,7 +9,7 @@ function IndexPage(props) {
     const exportProps = {
         downloadURL:'http://localhost:8002/',
         rowButton:false,
-        afterUpload(){
+        afterExport(){
             console.log('finish')
         },
         getExportParams(exportType){

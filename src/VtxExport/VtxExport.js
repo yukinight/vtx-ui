@@ -62,8 +62,8 @@ class VtxExport extends React.Component{
                 <iframe name="export_iframe" style={{display:'none'}}
                 ref={(ifm)=>{if(ifm)this.iframe = ifm}} 
                 onLoad={()=>{
-                    if(typeof this.props.afterUpload == 'function'){
-                        this.props.afterUpload();
+                    if(typeof this.props.afterExport == 'function'){
+                        this.props.afterExport();
                     }
                 }}></iframe>
             </span>
