@@ -9,6 +9,7 @@
 .vtx-ui-ztree-searchbox {
   position: absolute;
   left: 10px;
+  right: 10px;
   top: 5px;
 }
 .vtx-ui-ztree-tree-ct {
