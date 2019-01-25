@@ -9,6 +9,9 @@ function IndexPage(props) {
     const exportProps = {
         downloadURL:'http://localhost:8002/',
         rowButton:false,
+        afterExport(){
+            console.log('finish')
+        },
         getExportParams(exportType){
             const columnNames = "编号,名称,所属处置单位,监测类型,开始运行日期,排序号",
                 columnFields = "code,name,factoryName,deviceTypeName,validStartTime,orderIndex",

@@ -1,4 +1,8 @@
-### VtxExport&VtxExport2的Props配置
+### VtxExport的Props配置
+
+```
+保留VtxExport2是为了兼容老代码，建议大家使用<VtxExport mode='simple' />取代<VtxExport2 />
+```
 
 | **参数**        | **说明**   | **类型** | **默认值** |
 |-----------------|----------------|----------|------------|
@@ -7,9 +11,14 @@
 | pageButton      | 是否显示“导出当前页”按钮                                                                                                                                      | Boolean  | true       |
 | rowButton       | 是否显示“导出选中行”按钮                                                                                                                                      | Boolean  | true       |
 | getExportParams | 返回导出参数的函数（必填），具体返回值可参照各项目组后端的要求（必须有返回值） <br/>函数参数exportType： <br/>'rows'表示导出行,<br/> 'page'表示导出当前页,<br/> 'all'表示导出全部 | Function |            |
+| mode       | 导出模式，控制传输给后台的参数格式 <br/> 1. 默认： { parameters: getExportParams函数的返回值 }<br/>2. 'simple'：getExportParams函数的返回值直接传给后台服务   | String  |        |
+| afterExport   | 导出完毕触发的函数(导出成功或失败都会触发)   | function  |        |
 
-> **VtxExport**会将getExportParams函数的返回值包在对象里( { parameters: Your object } )传给后台服务，因此返回值可以是复杂的对象   
-> **VtxExport2**将getExportParams函数的返回值直接传给后台服务，返回值只能是一层的简单对象  
+> **VtxExport**   
+>1.mode参数为空：会将getExportParams函数的返回值包在对象里( { parameters: Your object } )传给后台服务  
+>2.mode='simple': 将getExportParams函数的返回值直接传给后台服务  
+> **VtxExport2**   
+> 等同于调用VtxExport并设置mode为'simple'
 
 代码示例如下
 
