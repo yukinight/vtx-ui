@@ -363,7 +363,7 @@ class VtxTree extends React.Component {
 			      		indexn != -1?
 			      			<span>
 			      				{beforeStr}
-						        <span style={{ color: (!!_tree.searchInput ? _tree.searchInput.color || '#f50': '#f50') }}>{searchValue}</span>
+						        <span style={{ color: (!!_tree.searchInput ? _tree.searchInput.color || '#f50': '#f50'),padding: 0}}>{searchValue}</span>
 						        {afterStr}
 			      			</span>
 				      		:
