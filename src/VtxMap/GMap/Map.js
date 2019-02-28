@@ -11,7 +11,8 @@ class ArcgisMap extends React.Component{
     constructor(props){
         super(props);
         this.grwkid = 4326;//wkid 坐标系对应,全局使用.
-        this.wkid = parseInt(props.wkid) || 4326;//wkid 坐标系对应,全局使用.
+        this.wkid = (isNaN(parseInt(props.wkid))?props.wkid:parseInt(props.wkid)) || 4326;//wkid 坐标系对应,全局使用.
+        this.wkidStr = isNaN(parseInt(props.wkid))?'wkt':'wkid';
         this.zIndexGraphics = [];//需要放在最后的图元,zoom和pan时刷新dom到最后
         this.htmlPointsId = 'vtx_gmap_html_points';//html点位容器id class管理
         this.pointCollectionId = 'vtx_gmap_html_pointCollection';//海量点canvas点位容器id class管理
@@ -674,7 +675,7 @@ class ArcgisMap extends React.Component{
             backgroundColor: '#f1f1f1',
             extent: new esri.geometry.Extent({
                 ...fullExtent,
-                spatialReference:{wkid:t.wkid}
+                spatialReference:{[t.wkidStr]:t.wkid}
             }),
             ...options
         });
@@ -706,7 +707,7 @@ class ArcgisMap extends React.Component{
                             "format": services[im].format || "format/png",
                             "compressionQuality": 0,
                             "spatialReference": new esri.SpatialReference({
-                              "wkid": t.wkid || 4326
+                              [t.wkidStr]: t.wkid || 4326
                             }),
                             "rows": 256,
                             "cols": 256,
@@ -714,10 +715,10 @@ class ArcgisMap extends React.Component{
                             "lods": mapServer.lods || []
                         });
                         let tileExtent = new esri.geometry.Extent(mapServer.fullExtent.xmin, mapServer.fullExtent.ymin, mapServer.fullExtent.xmax, mapServer.fullExtent.ymax, new esri.SpatialReference({
-                            wkid: t.wkid
+                            [t.wkidStr]: t.wkid
                         }));
                         let inTileExtent = new esri.geometry.Extent(mapServer.initialExtent.xmin, mapServer.initialExtent.ymin, mapServer.initialExtent.xmax, mapServer.initialExtent.ymax, new esri.SpatialReference({
-                            wkid: t.wkid
+                            [t.wkidStr]: t.wkid
                         }));
                         let layerInfo = new esri.layers.WMTSLayerInfo({
                             tileInfo: tileInfo,
@@ -757,7 +758,7 @@ class ArcgisMap extends React.Component{
                     // "format": "tiles",
                     "compressionQuality": 0,
                     "spatialReference": new esri.SpatialReference({
-                      "wkid": t.wkid || 4326
+                      [t.wkidStr]: t.wkid || 4326
                     }),
                     "rows": 256,
                     "cols": 256,
@@ -765,10 +766,10 @@ class ArcgisMap extends React.Component{
                     "lods": defaultWmtsMapLayers.lods || []
                 });
                 let dtileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.fullExtent.xmin, defaultWmtsMapLayers.fullExtent.ymin, defaultWmtsMapLayers.fullExtent.xmax, defaultWmtsMapLayers.fullExtent.ymax, new esri.SpatialReference({
-                    wkid: t.wkid
+                    [t.wkidStr]: t.wkid
                 }));
                 let dinTileExtent = new esri.geometry.Extent(defaultWmtsMapLayers.initialExtent.xmin, defaultWmtsMapLayers.initialExtent.ymin, defaultWmtsMapLayers.initialExtent.xmax, defaultWmtsMapLayers.initialExtent.ymax, new esri.SpatialReference({
-                    wkid: t.wkid
+                    [t.wkidStr]: t.wkid
                 }));
                 for(let i = 0 ; i < url.length ; i++){
                     let dlayerInfo = new esri.layers.WMTSLayerInfo({
@@ -1825,7 +1826,7 @@ class ArcgisMap extends React.Component{
             if(c.lng == gt[0] && c.lat == gt[1]){
                 return false;
             }
-            t.state.gis.centerAt(new esri.geometry.Point(gt[0],gt[1],new esri.SpatialReference({wkid: t.wkid})));
+            t.state.gis.centerAt(new esri.geometry.Point(gt[0],gt[1],new esri.SpatialReference({[t.wkidStr]: t.wkid})));
         }
     }
     //设置地图比例尺
@@ -1875,7 +1876,7 @@ class ArcgisMap extends React.Component{
         if(_extent.xmin && _extent.xmax && _extent.ymin && _extent.ymax){
             //避免偏移引起的点位漏看
             _extent = t.dealExtendBounds(_extent,100);
-            let ext = new esri.geometry.Extent({..._extent,spatialReference:{ wkid: t.wkid }});
+            let ext = new esri.geometry.Extent({..._extent,spatialReference:{ [t.wkidStr]: t.wkid }});
             if(!type || type == 'all' || type == 'zoom'){
                 t.state.gis.setExtent(ext);
             }else if(type == 'center'){
