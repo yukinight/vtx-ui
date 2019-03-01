@@ -1755,6 +1755,14 @@ class ArcgisMap extends React.Component{
         if(typeof(t.props.clickMap) === 'function'){
             let obj = t.getMapExtent();
             obj.e = e;
+            obj.clickLngLat = {
+                lng: (e.mapPoint || {}).x,
+                lat: (e.mapPoint || {}).y
+            };
+            obj.pixel = {
+                x: (e.screenPoint || {}).x,
+                y: (e.screenPoint || {}).y
+            };
             t.props.clickMap(obj);
         }
     }
