@@ -186,8 +186,8 @@ class VtxSearchMap extends React.Component {
                 editGraphic,
                 locationPoint: [{
                     id: 'locationPoint',
-                    longitude: lglt.nowCenter.lng,
-                    latitude: lglt.nowCenter.lat,
+                    longitude: (t.props.mapCenter || [])[0] || lglt.nowCenter.lng,
+                    latitude: (t.props.mapCenter || [])[1] || lglt.nowCenter.lat,
                     url: `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     config: {
                         zIndex: 1000
