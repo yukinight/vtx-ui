@@ -322,7 +322,7 @@ class VtxModalList extends React.Component{
                 errorMsg = '必填项';
             }
         }else{
-            if(!isRequired && isMaxNum && value.length > eval((mld.layout || {}).maxNum)){
+            if(!isRequired && isMaxNum && (value || '').length > eval((mld.layout || {}).maxNum)){
                 required = false;
                 errorMsg = '字数超限';
             }else{
