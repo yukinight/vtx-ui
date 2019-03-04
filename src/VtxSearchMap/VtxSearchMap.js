@@ -95,7 +95,7 @@ class VtxSearchMap extends React.Component {
             isEndEdit: false,
             editGraphicId: '',
             editGraphic: null,
-            mapZoomLevel: 11,
+            mapZoomLevel: props.mapZoomLevel || 11,
             setZoomLevel: false,
             /*modal参数*/
             modal1Visible: props.modal1Visible || false,
@@ -175,7 +175,7 @@ class VtxSearchMap extends React.Component {
     drawLocationPoint(){
         let t = this;
         //判断arcgis,是: 判断中心点是否已经确定,确定,继续走逻辑.不确认.轮询等待
-        if(this.props.mapType !== 'gmap' || (this.map.state.gis.extent && this.map.state.gis.extent.xmax < 180)){
+        if(this.props.mapType !== 'gmap' || (this.map.state.gis.extent && !!this.map.state.gis.extent.xmax)){
             let lglt = this.map.getMapExtent(),editGraphic = null,editGraphicId = 'locationPoint';
             if(this.props.editParam && (this.props.graphicType == 'polyline' || this.props.graphicType == 'polygon')){
                 editGraphic = {...this.props.editParam,id: 'drawnGraph'};
@@ -186,8 +186,8 @@ class VtxSearchMap extends React.Component {
                 editGraphic,
                 locationPoint: [{
                     id: 'locationPoint',
-                    longitude: lglt.nowCenter.lng,
-                    latitude: lglt.nowCenter.lat,
+                    longitude: (t.props.mapCenter || [])[0] || lglt.nowCenter.lng,
+                    latitude: (t.props.mapCenter || [])[1] || lglt.nowCenter.lat,
                     url: `${configUrl.mapServerURL}/images/defaultMarker.png`,
                     config: {
                         zIndex: 1000

@@ -1975,6 +1975,8 @@ class TMap extends React.Component{
                 }else{
                     let obj = t.getMapExtent();
                     obj.e = e;
+                    obj.clickLngLat = e.lnglat;
+                    obj.pixel = e.containerPoint;
                     t.props.clickMap(obj);
                 }
             });

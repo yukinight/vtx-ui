@@ -48,8 +48,13 @@ class VtxModalList extends React.Component{
 
      */
     repeteAjax(options = {}){
+        let headers = {};
+        if(options.headers && options.headers instanceof Object){
+            headers = options.headers;
+        }
         let ajaxPropmise = new Promise((resolve,reject)=>{
             $.ajax({
+                ...headers,
                 type: options.method || 'post',
                 url: options.url || '',
                 data: options.body || null,
@@ -185,7 +190,8 @@ class VtxModalList extends React.Component{
                         }
                         t.repeteAjax({
                             url: (reg.repete || {}).url || '',
-                            body: (reg.repete || {}).key || null
+                            body: (reg.repete || {}).key || null,
+                            headers: (reg.repete || {}).headers || null
                         }).then(({data})=>{
                             if(i >= t.onlyRecord[index]){
                                 t.repeteList[index] = {
@@ -316,7 +322,7 @@ class VtxModalList extends React.Component{
                 errorMsg = '必填项';
             }
         }else{
-            if(!isRequired && isMaxNum && value.length > eval((mld.layout || {}).maxNum)){
+            if(!isRequired && isMaxNum && (value || '').length > eval((mld.layout || {}).maxNum)){
                 required = false;
                 errorMsg = '字数超限';
             }else{
@@ -436,7 +442,8 @@ class VtxModalList extends React.Component{
                     if(r.type == 'default' && r.repete){
                         let p = t.repeteAjax({
                             url: (r.repete || {}).url || '',
-                            body: (r.repete || {}).key || null
+                            body: (r.repete || {}).key || null,
+                            headers: (reg.repete || {}).headers || null
                         });
                         plist.push(p);
                         ii.push(i);

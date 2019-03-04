@@ -1697,6 +1697,11 @@ class VortexAMap extends React.Component{
             t.state.gis.on('click', function(e) {
                 let obj = t.getMapExtent();
                 obj.e = e;
+                obj.clickLngLat = {
+                    lng: (e.lnglat || {}).lng,
+                    lat: (e.lnglat || {}).lat
+                };
+                obj.pixel = e.pixel;
                 t.props.clickMap(obj);
             });
         }

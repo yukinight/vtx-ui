@@ -12,7 +12,6 @@
 | rowButton       | 是否显示“导出选中行”按钮                                                                                                                                      | Boolean  | true       |
 | getExportParams | 返回导出参数的函数（必填），具体返回值可参照各项目组后端的要求（必须有返回值） <br/>函数参数exportType： <br/>'rows'表示导出行,<br/> 'page'表示导出当前页,<br/> 'all'表示导出全部 | Function |            |
 | mode       | 导出模式，控制传输给后台的参数格式 <br/> 1. 默认： { parameters: getExportParams函数的返回值 }<br/>2. 'simple'：getExportParams函数的返回值直接传给后台服务   | String  |        |
-| afterExport   | 导出完毕触发的函数(导出成功或失败都会触发)   | function  |        |
 
 > **VtxExport**   
 >1.mode参数为空：会将getExportParams函数的返回值包在对象里( { parameters: Your object } )传给后台服务  

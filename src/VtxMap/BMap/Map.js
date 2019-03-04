@@ -1243,6 +1243,8 @@ class BaiduMap extends React.Component{
             t.state.gis.addEventListener('click',(e)=>{
                 let obj = t.getMapExtent();
                 obj.e = e;
+                obj.clickLngLat = e.point;
+                obj.pixel = e.pixel;
                 t.props.clickMap(obj);
             });
         }

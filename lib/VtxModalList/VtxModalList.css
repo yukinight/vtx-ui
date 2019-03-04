@@ -141,6 +141,9 @@
 .vtx-ui-modallist-lists .vtx-ui-modallist-error span .ant-input-group > * {
   border-color: red !important;
 }
+.vtx-ui-modallist-lists .vtx-ui-modallist-error span .ant-input {
+  border-color: red !important;
+}
 .vtx-ui-modallist-lists .vtx-ui-modallist-error .ant-select-selection {
   border-color: red !important;
 }
