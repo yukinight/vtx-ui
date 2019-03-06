@@ -951,7 +951,7 @@ class ArcgisMap extends React.Component{
     //更新点位
     updatePoint(mapPoints){
         let t = this;
-        let dpoints = [],apoints = [];
+        // let dpoints = [],apoints = [];
         mapPoints.map((item,index)=>{
             //判断图元是否存在.
             if (this.GM.isRepetition(item.id)) {

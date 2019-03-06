@@ -443,7 +443,7 @@ class VtxModalList extends React.Component{
                         let p = t.repeteAjax({
                             url: (r.repete || {}).url || '',
                             body: (r.repete || {}).key || null,
-                            headers: (reg.repete || {}).headers || null
+                            headers: (r.repete || {}).headers || null
                         });
                         plist.push(p);
                         ii.push(i);
