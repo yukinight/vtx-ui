@@ -171,6 +171,7 @@ class ArcgisMap extends React.Component{
             //html点位 根据地图移动和zoom计算位置
             let changeLabel = ()=>{
                 for(let i in t.Label){
+                    let cmids = t.clusterMarkers.map((item)=>item.id);
                     if(t.Label[i]){
                         let position = t.GM.getGraphic(i).geometry;
                         let tl = t.state.gis.toScreen(position);
@@ -182,12 +183,12 @@ class ArcgisMap extends React.Component{
                                 top: tl.y + t.Label[i].offset.y - t.labelLayer.y,
                                 left: tl.x + t.Label[i].offset.x - t.labelLayer.x
                             });
-                            if(!t.Label[i].add){
+                            if(!t.Label[i].add && cmids.indexOf(i) == -1){
                                 $(`#${t.htmlPointsId}`).append(t.Label[i].html);
                                 t.Label[i].add = true;
                             }
                         }else{
-                            if(t.Label[i].add){
+                            if(t.Label[i].add && cmids.indexOf(i) == -1){
                                 t.Label[i].html.remove();
                                 t.Label[i].add = false;
                             }
