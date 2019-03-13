@@ -117,6 +117,8 @@ mapPoints
 
 例3.新增点,mapLines中存在原本没有的id数据时,会自动添加新的点
 
+==google地图虚线支持不佳==
+
 mapLines
 
 格式:Arrary[object]
@@ -152,6 +154,8 @@ mapLines
 例2.刷新点,刷新mapPolygons中的数据即可
 
 例3.新增点,mapPolygons中存在原本没有的id数据时,会自动添加新的点
+
+==google地图 多边形边线不支持虚线==
 
 mapPolygons
 

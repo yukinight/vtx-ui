@@ -489,7 +489,7 @@ class BaiduMap extends React.Component{
     //更新点位
     updatePoint(mapPoints){
         let t = this;
-        let dpoints = [],apoints = [];
+        // let dpoints = [],apoints = [];
         mapPoints.map((item,index)=>{
             //判断图元是否存在.
             if (this.GM.isRepetition(item.id)) {
@@ -625,16 +625,16 @@ class BaiduMap extends React.Component{
             }
         });
         t.moveAnimation();
-        //删除改变了加载方式的点
-        dpoints.map((item,index)=>{
-            t.removeGraphic(item,'point');
-        });
-        if(apoints.length > 0){
-            //重新加载改变了方式的点
-            setTimeout(()=>{
-                t.addPoint(apoints);
-            },100);
-        }
+        // //删除改变了加载方式的点
+        // dpoints.map((item,index)=>{
+        //     t.removeGraphic(item,'point');
+        // });
+        // if(apoints.length > 0){
+        //     //重新加载改变了方式的点
+        //     setTimeout(()=>{
+        //         t.addPoint(apoints);
+        //     },100);
+        // }
     }
     //添加线
     addLine(mapLines,type){
@@ -1679,14 +1679,14 @@ class BaiduMap extends React.Component{
             break;
         }
         let editGraphic = t.state.editGraphic;
-        if(editGraphic){
-            t.setState({
-                editId: '',
-                editGraphic: ''
-            },()=>{
+        t.setState({
+            editId: '',
+            editGraphic: ''
+        },()=>{
+            if(editGraphic){
                 t.props.editGraphicChange(editGraphic);
-            })
-        }
+            }
+        })
     }
     //绘制图元
     draw(obj){
