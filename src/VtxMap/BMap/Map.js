@@ -1678,27 +1678,15 @@ class BaiduMap extends React.Component{
                 graphic.removeEventListener("lineupdate",t.editGraphicChange);
             break;
         }
-        //点击事件
-        graphic.addEventListener('click',(e)=>{
-            t.clickGraphic(t.state.editId,e);
-        });
-        //鼠标移入事件
-        graphic.addEventListener('mouseover',(e)=>{
-            t.mouseOverGraphic(t.state.editId,e);
-        });
-        //鼠标移出事件
-        graphic.addEventListener('mouseout',(e)=>{
-            t.mouseOutGraphic(t.state.editId,e);
-        });
         let editGraphic = t.state.editGraphic;
-        if(editGraphic){
-            t.setState({
-                editId: '',
-                editGraphic: ''
-            },()=>{
+        t.setState({
+            editId: '',
+            editGraphic: ''
+        },()=>{
+            if(editGraphic){
                 t.props.editGraphicChange(editGraphic);
-            })
-        }
+            }
+        })
     }
     //绘制图元
     draw(obj){
