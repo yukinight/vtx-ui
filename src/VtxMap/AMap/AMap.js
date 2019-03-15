@@ -189,7 +189,7 @@ class VortexAMap extends React.Component{
         //创建海量点图层
         //加上mapId 实现多地图
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`
-        $($(`#${mapId} .amap-maps`)[0]).append(
+        $($(`#${mapId} .amap-layers`)[0]).append(
             `<div class='vtx_gmap_html_pointCollection_a' id='${t.pointCollectionId}' ></div>`
         )
         //聚合点类对象
