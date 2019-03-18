@@ -88,8 +88,8 @@ export default class Test extends React.Component{
         const selectTreeProps = {
             data:t.state.treeNodes,
             showSearch:true,
-            multiple:false,
-            treeCheckable:false,
+            multiple:true,
+            treeCheckable:true,
             expandedKeys:t.state.expandedKeys,
             style:{width:'200px'},
             dropdownStyle:{
@@ -98,7 +98,10 @@ export default class Test extends React.Component{
             placeholder:'请选择',
             disabled:false,
             // treeDefaultExpandAll:true,
-
+            beforeCheck(treenode){
+                console.log(treenode);
+                return true;
+            },
             onChange({nodes,keys,leafKeys,names}){
                 console.log(nodes,keys,leafKeys,names)
                 t.setState({selectVal:leafKeys})

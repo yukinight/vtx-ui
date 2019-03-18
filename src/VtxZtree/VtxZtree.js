@@ -81,6 +81,9 @@ export default class VtxZtree extends React.Component{
                 beforeClick(treeId, treeNode, clickFlag){
                     return treeNode.selectable;
                 },
+                beforeCheck(treeId,treeNode){
+                    return props.beforeCheck ? props.beforeCheck(treeNode):true;
+                },
                 onClick(e,treeId,treeNode,clickFlag){
                     // console.log('点击节点信息',treeNode)
                     if(typeof props.onClick =='function'){
