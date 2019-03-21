@@ -63,7 +63,8 @@ class BaiduMap extends React.Component{
                 resolve(window.BMap);
             }
             else{
-                $.getScript('http://api.map.baidu.com/getscript?v=2.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ',()=>{
+                window.HOST_TYPE = "2";
+                $.getScript('https://api.map.baidu.com/getscript?v=2.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ',()=>{
                     let DistanceTool = new Promise((resolve,reject)=>{
                         $.getScript(`${configUrl.mapServerURL}/DistanceTool_min.js`,()=>{
                             resolve();
@@ -104,12 +105,22 @@ class BaiduMap extends React.Component{
                             resolve();
                         });
                     });
+                    let InfoBox = new Promise(function (resolve, reject) {
+                        $.getScript(`${configUrl.mapServerURL}/InfoBox_min.js`,()=>{
+                            resolve();
+                        });
+                    });
+                    let LuShu = new Promise(function (resolve, reject) {
+                        $.getScript(`${configUrl.mapServerURL}/LuShu_min.js`,()=>{
+                            resolve();
+                        });
+                    });
 
-                    Promise.all([DistanceTool,TrafficControl,MarkerClusterer,AreaRestriction,DrawingManager,Heatmap,GeoUtils,TextIconOverlay]).then(()=>{
+                    Promise.all([DistanceTool,TrafficControl,MarkerClusterer,AreaRestriction,DrawingManager,Heatmap,GeoUtils,TextIconOverlay,InfoBox,LuShu]).then(()=>{
                         resolve(window.BMap);
                     });
                 });
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "https://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css"}).appendTo("head");
             }
         });
     }
