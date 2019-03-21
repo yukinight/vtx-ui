@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Map.css';
+import './Map.css';
 import {
     graphicManage,defaultWmtsMapLayers,getPixelDistance,getDistance,getPolygonArea
 } from '../MapToolFunction';
