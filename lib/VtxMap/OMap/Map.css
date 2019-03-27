@@ -1,0 +1,76 @@
+.label-content {
+  display: inline-block;
+  padding: 5px;
+  line-height: 22px;
+  text-align: center;
+  border-radius: 5px;
+  background-color: #fff;
+  opacity: 1;
+  color: #5DD0EE;
+  transform: translate(-50%);
+  -ms-transform: translate(-50%);
+}
+.noselect {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Chrome/Safari/Opera */
+  -khtml-user-select: none;
+  /* Konqueror */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+    not supported by any browser */
+}
+.vtx_gmap_html_pointCollection_a {
+  position: absolute;
+}
+.vtx_gmap_html_pointCollection_a canvas {
+  z-index: 111;
+}
+.vtx-g-rangingPoint {
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  border: 2px solid #108ee9;
+  display: inline-block;
+  border-radius: 8px;
+  position: relative;
+  top: 5px;
+  left: 1px;
+}
+.vtx-g-rangingDistance {
+  position: relative;
+  top: -36px;
+  left: 15px;
+  height: 30px;
+  line-height: 28px;
+  background-color: #fff;
+  border: 1px solid #108ee9;
+  font-size: 12px;
+  word-break: keep-all;
+  padding: 0px 3px;
+  color: #108ee9;
+}
+.vtx-g-rang-exit {
+  width: 12px;
+  height: 12px;
+  background-color: #fff;
+  border: 2px solid #108ee9;
+  color: #108ee9;
+  line-height: 7px;
+  text-align: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+.vtx-g-rang-showRangTool {
+  line-height: 18px;
+  font-size: 12px;
+  border: 1px solid #108ee9;
+  word-break: keep-all;
+  background-color: #fff;
+  padding: 0px 5px;
+}
