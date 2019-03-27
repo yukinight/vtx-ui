@@ -73,6 +73,7 @@ export default class VtxZtree extends React.Component{
                 selectedMulti: !!props.multiple,
                 showIcon: true,
                 expandSpeed:'normal',
+                showTitle:false,
                 fontCss:(treeId, treeNode)=>{
                     return treeNode.selectable?{}:{color:"#B9B9B9"}
                 },
