@@ -17,6 +17,8 @@
 | showSearch           | 显示下拉树搜索框                           | Boolean                                                                                                                                                    | False              |
 | placeholder          | 选择框默认文字                             | String                                                                                                                                                     | \--                |
 | onChange             | 下拉树选中回调方法（单选和多选使用一样方法）| Function({nodes,keys,leafKeys,names })<br/> nodes:返回所有选中节点信息,<br/> keys:返回所有选中节点key,<br/> leafKeys:返回所有选中叶子节点key,<br/> Names:返回所有选中节点name, | \--                |
+| beforeCheck       | 处理节点勾选事件<br/> 允许勾选此节点，函数返回值应为true；不允许勾选此节点，函数值返回值为false（当返回false后不会触发onCheck事件）  | Funciton(treeNode)  | \--        |
+
 
 #### VtxZtreeSelect 树子节点参数配置
 

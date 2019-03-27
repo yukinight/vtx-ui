@@ -73,6 +73,7 @@ export default class VtxZtree extends React.Component{
                 selectedMulti: !!props.multiple,
                 showIcon: true,
                 expandSpeed:'normal',
+                showTitle:false,
                 fontCss:(treeId, treeNode)=>{
                     return treeNode.selectable?{}:{color:"#B9B9B9"}
                 },
@@ -80,6 +81,9 @@ export default class VtxZtree extends React.Component{
             callback:{
                 beforeClick(treeId, treeNode, clickFlag){
                     return treeNode.selectable;
+                },
+                beforeCheck(treeId,treeNode){
+                    return props.beforeCheck ? props.beforeCheck(treeNode):true;
                 },
                 onClick(e,treeId,treeNode,clickFlag){
                     // console.log('点击节点信息',treeNode)

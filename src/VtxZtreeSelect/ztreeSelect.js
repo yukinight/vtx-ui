@@ -115,14 +115,13 @@ export default class SelectZTree extends React.Component{
         // ztree配置
         const treeProps = {
             data,//树的数据
-            refreshFlag,
             isShowSearchInput:showSearch,
             multiple,
             checkable:treeCheckable,
             [treeCheckable?'checkedKeys':'selectedKeys']:value_arr,
             defaultExpandAll:treeDefaultExpandAll,
             expandedKeys,
-            refreshFlag:t.treeRefreshFlag,
+            refreshFlag: refreshFlag || t.treeRefreshFlag,
             ref(instance){
                 if(instance)t.tree = instance;
             },
@@ -152,6 +151,9 @@ export default class SelectZTree extends React.Component{
                         names:checkedNames
                     })
                 }
+            },
+            beforeCheck(treeNode){
+                return t.props.beforeCheck ? t.props.beforeCheck(treeNode):true;
             },
         };
         // popover配置

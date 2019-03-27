@@ -57,7 +57,35 @@ graphicManage.prototype = {
     }
 }
 
-
+//使用canvas 旋转图片,生成base64,达到旋转效果
+export function RotateIcon(options = {}) {
+    this.options = options;
+    this.rImg = new Image();
+    this.rImg.src = this.options.url || '';
+    let canvas = document.createElement("canvas");
+    canvas.width = this.options.width;
+    canvas.height = this.options.height;
+    this.context = canvas.getContext("2d");
+    this.canvas = canvas;
+};
+RotateIcon.prototype.setRotation = function (deg = 0) {
+    let t = this;
+    let canvas = t.context,
+        angle = deg * Math.PI / 180,
+        centerX = t.options.width / 2,
+        centerY = t.options.height / 2;
+    canvas.clearRect(0, 0, t.options.width, t.options.height);
+    canvas.save();
+    canvas.translate(centerX, centerY);
+    canvas.rotate(angle);
+    canvas.translate(-centerX, -centerY);
+    canvas.drawImage(t.rImg, -1, -1);
+    canvas.restore();
+    return (t);
+};
+RotateIcon.prototype.getUrl = function () {
+    return this.canvas.toDataURL('image/png');
+};
 
 export function getMaxMin(path = []){
     //区别点和圆的经纬度数据处理
