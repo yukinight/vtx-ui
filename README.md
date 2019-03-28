@@ -28,6 +28,7 @@ $ yarn add vtx-ui
 - [VtxMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxMap.md)
 - [VtxSearchMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxSearchMap.md)
 - [VtxOptMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxOptMap.md)
+- [VtxRpsFrame](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxRpsFrame.md)
 
 #### 全量导入引用方式（==不推荐==）：
 
@@ -73,6 +74,9 @@ $ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
 $ import {VtxZtreeSelect} from 'vtx-ui';
+
+# 报表组件
+$ import {VtxRpsFrame} from 'vtx-ui';
 ```
 
 #### 使用babel-plugin-import动态加载引用方式(==推荐==)：
@@ -126,6 +130,9 @@ $ import {VtxZtree} from 'vtx-ui';
 # 下拉树组件
 $ import {VtxTreeSelect} from 'vtx-ui';
 $ import {VtxZtreeSelect} from 'vtx-ui';
+
+# 报表组件
+$ import {VtxRpsFrame} from 'vtx-ui';
 ```
 
 
