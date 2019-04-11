@@ -107,8 +107,8 @@ class ArcgisMap extends React.Component{
                     })
                 });
                 //加载 css
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css"}).appendTo("head");
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css`}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css`}).appendTo("head");
             }
         });
     }
