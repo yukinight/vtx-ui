@@ -1,5 +1,9 @@
 import React from 'react';
-import styles from './VtxRpsFrame.css';
+import './VtxRpsFrame.css';
+
+const styles = {
+    iframeParent: 'vtx-ui-frame-ct',
+}
 
 class VtxRpsFrame extends React.Component{
     constructor(){
@@ -88,7 +92,7 @@ class VtxRpsFrame extends React.Component{
     render(){
         return(
                 <div className={styles.iframeParent}>
-                    <iframe className={styles.iframe + ' wrapper'} width="100%" height="100%" name='yy'></iframe>
+                    <iframe className={'wrapper'} width="100%" height="100%" name='yy'></iframe>
                 </div>
         )
     }
