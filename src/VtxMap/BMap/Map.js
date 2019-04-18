@@ -171,7 +171,7 @@ class BaiduMap extends React.Component{
                     t.setVisiblePoints(pointIds.concat(lineIds).concat(polygonIds).concat(circleIds),mapVisiblePoints.type);
                 break;
                 default:
-                    t.setVisiblePoints(mapVisiblePoints,mapVisiblePoints.type);
+                    t.setVisiblePoints(mapVisiblePoints.fitView,mapVisiblePoints.type);
                 break;
             }
         }
