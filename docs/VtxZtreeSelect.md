@@ -18,6 +18,7 @@
 | placeholder          | 选择框默认文字                             | String                                                                                                                                                     | \--                |
 | onChange             | 下拉树选中回调方法（单选和多选使用一样方法）| Function({nodes,keys,leafKeys,names })<br/> nodes:返回所有选中节点信息,<br/> keys:返回所有选中节点key,<br/> leafKeys:返回所有选中叶子节点key,<br/> Names:返回所有选中节点name, | \--                |
 | beforeCheck       | 处理节点勾选事件<br/> 允许勾选此节点，函数返回值应为true；不允许勾选此节点，函数值返回值为false（当返回false后不会触发onCheck事件）  | Funciton(treeNode)  | \--        |
+| refreshFlag       | 同步数据标志位<br/>（初始化后，下拉树的数据、状态内部独立，不随外部参数的变化而变化。如需要同步外部数据到下拉树，改变此标志位，eg: 1, 2, 3...）  | Number  | \--        |
 
 
 #### VtxZtreeSelect 树子节点参数配置
