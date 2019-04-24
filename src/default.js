@@ -1,8 +1,8 @@
 export default {
     //地图服务地址ip
-    mapServerURL: '//vortexplugin.cloudhw.cn/mapplugin',
+    mapServerURL:  (window.VtxPublicServiceAddress || {}).mapServerURL || 'http://120.26.217.62:25048/mapplugin',
     //arcgis地图服务ip
-    arcgisServerURL: '//vortexplugin.cloudhw.cn/gis',
+    arcgisServerURL:  (window.VtxPublicServiceAddress || {}).arcgisServerURL || 'http://120.26.217.62:25048/gis',
     // ztree文件地址
-    ztreeServer:'//vortexplugin.cloudhw.cn/ztree',
+    ztreeServer: (window.VtxPublicServiceAddress || {}).ztreeServer || 'http://120.26.217.62:25048/ztree',
 }

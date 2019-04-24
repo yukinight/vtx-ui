@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './Map.css';
+import './Map.css';
 import {
     graphicManage,defaultWmtsMapLayers,getPixelDistance,getDistance,getPolygonArea
 } from '../MapToolFunction';
@@ -107,8 +107,8 @@ class ArcgisMap extends React.Component{
                     })
                 });
                 //加载 css
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css"}).appendTo("head");
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://120.26.217.62:25048/gis/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/js/dojo/dijit/themes/tundra/tundra.css`}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.arcgisServerURL}/html/js/arcgis_js_api/library/3.9/3.9/js/esri/css/esri.css`}).appendTo("head");
             }
         });
     }
@@ -1294,10 +1294,14 @@ class ArcgisMap extends React.Component{
             if(item.config){
                 cg = {...cg,...item.config};
             }
+            let rings = [...item.rings];
+            if(item.rings[0][0] != item.rings[item.rings.length -1][0] || item.rings[0][1] != item.rings[item.rings.length -1][1]){
+                rings = [...rings,item.rings[0]]
+            }
             //处理面的点数据
             let polygonPath = esri.geometry.Polygon({
                 //添加最后一个点,使面闭合
-                rings: [[...item.rings,item.rings[0]]],
+                rings: [rings],
                 spatialReference: { wkid: t.grwkid}
             });
             //线类型
@@ -1390,8 +1394,12 @@ class ArcgisMap extends React.Component{
             }
             //删除原来的点位
             gc.geometry.removeRing(0);
+            let rings = [...item.rings];
+            if(item.rings[0][0] != item.rings[item.rings.length -1][0] || item.rings[0][1] != item.rings[item.rings.length -1][1]){
+                rings = [...rings,item.rings[0]]
+            }
             //添加新的点位
-            gc.geometry.addRing([...item.rings,item.rings[0]]);
+            gc.geometry.addRing(rings);
             let {_extent} = t.dealData(item.rings);
             //设置完点位后  需要刷新下点位的显示范围
             gc._extent.update(_extent.xmin,_extent.ymin,_extent.xmax,_extent.ymax,new esri.SpatialReference({ wkid: t.grwkid }));

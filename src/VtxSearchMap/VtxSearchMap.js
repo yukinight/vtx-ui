@@ -75,7 +75,7 @@ class VtxSearchMap extends React.Component {
             // 返回点位/图形
             graphicType: props.graphicType ||'point',
             isDraw: props.graphicType!=='point',
-            parameter: props.drawParameter || {},
+            parameter: props.drawParameter,
             graphicValue: null,
             drawGraphID:'drawnGraph',
             /*地图Api参数*/
@@ -412,9 +412,23 @@ class VtxSearchMap extends React.Component {
             },
             mapDraw:{
                 geometryType: this.state.graphicType,
-                parameter: this.state.parameter,
+                parameter: (this.state.parameter || (this.state.graphicType=='polyline'?{
+                    color: '#108edf',//线颜色,
+                    pellucidity: 1,//线透明度,
+                    lineWidth: 3,//线宽度 
+                    lineType : 'solid'
+                }:(this.state.graphicType=='polygon' 
+                    || this.state.graphicType=='circle'
+                    || this.state.graphicType=='rectangle')?{
+                    color: '#ffffff',//填充色, 
+                    lineColor: '#108edf',//线颜色, 
+                    lineOpacity: 1,//线透明度, 
+                    lineWidth: 3,//线宽度, 
+                    pellucidity: 0.8,//填充透明度 
+                    lineType : 'solid'
+                }:{})),
                 data: {id: drawGraphID}
-            }  
+            }
         }
         let mapPoints = [],mapLines=[],mapPolygons=[],mapCircles=[];
         if(graphicType == 'point'){
