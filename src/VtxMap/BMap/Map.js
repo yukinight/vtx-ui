@@ -63,7 +63,7 @@ class BaiduMap extends React.Component{
                 resolve(window.BMap);
             }
             else{
-                $.getScript('http://api.map.baidu.com/getscript?v=2.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ',()=>{
+                $.getScript(`${configUrl.httpOrhttps}://api.map.baidu.com/getscript?v=2.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ`,()=>{
                     let DistanceTool = new Promise((resolve,reject)=>{
                         $.getScript(`${configUrl.mapServerURL}/DistanceTool_min.js`,()=>{
                             resolve();
