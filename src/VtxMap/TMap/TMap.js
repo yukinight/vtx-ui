@@ -2113,7 +2113,11 @@ class TMap extends React.Component{
     //点位角度旋转(以指向东(右)为0°)
     rotateDeg(sp,ep){
         let t = this;
-        let s = t.state.gis.lngLatToLayerPoint(sp),
+        let spLngLat = sp;
+        if(Array.isArray(sp)){
+            spLngLat = new AMap.LngLat(sp[0],sp[1]);
+        }
+        let s = t.state.gis.lngLatToLayerPoint(spLngLat),
         //获取当前点位的经纬度
             e = t.state.gis.lngLatToLayerPoint(new T.LngLat(ep[0],ep[1])),
             deg = 0;

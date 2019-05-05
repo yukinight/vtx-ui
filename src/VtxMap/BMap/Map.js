@@ -2051,7 +2051,11 @@ class BaiduMap extends React.Component{
     //点位角度旋转(以指向东(右)为0°)
     rotateDeg(sp,ep){
         let t = this;
-        let s = t.state.gis.pointToPixel(sp),
+        let spLngLat = sp;
+        if(Array.isArray(sp)){
+            spLngLat = new BMap.Point(sp[0],sp[1]);
+        }
+        let s = t.state.gis.pointToPixel(spLngLat),
         //获取当前点位的经纬度
             e = t.state.gis.pointToPixel(new BMap.Point(ep[0],ep[1])),
             deg = 0;
