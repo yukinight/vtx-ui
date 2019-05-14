@@ -5,13 +5,12 @@ import Button from 'antd/lib/button';
 import 'antd/lib/button/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import Modal from 'antd/lib/modal';
-import 'antd/lib/modal/style/css';
+import 'viewerjs/dist/viewer.css';
+import Viewer from 'viewerjs';
 
 class VortexUpload extends React.Component{
     constructor(props){
         super(props); 
-        let t = this;
         // 初始化上传下载的地址
         this.uploadURL = props.action;
         this.downLoadURL = props.downLoadURL;
@@ -19,10 +18,10 @@ class VortexUpload extends React.Component{
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
         'disabled','withCredentials','beforeUpload'];
 
+        this.imageCt = null;
+        this.imageViewer = null;
+
         this.state = {
-            previewVisible: false,
-            previewImage: '',
-            previewName:'',
             fileList: this.getSynFileList()
         };
     }
@@ -131,50 +130,53 @@ class VortexUpload extends React.Component{
 
     componentWillReceiveProps(nextProps){
         if(this.props.fileListVersion!=nextProps.fileListVersion){
-                this.setState({
+            this.setState({
                 fileList: this.getSynFileList(nextProps)
             });
         }
     }
-    handlePreview(file){
-        this.setState({
-          previewImage: file.url || file.thumbUrl,
-          previewName: file.name,
-          previewVisible: true,
-        });
+    componentDidMount(){
+        this.imageViewer = new Viewer(this.imageCt,{})
     }
-    handleCancel(){
-        this.setState({ previewVisible: false })
+    componentWillUnmount(){
+        this.imageViewer.destroy();
+    }
+    handlePreview(file){
+        const imageIndex = this.props.fileList.map(item=>item.id).indexOf(file.id);
+        if(imageIndex==-1)return;
+        this.imageViewer.update();
+        this.imageViewer.view(imageIndex);
     }
     render(){
         return (
             <div>
-            <Upload {...this.getConfig()}>
-                {
-                    this.props.viewMode ? null : 
-                    (this.props.customizedButton ||
-                        (this.props.listType =='picture-card' ? 
-                            <div>
-                                <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
-                                <div className="ant-upload-text">上传</div>
-                            </div>
-                            :
-                            <Button>
-                                <Icon type="upload" />上传
-                            </Button>
+                <Upload {...this.getConfig()}>
+                    {
+                        this.props.viewMode ? null : 
+                        (this.props.customizedButton ||
+                            (this.props.listType =='picture-card' ? 
+                                <div>
+                                    <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
+                                    <div className="ant-upload-text">上传</div>
+                                </div>
+                                :
+                                <Button>
+                                    <Icon type="upload" />上传
+                                </Button>
+                            )
                         )
-                    )
-                }
-                
-            </Upload>
-            {
-                this.props.listType =='picture-card'?
-                <Modal visible={this.state.previewVisible} footer={null} onCancel={this.handleCancel.bind(this)}>
-                    <img alt={this.state.previewName} style={{ width: '100%' }} src={this.state.previewImage} />
-                </Modal>:
-                null
-            }
-            
+                    }
+                </Upload>
+
+                <div style={{display:'none'}}>
+                    <ul ref={(ins)=>{if(ins)this.imageCt = ins}}>
+                        {
+                            this.props.fileList.map((item,index)=><li key={item.id}>
+                                <img src={item.url} alt={item.name||`picture-${index+1}`}/>
+                            </li>)
+                        }
+                    </ul>
+                </div>
             </div>
         )
     }
