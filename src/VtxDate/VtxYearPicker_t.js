@@ -70,7 +70,7 @@ class VtxYearPicker_t extends React.Component{
         let props = this.props;
         let d = date.toString()
         if('onChange' in props){
-            props.onChange(moment(d),d);
+            props.onChange(moment(d,'YYYY'),d);
         }
     }
     changeTime(item,e){
