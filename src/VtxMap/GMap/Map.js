@@ -3334,7 +3334,11 @@ class ArcgisMap extends React.Component{
     //点位角度旋转(以指向东(右)为0°)
     rotateDeg(sp,ep){
         let t = this;
-        let s = t.state.gis.toScreen(sp),
+        let spLngLat = sp;
+        if(Array.isArray(sp)){
+            spLngLat = new esri.geometry.Point(sp[0],sp[1]);
+        }
+        let s = t.state.gis.toScreen(spLngLat),
         //获取当前点位的经纬度
             e = t.state.gis.toScreen(new esri.geometry.Point(ep[0],ep[1])),
             deg = 0;

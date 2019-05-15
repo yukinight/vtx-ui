@@ -22,7 +22,7 @@
 | placeholder  | 搜索框提示文字    | String     |  '请输入要查询的关键字'      |
 | disableCheckboxAll | 禁掉所有节点checked响应                                                                                                                                                                                                        | Bool                                                                                                                                                                                                                                                  | 默认false  |
 | customCfg          | 自定义配置项，参考[ztree的setting配置](http://www.treejs.cn/v3/api.php )  | Object  |            |
-| refreshFlag        | 同步标志位，如需要同步数据到当前树，改变此标志位，eg: 1, 2, 3...                                                                                                                                                               | Number                                                                                                                                                                                                                                                   |            |
+| refreshFlag        |同步数据标志位<br/>（初始化后，树的数据、状态内部独立，不随外部参数的变化而变化。如需要同步外部数据到树，改变此标志位，eg: 1, 2, 3...）| Number|            |
 
 #### VtxZTree data 参数说明
 

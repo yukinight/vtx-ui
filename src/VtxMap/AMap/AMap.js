@@ -62,7 +62,7 @@ class VortexAMap extends React.Component{
                 resolve(window.AMap);
             }
             else{
-                $.getScript('http://webapi.amap.com/maps?v=1.4.6&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap',()=>{
+                $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.6&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
                     let PointCollection = new Promise((resolve,reject)=>{
                         $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                             resolve();
@@ -827,7 +827,17 @@ class VortexAMap extends React.Component{
             if(!!item.markerContent){
                 markerOption.content = item.markerContent;
             }else{
-                markerOption.icon = item.url;
+                if(item.url){
+                    if(item.url.indexOf('http://') > -1 || item.url.indexOf('https://') > -1){
+                        markerOption.icon = new AMap.Icon({
+                            size: new AMap.Size(cg.width,cg.height),
+                            image: item.url,
+                            imageSize: new AMap.Size(cg.width,cg.height)
+                        })
+                    }else{
+                        markerOption.icon = item.url;
+                    }
+                }
             }
             //是否展示label
             if(item.canShowLabel){
@@ -957,7 +967,15 @@ class VortexAMap extends React.Component{
                         gc.setIcon(item.urlleft);
                     }else{
                         if(item.url){
-                            gc.setIcon(item.url);
+                            if(item.url.indexOf('http://') > -1 || item.url.indexOf('https://') > -1){
+                                gc.setIcon(new AMap.Icon({
+                                    size: new AMap.Size(cg.width,cg.height),
+                                    image: item.url,
+                                    imageSize: new AMap.Size(cg.width,cg.height)
+                                }));
+                            }else{
+                                gc.setIcon(item.url);
+                            }
                         }
                     }
                 }
@@ -1921,7 +1939,11 @@ class VortexAMap extends React.Component{
     //点位角度旋转(以指向东(右)为0°)
     rotateDeg(sp,ep){
         let t = this;
-        let s = t.state.gis.lngLatToContainer(sp),
+        let spLngLat = sp;
+        if(Array.isArray(sp)){
+            spLngLat = new AMap.LngLat(sp[0],sp[1]);
+        }
+        let s = t.state.gis.lngLatToContainer(spLngLat),
         //获取当前点位的经纬度
             e = t.state.gis.lngLatToContainer(new AMap.LngLat(ep[0],ep[1])),
             deg = 0;

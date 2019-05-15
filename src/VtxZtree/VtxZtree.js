@@ -240,7 +240,7 @@ export default class VtxZtree extends React.Component{
             if(node){
                 // 隐藏节点的勾选状态也要改变
                 node.checked = checkedFlag;
-                this.zTreeObj.updateNode(node);
+                this.zTreeObj.updateNode(node,true);
                 // this.zTreeObj.checkNode(node,checkedFlag,false);
             }
         }

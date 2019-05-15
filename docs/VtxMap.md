@@ -1,5 +1,23 @@
 ## react地图Map组件文档
 
+
+#### https支持
+==注: 天地图,arcgis类型地图的插件js,如果也需要是https,就需要当前页面的请求模式也是https的.
+地图的插件,是由地图api初始化时,异步引入的,通过当前页面的document.location.protocol做了https的判断==
+
+```
+https的配置方式:(仅供参考)
+将如下代码,放入根目录的html中
+window.VtxPublicServiceAddress = {
+    //地图api地址的http方式
+    httpOrhttps: 'https',
+    //地图服务地址ip
+    mapServerURL:  'https://vortexplugin.cloudhw.cn/mapplugin',
+    //arcgis地图服务ip
+    arcgisServerURL:  'https://vortexplugin.cloudhw.cn/gis',
+};
+```
+
 **注:react组件创建地图时会在window中添加VtxMap对象.**
 
 VtxMap对象中通过mapId储存了map对象.  

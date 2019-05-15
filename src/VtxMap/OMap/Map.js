@@ -192,7 +192,7 @@ class Map extends React.Component {
             isShowControl = !!showControl;
         }
         let latLngBounds = [];
-        if(areaRestriction){
+        if(areaRestriction && Array.isArray(areaRestriction) && Array.isArray(areaRestriction[0])){
             //处理 区域限制数据
             latLngBounds = [
                 areaRestriction[0][0],
@@ -2816,12 +2816,12 @@ class Map extends React.Component {
         let nowBounds = t.state.gis.getBounds();
         let obj = {};
         obj.southWest = {
-            lng : nowBounds.ga.j,
-            lat : nowBounds.ma.l
+            lng : nowBounds.getNorthEast().lng(),
+            lat : nowBounds.getNorthEast().lat()
         };
         obj.northEast = {
-            lng : nowBounds.ga.l,
-            lat : nowBounds.ma.j
+            lng : nowBounds.getSouthWest().lng(),
+            lat : nowBounds.getSouthWest().lat()
         };
         obj.nowCenter = t.state.gis.getCenter();
         obj.zoom = t.state.gis.getZoom();
@@ -2982,11 +2982,18 @@ class Map extends React.Component {
     rotateDeg(sp,ep){
         let t = this,
             deg = 0,
-            ftp = t.canvasProjectionOverlay.getProjection();
+            ftp = t.canvasProjectionOverlay.getProjection(),
+            spLngLat = sp,epLngLat = ep;
         if(ftp){
-            let s = ftp.fromLatLngToContainerPixel(sp),
+            if(Array.isArray(sp)){
+                spLngLat = new t.omap.LatLng({lng:sp[0],lat:sp[1]})
+            }
+            if(Array.isArray(ep)){
+                spLngLat = new t.omap.LatLng({lng:ep[0],lat:ep[1]})
+            }
+            let s = ftp.fromLatLngToContainerPixel(spLngLat),
             //获取当前点位的经纬度
-                e = ftp.fromLatLngToContainerPixel(ep);
+                e = ftp.fromLatLngToContainerPixel(epLngLat);
             if(e.x != s.x){
                 var tan = (e.y - s.y)/(e.x - s.x),
                 atan  = Math.atan(tan);
