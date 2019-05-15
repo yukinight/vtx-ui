@@ -60,6 +60,7 @@ export default class Test extends React.Component{
             selectedKeys:t.state.selectedKeys,//已选中节点的key集合
             expandedKeys:t.state.expandedKeys,//展开节点的key集合
             checkable:true,//是否可以勾选
+            // checkStrictly:true,//父子节点不关联
             checkedKeys:t.state.checkedKeys,//勾选的节点key集合
             onClick({key,treeNode, selectedKeys }){
                 console.log({key,treeNode, selectedKeys })
@@ -81,7 +82,10 @@ export default class Test extends React.Component{
                 })
             },
             onRightClick({event, key,treeNode }){
-                console.log(event)
+                console.log(event,treeNode)
+            },
+            onDbClick({event, key,treeNode }){
+                console.log(event,treeNode)
             }
         };
 
@@ -89,7 +93,8 @@ export default class Test extends React.Component{
             data:t.state.treeNodes,
             showSearch:true,
             multiple:true,
-            treeCheckable:true,
+            // treeCheckable:true,
+            // checkStrictly:true,
             expandedKeys:t.state.expandedKeys,
             style:{width:'200px'},
             dropdownStyle:{
@@ -104,7 +109,7 @@ export default class Test extends React.Component{
             },
             onChange({nodes,keys,leafKeys,names}){
                 console.log(nodes,keys,leafKeys,names)
-                t.setState({selectVal:leafKeys})
+                t.setState({selectVal:keys})
             },
             value:t.state.selectVal
         }
