@@ -95,7 +95,7 @@ export default class SelectZTree extends React.Component{
         const {
             treeCheckable=false, treeDefaultExpandAll=false, multiple=false,
             showSearch=false, dropdownStyle={}, style={}, disabled=false,
-            refreshFlag=null, expandedKeys
+            refreshFlag=null, expandedKeys, customCfg, checkStrictly
         } = t.props;
         const value_arr = (function(val){
             if(Array.isArray(val)){
@@ -122,6 +122,8 @@ export default class SelectZTree extends React.Component{
             defaultExpandAll:treeDefaultExpandAll,
             expandedKeys,
             refreshFlag: refreshFlag || t.treeRefreshFlag,
+            customCfg,
+            checkStrictly,
             ref(instance){
                 if(instance)t.tree = instance;
             },

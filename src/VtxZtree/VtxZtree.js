@@ -68,6 +68,7 @@ export default class VtxZtree extends React.Component{
         this.treeSetting = {
             check: {
                 enable: !!props.checkable,
+                chkboxType: props.checkStrictly ? {"Y": "", "N": ""}:{ "Y": "ps", "N": "ps" }
             },
             view:{
                 selectedMulti: !!props.multiple,
@@ -138,6 +139,16 @@ export default class VtxZtree extends React.Component{
                     // console.log('右击节点信息',treeNode);
                     if(typeof props.onRightClick =='function'){
                         props.onRightClick({
+                            event:e,
+                            key:treeNode.key,
+                            treeNode
+                        });
+                    }
+                },
+                onDblClick(e,treeId,treeNode){
+                    // console.log('双击节点信息',treeNode);
+                    if(typeof props.onDblClick =='function'){
+                        props.onDblClick({
                             event:e,
                             key:treeNode.key,
                             treeNode
@@ -378,6 +389,7 @@ export default class VtxZtree extends React.Component{
     getCheckedNodes(){
         return this.zTreeObj.getNodesByFilter((node)=>{
             // 节点被勾选（非半勾状态）
+            if(this.props.checkStrictly)return node.checked;
             return node.checked && node.check_Child_State!=1;
         }).map(item=>{
             return {
