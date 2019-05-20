@@ -78,8 +78,7 @@ class TMap extends React.Component{
                             });
                         });
                         let ImageOverlays = new Promise((resolve,reject)=>{
-                            // $.getScript(`${configUrl.mapServerURL}/TImageOverlay.js`,()=>{
-                            $.getScript(`./resources/js/TImageOverlay.js`,()=>{
+                            $.getScript(`${configUrl.mapServerURL}/TImageOverlay.js`,()=>{
                                 resolve();
                             });
                         });
