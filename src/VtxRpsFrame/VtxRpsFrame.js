@@ -8,6 +8,7 @@ const styles = {
 class VtxRpsFrame extends React.Component{
     constructor(){
         super();
+        this.iframeName = Math.random()+new Date().getTime();
     }
     shouldComponentUpdate(nextProps){
         if(this.props.flag!==nextProps.flag){
@@ -23,6 +24,7 @@ class VtxRpsFrame extends React.Component{
         this.getReportInfoByCode()
     }
     getReportInfoByCode(){
+        const t = this;
         const { report_code, report_param, data_param, paramTypeCode, tenantId } = this.props;
         let param = {
             report_code,
@@ -83,7 +85,7 @@ class VtxRpsFrame extends React.Component{
                     ...obj,
                     reqMethod: 0
                 }
-                createForm(`/ReportServer?report_code=${report_code}&reportlet=${reportInfoByCodeData.reportlet}&fr_locale=zh_CN&timestamp=${new Date().valueOf()}`, param, 'yy');
+                createForm(`/ReportServer?report_code=${report_code}&reportlet=${reportInfoByCodeData.reportlet}&fr_locale=zh_CN&timestamp=${new Date().valueOf()}`, param, `${t.iframeName}`);
 
             }
             
@@ -92,7 +94,7 @@ class VtxRpsFrame extends React.Component{
     render(){
         return(
                 <div className={styles.iframeParent}>
-                    <iframe className={'wrapper'} width="100%" height="100%" name='yy'></iframe>
+                    <iframe className={'wrapper'} width="100%" height="100%" name={`${this.iframeName}`}></iframe>
                 </div>
         )
     }

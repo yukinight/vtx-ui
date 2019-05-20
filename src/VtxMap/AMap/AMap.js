@@ -80,6 +80,7 @@ class VortexAMap extends React.Component{
         let t = this;
         const {
             mapPoints,mapLines,mapPolygons,mapCircles,
+            imageOverlays,
             setVisiblePoints,mapVisiblePoints,
             mapCenter,mapZoomLevel,
             mapCluster,mapPointCollection,
@@ -105,6 +106,10 @@ class VortexAMap extends React.Component{
         //添加圆
         if(mapCircles instanceof Array){
             t.addCircle(mapCircles);
+        }
+        //添加图片图层
+        if(imageOverlays instanceof Array){
+            t.imageUrlOverlay(imageOverlays);
         }
         /*设置指定图元展示*/
         if(mapVisiblePoints){
@@ -353,6 +358,29 @@ class VortexAMap extends React.Component{
                     left: t.htmlXY.x - nowXY.x,
                     display: 'none'
                 });
+            }
+        })
+    }
+    //增加图片图层
+    imageUrlOverlay(imageAry){
+        let t = this;
+        imageAry.map((item,index)=>{
+            let {sw,ne,url,opacity,displayOnMinLevel,displayOnMaxLevel} = item;
+            if(!url){
+                console.error(`图片图层url数据错误`);
+                return false;
+            }
+            if(sw && ne && Array.isArray(sw) && Array.isArray(ne) && sw[0] && sw[1] && ne[0] && ne[1]){
+                    let swnep = new AMap.Bounds(sw, ne),
+                        imageUrlOverlay = new AMap.ImageLayer({
+                            url,
+                            zooms: [displayOnMinLevel || 3,displayOnMaxLevel || 18],
+                            bounds: swnep
+                        });
+                    t.state.gis.setLayers([new AMap.TileLayer(),imageUrlOverlay]);
+            }else{
+                console.error(`区域经纬度sw/ne数据错误`);
+                return false;
             }
         })
     }

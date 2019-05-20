@@ -119,7 +119,7 @@ class BaiduMap extends React.Component{
         //创建地图
         t.createMap();
         const {
-            mapPoints,mapLines,mapPolygons,mapCircles,
+            mapPoints,mapLines,mapPolygons,mapCircles,imageOverlays,
             mapVisiblePoints,mapCluster,mapZoomLevel,
             isOpenTrafficInfo,mapPointCollection,areaRestriction
         } = this.props;
@@ -140,6 +140,10 @@ class BaiduMap extends React.Component{
         //添加圆
         if(mapCircles instanceof Array){
             t.addCircle(mapCircles);
+        }
+        //添加图片图层
+        if(imageOverlays instanceof Array){
+            t.imageUrlOverlay(imageOverlays);
         }
         //画边界线
         if(boundaryName instanceof Array && boundaryName.length>0){
@@ -208,7 +212,6 @@ class BaiduMap extends React.Component{
         t.zoomStart();
         //地图缩放结束后事件
         t.zoomEnd();
-
         t.setState({
             mapCreated:true
         })
@@ -341,6 +344,34 @@ class BaiduMap extends React.Component{
                 }
             });
         }
+    }
+    //增加图片图层
+    imageUrlOverlay(imageAry){
+        let t = this;
+        imageAry.map((item,index)=>{
+            let {sw,ne,url,opacity} = item;
+            if(!url){
+                console.error(`图片图层url数据错误`);
+                return false;
+            }
+            if(sw && ne && Array.isArray(sw) && Array.isArray(ne) && sw[0] && sw[1] && ne[0] && ne[1]){
+                let swp = new BMap.Point(sw[0],sw[1]),
+                    nep = new BMap.Point(ne[0],ne[1]),
+                    option = {
+                        opacity: opacity || 1,
+                        displayOnMinLevel: item.displayOnMinLevel || 3,
+                        displayOnMaxLevel: item.displayOnMaxLevel || 19,
+                        imageURL: url
+                    },
+                    swnep = new BMap.Bounds(swp, nep),
+                    imageUrlOverlay = new BMap.GroundOverlay(swnep, option);
+                    t.state.gis.addOverlay(imageUrlOverlay);
+
+            }else{
+                console.error(`区域经纬度sw/ne数据错误`);
+                return false;
+            }
+        })
     }
     //新增点位
     addPoint(mapPoints,type){

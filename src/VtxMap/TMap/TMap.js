@@ -65,7 +65,7 @@ class TMap extends React.Component{
             }
             else{
                 $.getScript(`${configUrl.mapServerURL}/T_content.js`,()=>{
-                    $.getScript(`${configUrl.httpOrhttps}//api.tianditu.gov.cn/api?v=4.0&tk=e781ae595c43649431fb7270328e0669`,()=>{
+                    $.getScript(`${configUrl.httpOrhttps}://api.tianditu.gov.cn/api?v=4.0&tk=e781ae595c43649431fb7270328e0669`,()=>{
                         let Heatmap = new Promise((resolve,reject)=>{
                             //对象问题  和arcgis使用不同的热力图
                             $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{
@@ -77,12 +77,18 @@ class TMap extends React.Component{
                                 resolve();
                             });
                         });
+                        let ImageOverlays = new Promise((resolve,reject)=>{
+                            // $.getScript(`${configUrl.mapServerURL}/TImageOverlay.js`,()=>{
+                            $.getScript(`./resources/js/TImageOverlay.js`,()=>{
+                                resolve();
+                            });
+                        });
                         // let components = new Promise((resolve,reject)=>{
                         //     $.getScript(`${configUrl.mapServerURL}/T_toolComponents.js`,()=>{
                         //         resolve();
                         //     })
                         // });
-                        Promise.all([Heatmap,PointCollection/*,components*/]).then(()=>{
+                        Promise.all([Heatmap,PointCollection,ImageOverlays/*,components*/]).then(()=>{
                             if(t.waitInit){
                                 clearInterval(t.waitInit);
                             }
@@ -106,7 +112,8 @@ class TMap extends React.Component{
             mapCenter,mapZoomLevel,
             mapCluster,mapPointCollection,
             showControl,boundaryName,
-            areaRestriction,heatMapData
+            areaRestriction,heatMapData,
+            imageOverlays
         } = t.props;
         //创建地图
         t.createMap();
@@ -125,6 +132,10 @@ class TMap extends React.Component{
         //添加圆
         if(mapCircles instanceof Array){
             t.addCircle(mapCircles);
+        }
+        //添加图片图层
+        if(imageOverlays instanceof Array){
+            t.imageUrlOverlay(imageOverlays);
         }
         /*设置指定图元展示*/
         if(mapVisiblePoints){
@@ -201,6 +212,35 @@ class TMap extends React.Component{
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
         $(t.state.gis.getPanes().mapPane.children[0]).before(pointCollectionDiv);
+    }
+    //增加图片图层
+    imageUrlOverlay(imageAry){
+        let t = this;
+        imageAry.map((item,index)=>{
+            let {sw,ne,url,opacity,displayOnMinLevel,displayOnMaxLevel} = item;
+            if(!url){
+                console.error(`图片图层url数据错误`);
+                return false;
+            }
+            if(sw && ne && Array.isArray(sw) && Array.isArray(ne) && sw[0] && sw[1] && ne[0] && ne[1]){
+                    let swnep = new T.LngLatBounds(
+                            new T.LngLat(sw[0],sw[1]),
+                            new T.LngLat(ne[0],ne[1])
+                        ),
+                        imageUrlOverlay = new T.ImageOverlay(
+                            url,
+                            swnep,
+                            {
+                                minZoom: displayOnMinLevel || 3,
+                                maxZoom: displayOnMaxLevel || 18
+                            }
+                        );
+                    t.state.gis.addOverLay(imageUrlOverlay);
+            }else{
+                console.error(`区域经纬度sw/ne数据错误`);
+                return false;
+            }
+        })
     }
     //清空地图所有图元
     clearAll (){
