@@ -39,7 +39,7 @@ class VortexUpload extends React.Component{
             fileList: t.state.fileList,
             onChange(info){
                 // 此处根据后台返回的数据结构取得文件ID             
-                let vtxId =  info.file.response ? info.file.response.data[0].id: undefined;
+                let vtxId =  (info.file.response && Array.isArray(info.file.response.data) && info.file.response.data.length>0) ? info.file.response.data[0].id : undefined;
                 let newFileList = info.fileList;
                 let newFile = vtxId?{
                     ...info.file,
