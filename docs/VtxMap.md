@@ -70,7 +70,19 @@ VtxMap对象中通过mapId储存了map对象.
         ...
     ] 
 ```
+### 1.0.1地图-地面图片图层添加(imageOverlays)
+说明: 地面图层参数为数组/对象,具体参数如下:
 
+==注:只有天地图,百度,高德地图支持,arcgis需要使用其他方式实现==
+
+参数 | 描述 | 是否必填 | 取值范围，格式 | 默认
+---|---|---|---|---
+ne | 左上角经纬度 | 是 | Array[number,number]/经纬度,如[120,30] | --
+sw | 右下角经纬度 | 是 | Array[number,number]/经纬度,如[120,30] | --
+opacity | 图片透明度 | 否 | number/0-1 | 1
+displayOnMinLevel | 最小展示zoom等级 | 否 | number/根据地图类型取值 | 2/3
+displayOnMaxLevel | 最大展示zoom等级 | 否 | number/根据地图类型取值 | 18/19
+url | 图片地址 | 是 | 'http://xxx' | --
 ---
 
 ### 1.1添加/删除/更新点（mapPoints）

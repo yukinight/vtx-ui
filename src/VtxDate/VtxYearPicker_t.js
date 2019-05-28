@@ -48,6 +48,15 @@ class VtxYearPicker_t extends React.Component{
                 time: item
             });
         }else{
+            t.setState({
+                cn: styles.hidden
+            },()=>{
+                setTimeout(()=>{
+                    t.setState({
+                        time: '',
+                    })
+                },190)
+            });
             t.chooseYear(item);
         }
     }
