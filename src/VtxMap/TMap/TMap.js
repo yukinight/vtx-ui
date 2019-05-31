@@ -1939,12 +1939,13 @@ class TMap extends React.Component{
                 if(mapPane.style.top){
                     xylist = [mapPane.style.left,mapPane.style.top];
                 }else{
-                    xylist = (mapPane.style.transform || '').substr(12).split(',');
+                    let matchList = mapPane.style.transform.match(/translate\((-?\d*)+px,\s*(-?\d*)+px\)/) || [];
+                    xylist = [matchList[1],matchList[2]];
                 }
                 //重画海量点
                 $(`#${t.pointCollectionId}`).css({
-                    top: `${-eval((xylist[1] || '').replace('px',''))}px`,
-                    left: `${-eval((xylist[0] || '').replace('px',''))}px`
+                    top: `${-xylist[1]}px`,
+                    left: `${-xylist[0]}px`
                 })
                 if(t.morepoints.length > 0){
                     t.updatePointCollection(t.props.mapPointCollection);

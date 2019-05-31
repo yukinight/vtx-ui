@@ -49,6 +49,8 @@ function IndexPage(props) {
           }})
     }
     const vtxProps2 = {
+        action: 'http://192.168.1.207:18082/cloudFile/common/uploadFile',
+        downLoadURL:'http://192.168.1.207:18082/cloudFile/common/downloadFile?id=',
         fileList,   // 重要：保存在数据store的文件数组
         listType:'picture-card',
         accept:"image/png, image/jpeg", // 接受上传的文件类型
@@ -62,7 +64,11 @@ function IndexPage(props) {
           dispatch({type:'upload/fetch',payload:{
             fileList:[
               ...fileList,
-              file
+              {
+                name:file.name,
+                id:file.id
+              }
+              // file
             ]
           }})
         },

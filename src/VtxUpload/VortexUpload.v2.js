@@ -12,8 +12,8 @@ class VortexUpload extends React.Component{
     constructor(props){
         super(props); 
         // 初始化上传下载的地址
-        this.uploadURL = props.action;
-        this.downLoadURL = props.downLoadURL;
+        this.uploadURL = props.action||'';
+        this.downLoadURL = props.downLoadURL||'';
         // 可在外部配置的属性，具体文档参考AntUI
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
         'disabled','withCredentials','beforeUpload'];
@@ -30,8 +30,8 @@ class VortexUpload extends React.Component{
         let t = this;
         let props = this.props;
         // 重置上传下载的地址
-        t.uploadURL = props.action;
-        t.downLoadURL = props.downLoadURL;
+        t.uploadURL = props.action||'';
+        t.downLoadURL = props.downLoadURL||'';
         let config = {
             action: t.uploadURL,
             fileList: t.state.fileList,
@@ -172,7 +172,7 @@ class VortexUpload extends React.Component{
                     <ul ref={(ins)=>{if(ins)this.imageCt = ins}}>
                         {
                             this.props.fileList.map((item,index)=><li key={item.id}>
-                                <img src={item.url} alt={item.name||`picture-${index+1}`}/>
+                                <img src={item.url||this.downLoadURL+item.id} alt={item.name||`picture-${index+1}`}/>
                             </li>)
                         }
                     </ul>
