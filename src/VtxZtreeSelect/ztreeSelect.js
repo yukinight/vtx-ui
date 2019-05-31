@@ -170,11 +170,11 @@ export default class SelectZTree extends React.Component{
             {
                 selectedNodes.length>0?[
                     selectedNodes.map((item,index)=><Tag key={item.id} closable={!disabled} 
-                    onClick={(e)=>{e.stopPropagation();}}
+                    onClose={(e)=>{e.stopPropagation();}}
                     afterClose={() => {
                         t.clearKey(item.id);
                     }}>
-                        {item.name}
+                        {item.name.length>20 ? `${item.name.slice(0, 20)}...` : item.name}
                     </Tag>),
                     
                     (disabled? null:<Icon key={'icon'} className='close-icon' type="close-circle" onClick={(e)=>{
