@@ -62,14 +62,24 @@ class VortexAMap extends React.Component{
                 resolve(window.AMap);
             }
             else{
-                $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.6&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
-                    let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
-                            resolve();
+                $.getScript(`${configUrl.mapServerURL}/A_content.js`,()=>{
+                    $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.14&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
+                        let PointCollection = new Promise((resolve,reject)=>{
+                            $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
+                                resolve();
+                            });
                         });
-                    });
-                    Promise.all([PointCollection]).then(()=>{
-                        resolve(window.AMap);
+                        Promise.all([PointCollection]).then(()=>{
+                            (function setTime() {
+                                if(window.AMap){
+                                    resolve(window.AMap);
+                                }else{
+                                    setTimeout(()=>{
+                                        setTime();
+                                    },50)
+                                }
+                            })();
+                        })
                     })
                 })
             }
