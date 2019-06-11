@@ -71,7 +71,34 @@ class VortexAMap extends React.Component{
                         });
                         Promise.all([PointCollection]).then(()=>{
                             (function setTime() {
-                                if(window.AMap){
+                                let allEvents = [
+                                    window.AMap,
+                                    'MarkerClusterer',
+                                    'Scale',
+                                    'ToolBar',
+                                    'DistrictSearch',
+                                    'RangingTool',
+                                    'MouseTool',
+                                    'PolyEditor',
+                                    'CircleEditor',
+                                    'PlaceSearch',
+                                    'Heatmap'
+                                ];
+                                let isLoading = true;
+                                for(let i = 0; i <= allEvents.length - 1; i++){
+                                    if(i === 0){
+                                        if(!allEvents[i]){
+                                            isLoading = false;
+                                            break;
+                                        }
+                                    }else{
+                                        if(!allEvents[0][allEvents[i]]){
+                                            isLoading = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(isLoading){
                                     resolve(window.AMap);
                                 }else{
                                     setTimeout(()=>{
