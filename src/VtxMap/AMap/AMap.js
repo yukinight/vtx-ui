@@ -2169,7 +2169,7 @@ class VortexAMap extends React.Component{
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-            isOpenTrafficInfo,boundaryName,heatMapData,
+            isOpenTrafficInfo,boundaryName,heatMapData,imageOverlays,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
             setZoomLevel,mapZoomLevel,
@@ -2310,6 +2310,10 @@ class VortexAMap extends React.Component{
         // 获取热力图
         if(heatMapData && !t.deepEqual(heatMapData,props.heatMapData)){
             t.heatMapOverlay(heatMapData);
+        }
+        //添加图片图层
+        if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+            t.imageUrlOverlay(imageOverlays);
         }
         //图元编辑调用
         if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
