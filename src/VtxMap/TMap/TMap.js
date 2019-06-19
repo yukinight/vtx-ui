@@ -194,7 +194,9 @@ class TMap extends React.Component{
     createMap(){
         let t = this;
         const {mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
-        window.VtxMap = {};
+        if(!window.VtxMap){
+            window.VtxMap = {};
+        }
         window.VtxMap[mapId] = t.state.gis = new T.Map(mapId,{
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
@@ -2557,6 +2559,7 @@ class TMap extends React.Component{
                 clearInterval(t.animTimer[j]);
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 export default TMap;

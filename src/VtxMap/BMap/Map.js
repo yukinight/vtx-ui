@@ -226,7 +226,7 @@ class BaiduMap extends React.Component{
             minZoom,maxZoom
         };
         if(window.VtxMap){
-            window.VtxMap[mapId]= {};
+            window.VtxMap[mapId]= null;
         }else{
             window.VtxMap = {};
         }
@@ -2535,6 +2535,7 @@ class BaiduMap extends React.Component{
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 

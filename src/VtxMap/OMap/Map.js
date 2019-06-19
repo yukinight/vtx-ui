@@ -180,7 +180,7 @@ class Map extends React.Component {
         //缓存 zoom等级,用于事件判断
         t.oldZoomLevel = options.zoom;
         if(window.VtxMap){
-            window.VtxMap[mapId]= {};
+            window.VtxMap[mapId]= null;
         }else{
             window.VtxMap = {};
         }
@@ -3354,6 +3354,7 @@ class Map extends React.Component {
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 

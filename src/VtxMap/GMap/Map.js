@@ -3686,6 +3686,7 @@ class ArcgisMap extends React.Component{
                 clearInterval(t.animTimer[j]);
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 export default ArcgisMap;

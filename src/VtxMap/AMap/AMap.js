@@ -216,7 +216,7 @@ class VortexAMap extends React.Component{
         //缓存Map的对象,方便后期的功能操作
         //后期不会操作gis数据,直接通过state缓存.
         if(window.VtxMap){
-            window.VtxMap[mapId] = {};
+            window.VtxMap[mapId] = null;
         }else{
             window.VtxMap = {};
         }
@@ -2392,6 +2392,7 @@ class VortexAMap extends React.Component{
                 }
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 
