@@ -220,7 +220,7 @@ class VortexAMap extends React.Component{
         }else{
             window.VtxMap = {};
         }
-        window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId,{
+        window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId.toString(),{
             resizeEnable: true,
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,

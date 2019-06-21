@@ -203,7 +203,7 @@ class Map extends React.Component {
             latLngBounds.sort((a,b)=>a-b);
         }
         //创建地图  缓存地图对象
-        let map = window.VtxMap[mapId] = t.state.gis = new t.omap.Map(document.getElementById(mapId),{
+        let map = window.VtxMap[mapId] = t.state.gis = new t.omap.Map(document.getElementById(mapId.toString()),{
             center: {lng: options.center[0],lat: options.center[1]},
             disableDoubleClickZoom: false,
             draggableCursor: 'url("http://maps.gstatic.cn/mapfiles/openhand_8_8.cur"), default', 

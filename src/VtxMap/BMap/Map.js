@@ -230,7 +230,7 @@ class BaiduMap extends React.Component{
         }else{
             window.VtxMap = {};
         }
-        let map = window.VtxMap[mapId] = t.state.gis = new BMap.Map(mapId,{
+        let map = window.VtxMap[mapId] = t.state.gis = new BMap.Map(mapId.toString(),{
             enableMapClick : false,
             minZoom: options.minZoom,
             maxZoom: options.maxZoom

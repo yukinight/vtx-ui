@@ -197,7 +197,7 @@ class TMap extends React.Component{
         if(!window.VtxMap){
             window.VtxMap = {};
         }
-        window.VtxMap[mapId] = t.state.gis = new T.Map(mapId,{
+        window.VtxMap[mapId] = t.state.gis = new T.Map(mapId.toString(),{
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
             //必须有中心点,不传默认在北京(不设置中心点,报错)
