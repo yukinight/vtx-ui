@@ -82,7 +82,8 @@ class VtxModalList extends React.Component{
         //清空缓存,避免缓存数据
         if(!!chil){
             if(!chil.length){
-                return t.cloneComponent(this.props.children);
+                return null;
+                // t.cloneComponent(this.props.children);
             }else{
                 //复制子节点处理数据
                 let clone = (ary,key)=>{
@@ -397,7 +398,7 @@ class VtxModalList extends React.Component{
                         break;
                     }
                     //有值  做正则判断
-                    if(r.value && !(typeof(r.value) == 'string' && !r.value.trim())){
+                    if((r.value || r.value == 0) && !(typeof(r.value) == 'string' && !r.value.trim())){
                         let reg = r.mld.regexp || {},required =true,maxNum = eval((r.mld.layout || {}).maxNum);
                         //判断字数是否超限
                         if(!!maxNum && r.value.length > maxNum){

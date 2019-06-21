@@ -226,11 +226,11 @@ class BaiduMap extends React.Component{
             minZoom,maxZoom
         };
         if(window.VtxMap){
-            window.VtxMap[mapId]= {};
+            window.VtxMap[mapId]= null;
         }else{
             window.VtxMap = {};
         }
-        let map = window.VtxMap[mapId] = t.state.gis = new BMap.Map(mapId,{
+        let map = window.VtxMap[mapId] = t.state.gis = new BMap.Map(mapId.toString(),{
             enableMapClick : false,
             minZoom: options.minZoom,
             maxZoom: options.maxZoom
@@ -2294,7 +2294,7 @@ class BaiduMap extends React.Component{
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-            isOpenTrafficInfo,boundaryName,heatMapData,
+            isOpenTrafficInfo,boundaryName,heatMapData,imageOverlays,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
             setZoomLevel,mapZoomLevel,
@@ -2439,6 +2439,10 @@ class BaiduMap extends React.Component{
         if(heatMapData && !t.deepEqual(heatMapData,props.heatMapData)){
             t.heatMapOverlay(heatMapData);
         }
+        //添加图片图层
+        if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+            t.imageUrlOverlay(imageOverlays);
+        }
         //图元编辑调用
         if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
             t.doEdit(editGraphicId);
@@ -2531,6 +2535,7 @@ class BaiduMap extends React.Component{
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 

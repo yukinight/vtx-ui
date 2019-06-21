@@ -6,6 +6,7 @@ import DataGrid from './routes/DataGrid';
 import VMap from './routes/Map';
 import OMap from './routes/optMap';
 import SMap from './routes/searchMap';
+import MapPlayer from './routes/mapPlayer';
 import DatePk from './routes/date';
 import TreeSelect from './routes/TreeSelect';
 import VtxGrid from './routes/grid';
@@ -25,6 +26,7 @@ function RouterConfig({ history }) {
         <Route path="/ztree" component={ZTree} />
         <Route path="/datagrid" component={DataGrid} />
         <Route path="/map" component={VMap} />   
+        <Route path="/mapplayer" component={MapPlayer} /> 
         <Route path="/optmap" component={OMap} />   
         <Route path="/searchmap" component={SMap} />  
         <Route path="/date" component={DatePk} />  

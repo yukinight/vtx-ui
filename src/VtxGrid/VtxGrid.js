@@ -121,7 +121,7 @@ class VtxGrid extends React.Component{
             }
         }
         return(
-            <div className={`${styles.normal} ${t.props.className}`} style={{height: `${t.state.height}px`,...t.state.style}}>
+            <div ref={(ref)=>{this.ref = ref}} className={`${styles.normal} ${t.props.className}`} style={{height: `${t.state.height}px`,...t.state.style}}>
                 <VtxRow gutter={10}  attr='row'>
                     <VtxCol span={al} xl={{span:21}}>
                         <VtxRow gutter={10}  attr='row'>
@@ -168,6 +168,11 @@ class VtxGrid extends React.Component{
     }
     componentDidMount(){
         let t = this;
+        if(t.ref){
+            t.setState({
+                width: t.ref.offsetWidth
+            })
+        }
         // 自适应宽度
         window.addEventListener('resize',t.resetWidth,false);
     }

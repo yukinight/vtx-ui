@@ -194,8 +194,10 @@ class TMap extends React.Component{
     createMap(){
         let t = this;
         const {mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
-        window.VtxMap = {};
-        window.VtxMap[mapId] = t.state.gis = new T.Map(mapId,{
+        if(!window.VtxMap){
+            window.VtxMap = {};
+        }
+        window.VtxMap[mapId] = t.state.gis = new T.Map(mapId.toString(),{
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
             //必须有中心点,不传默认在北京(不设置中心点,报错)
@@ -2309,7 +2311,7 @@ class TMap extends React.Component{
             //点/线新数据
             let {
                 mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-                isOpenTrafficInfo,boundaryName,heatMapData,
+                isOpenTrafficInfo,boundaryName,heatMapData,imageOverlays,
                 mapVisiblePoints,setVisiblePoints,
                 setCenter,mapCenter,
                 setZoomLevel,mapZoomLevel,
@@ -2453,6 +2455,10 @@ class TMap extends React.Component{
             if(heatMapData && !t.deepEqual(heatMapData,t.props.heatMapData)){
                 t.heatMapOverlay(heatMapData);
             }
+            //添加图片图层
+            if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+                t.imageUrlOverlay(imageOverlays);
+            }
             //图元编辑调用
             if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
                 t.doEdit(editGraphicId);
@@ -2553,6 +2559,7 @@ class TMap extends React.Component{
                 clearInterval(t.animTimer[j]);
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 export default TMap;

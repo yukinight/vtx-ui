@@ -62,14 +62,51 @@ class VortexAMap extends React.Component{
                 resolve(window.AMap);
             }
             else{
-                $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.6&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
-                    let PointCollection = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
-                            resolve();
+                $.getScript(`${configUrl.mapServerURL}/A_content.js`,()=>{
+                    $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.14&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
+                        let PointCollection = new Promise((resolve,reject)=>{
+                            $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
+                                resolve();
+                            });
                         });
-                    });
-                    Promise.all([PointCollection]).then(()=>{
-                        resolve(window.AMap);
+                        Promise.all([PointCollection]).then(()=>{
+                            (function setTime() {
+                                let allEvents = [
+                                    window.AMap,
+                                    'MarkerClusterer',
+                                    'Scale',
+                                    'ToolBar',
+                                    'DistrictSearch',
+                                    'RangingTool',
+                                    'MouseTool',
+                                    'PolyEditor',
+                                    'CircleEditor',
+                                    'PlaceSearch',
+                                    'Heatmap'
+                                ];
+                                let isLoading = true;
+                                for(let i = 0; i <= allEvents.length - 1; i++){
+                                    if(i === 0){
+                                        if(!allEvents[i]){
+                                            isLoading = false;
+                                            break;
+                                        }
+                                    }else{
+                                        if(!allEvents[0][allEvents[i]]){
+                                            isLoading = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                                if(isLoading){
+                                    resolve(window.AMap);
+                                }else{
+                                    setTimeout(()=>{
+                                        setTime();
+                                    },50)
+                                }
+                            })();
+                        })
                     })
                 })
             }
@@ -179,11 +216,11 @@ class VortexAMap extends React.Component{
         //缓存Map的对象,方便后期的功能操作
         //后期不会操作gis数据,直接通过state缓存.
         if(window.VtxMap){
-            window.VtxMap[mapId] = {};
+            window.VtxMap[mapId] = null;
         }else{
             window.VtxMap = {};
         }
-        window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId,{
+        window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId.toString(),{
             resizeEnable: true,
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
@@ -2132,7 +2169,7 @@ class VortexAMap extends React.Component{
         //点/线新数据
         let {
             mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
-            isOpenTrafficInfo,boundaryName,heatMapData,
+            isOpenTrafficInfo,boundaryName,heatMapData,imageOverlays,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
             setZoomLevel,mapZoomLevel,
@@ -2274,6 +2311,10 @@ class VortexAMap extends React.Component{
         if(heatMapData && !t.deepEqual(heatMapData,props.heatMapData)){
             t.heatMapOverlay(heatMapData);
         }
+        //添加图片图层
+        if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+            t.imageUrlOverlay(imageOverlays);
+        }
         //图元编辑调用
         if((typeof(isDoEdit) == 'boolean' && isDoEdit) || (isDoEdit && isDoEdit !== t.props.isDoEdit)){
             t.doEdit(editGraphicId);
@@ -2351,6 +2392,7 @@ class VortexAMap extends React.Component{
                 }
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 

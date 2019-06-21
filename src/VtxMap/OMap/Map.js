@@ -180,7 +180,7 @@ class Map extends React.Component {
         //缓存 zoom等级,用于事件判断
         t.oldZoomLevel = options.zoom;
         if(window.VtxMap){
-            window.VtxMap[mapId]= {};
+            window.VtxMap[mapId]= null;
         }else{
             window.VtxMap = {};
         }
@@ -203,7 +203,7 @@ class Map extends React.Component {
             latLngBounds.sort((a,b)=>a-b);
         }
         //创建地图  缓存地图对象
-        let map = window.VtxMap[mapId] = t.state.gis = new t.omap.Map(document.getElementById(mapId),{
+        let map = window.VtxMap[mapId] = t.state.gis = new t.omap.Map(document.getElementById(mapId.toString()),{
             center: {lng: options.center[0],lat: options.center[1]},
             disableDoubleClickZoom: false,
             draggableCursor: 'url("http://maps.gstatic.cn/mapfiles/openhand_8_8.cur"), default', 
@@ -3354,6 +3354,7 @@ class Map extends React.Component {
         if(t.moveToTimer){
             clearInterval(t.moveToTimer);
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 

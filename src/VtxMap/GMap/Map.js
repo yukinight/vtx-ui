@@ -668,7 +668,7 @@ class ArcgisMap extends React.Component{
         let fullExtent = (mapServer || {}).fullExtent || {
             xmin : -180.0,ymin : -90.0,xmax : 180.0,ymax : 90.0
         };
-        let map = window.VtxMap[mapId] = t.state.gis = new GMap(t.props.mapId,{
+        let map = window.VtxMap[mapId] = t.state.gis = new GMap(t.props.mapId.toString(),{
             autoResize: true,
             logo : false,
             isKeyboardNavigation : false,
@@ -3686,6 +3686,7 @@ class ArcgisMap extends React.Component{
                 clearInterval(t.animTimer[j]);
             }
         }
+        window.VtxMap[t.state.mapId]= null;
     }
 }
 export default ArcgisMap;

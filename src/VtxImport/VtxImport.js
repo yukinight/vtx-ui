@@ -37,6 +37,7 @@ class VtxImport extends React.Component{
         }
     }
     uploadSuccess(data){
+        this.fileInput.value = '';
         this.setState({
             uploading:false
         });

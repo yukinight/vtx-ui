@@ -13,6 +13,7 @@ function IndexPage() {
                 <li><Link to='/treeselect'>下拉树</Link></li>
                 <li><Link to='/datagrid'>表格</Link></li>
                 <li><Link to='/map'>地图</Link></li>
+                <li><Link to='/mapplayer'>地图播放</Link></li>
                 <li><Link to='/optmap'>网格地图(点位过滤)</Link></li>
                 <li><Link to='/searchmap'>弹框地图</Link></li>
                 <li><Link to='/date'>日期控件</Link></li>

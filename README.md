@@ -26,6 +26,7 @@ $ yarn add vtx-ui
 - [VtxZtree](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxZtree.md)
 - [VtxZtreeSelect](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxZtreeSelect.md)
 - [VtxMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxMap.md)
+- [MapPlayer](https://github.com/yukinight/vtx-ui/blob/master/docs/MapPlayer.md)
 - [VtxSearchMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxSearchMap.md)
 - [VtxOptMap](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxOptMap.md)
 - [VtxRpsFrame](https://github.com/yukinight/vtx-ui/blob/master/docs/VtxRpsFrame.md)
@@ -109,7 +110,7 @@ $ const {VtxModeGrid} = VtxGrid;
 
 # 地图组件(地图组件的ref函数现在改为getMapInstance)
 $ import {VtxMap} from 'vtx-ui';
-$ const {VtxOptMap,VtxZoomMap} = VtxMap;
+$ const {VtxOptMap,VtxZoomMap,MapPlayer} = VtxMap;
 
 # 表单组件
 $ import {VtxForm} from 'vtx-ui';
