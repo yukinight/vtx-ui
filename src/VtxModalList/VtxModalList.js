@@ -398,7 +398,7 @@ class VtxModalList extends React.Component{
                         break;
                     }
                     //有值  做正则判断
-                    if(r.value && !(typeof(r.value) == 'string' && !r.value.trim())){
+                    if((r.value || r.value == 0) && !(typeof(r.value) == 'string' && !r.value.trim())){
                         let reg = r.mld.regexp || {},required =true,maxNum = eval((r.mld.layout || {}).maxNum);
                         //判断字数是否超限
                         if(!!maxNum && r.value.length > maxNum){
