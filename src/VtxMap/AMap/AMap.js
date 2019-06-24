@@ -228,12 +228,6 @@ class VortexAMap extends React.Component{
             center: mapCenter,
             zooms: [minZoom || 3, maxZoom || 18]
         });
-        //创建海量点图层
-        //加上mapId 实现多地图
-        t.pointCollectionId = `${mapId}_${t.pointCollectionId}`
-        $($(`#${mapId} .amap-layers`)[0]).append(
-            `<div class='vtx_gmap_html_pointCollection_a' id='${t.pointCollectionId}' ></div>`
-        )
         //聚合点类对象
         t.clusterObj = new AMap.MarkerClusterer(t.state.gis,[]);
         //比例尺控件对象
@@ -773,28 +767,49 @@ class VortexAMap extends React.Component{
     //添加海量点
     addPointCollection(data = []){
         let t = this;
-        data.map((item,index)=>{
-            let d = item || {};
-            let points = (d.points || []).map((d,i)=>{
-                let p = new AMap.LngLat(d.lng,d.lat);
-                    p = t.state.gis.lngLatToContainer(p);
-                return [p.x,p.y];
-            });
-            let options = {
-                size: d.size,
-                shape: d.shape,
-                color: d.color,
-                width: t.state.gis.getSize().width,
-                height: t.state.gis.getSize().height,
-                mapId: t.props.mapId
-            };
-            let VotexpointCollection = new GMapLib.PointCollection(points,options);
-            t.morepoints.push({
-                id: d.id,
-                value: VotexpointCollection
-            });
-            VotexpointCollection.draw();
-        })
+        if(!$(`#${t.state.mapId} .amap-layers`).length){
+            if(t.pointCollectTimer){
+                clearTimeout(t.pointCollectTimer);
+            }
+            t.pointCollectTimer = setTimeout(() => {
+                t.addPointCollection(data);
+            }, 50);
+        }else{
+            if(!$(`#${t.pointCollectionId}`).length){
+                //创建海量点图层
+                //加上mapId 实现多地图
+                t.pointCollectionId = `${t.state.mapId}_${t.pointCollectionId}`
+                let pointCollectionHtml = document.createElement('div');
+                    pointCollectionHtml.id = t.pointCollectionId;
+                    pointCollectionHtml.class = 'vtx_gmap_html_pointCollection_a';
+                    pointCollectionHtml.className = 'vtx_gmap_html_pointCollection_a';
+                $($(`#${t.state.mapId} .amap-layers`)[0]).append(pointCollectionHtml);
+            }else{
+                
+            }
+            data.map((item,index)=>{
+                let d = item || {};
+                let points = (d.points || []).map((d,i)=>{
+                    let p = new AMap.LngLat(d.lng,d.lat);
+                        p = t.state.gis.lngLatToContainer(p);
+                    return [p.x,p.y];
+                });
+                let options = {
+                    size: d.size,
+                    shape: d.shape,
+                    color: d.color,
+                    width: t.state.gis.getSize().width,
+                    height: t.state.gis.getSize().height,
+                    mapId: t.props.mapId
+                };
+                let VotexpointCollection = new GMapLib.PointCollection(points,options);
+                t.morepoints.push({
+                    id: d.id,
+                    value: VotexpointCollection
+                });
+                VotexpointCollection.draw();
+            })
+        }
     }
     //更新海量点
     updatePointCollection(data = []){
@@ -2391,6 +2406,9 @@ class VortexAMap extends React.Component{
                     t.GM.getGraphic[i].stopMove();
                 }
             }
+        }
+        if(t.pointCollectTimer){
+            clearTimeout(t.pointCollectTimer);
         }
         window.VtxMap[t.state.mapId]= null;
     }

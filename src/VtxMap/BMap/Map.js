@@ -104,7 +104,6 @@ class BaiduMap extends React.Component{
                             resolve();
                         });
                     });
-
                     Promise.all([DistanceTool,TrafficControl,MarkerClusterer,AreaRestriction,DrawingManager,Heatmap,GeoUtils,TextIconOverlay]).then(()=>{
                         resolve(window.BMap);
                     });
@@ -1135,11 +1134,11 @@ class BaiduMap extends React.Component{
         if(cg.gradient){
             option.gradient = cg.gradient;
         }
-        t.heatmap.setOptions(option);
         t.heatmap.setDataSet({
             max: cg.max,
             data: d.data || []
         });
+        t.heatmap.setOptions(option);
         if(cg.visible){
             t.heatmap.show();
         }else{

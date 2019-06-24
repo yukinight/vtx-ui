@@ -1941,7 +1941,9 @@ class TMap extends React.Component{
                 if(mapPane.style.top){
                     xylist = [mapPane.style.left,mapPane.style.top];
                 }else{
-                    let matchList = mapPane.style.transform.match(/translate\((-?\d*)+px,\s*(-?\d*)+px\)/) || [];
+                    let matchList = mapPane.style.transform.match(/translate\((-?\d*)+px,\s*(-?\d*)+px\)/) 
+                                    || mapPane.style.transform.match(/translate3d\((-?\d*)+px,\s*(-?\d*)+px,\s*(-?\d*)+px\)/)
+                                    || [];
                     xylist = [matchList[1],matchList[2]];
                 }
                 //重画海量点
