@@ -193,7 +193,7 @@ class TMap extends React.Component{
     }
     createMap(){
         let t = this;
-        const {mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {mapStyle,mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         if(!window.VtxMap){
             window.VtxMap = {};
         }
@@ -206,6 +206,9 @@ class TMap extends React.Component{
             minZoom: minZoom || 1,
             maxZoom: maxZoom || 18
         });
+        if(mapStyle){
+            t.state.gis.setStyle(mapStyle);
+        }
         //海量点图元容器
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
         let pointCollectionDiv = document.createElement('div');
@@ -2323,12 +2326,18 @@ class TMap extends React.Component{
                 mapDraw,isDraw,isCloseDraw,
                 editGraphicId,isDoEdit,isEndEdit,
                 mapPointCollection,isclearAllPointCollection,
-                isClearAll,
+                isClearAll,mapStyle,
                 isSetAreaRestriction,areaRestriction,isClearAreaRestriction
             } = nextProps;
 
             // 等待地图加载
             if(!t.state.mapCreated)return;
+            // 设置地图样式
+            if(mapStyle){
+                t.state.gis.setStyle(mapStyle);
+            }else{
+                t.state.gis.removeStyle();
+            }
             /*添加海量点*/
             if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
