@@ -212,7 +212,7 @@ class VortexAMap extends React.Component{
     //地图方法
     createMap(divId){
         let t = this;
-        const {mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {viewMode,mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         //缓存Map的对象,方便后期的功能操作
         //后期不会操作gis数据,直接通过state缓存.
         if(window.VtxMap){
@@ -221,6 +221,7 @@ class VortexAMap extends React.Component{
             window.VtxMap = {};
         }
         window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId.toString(),{
+            viewMode: viewMode?viewMode:'2D',
             resizeEnable: true,
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
@@ -541,21 +542,23 @@ class VortexAMap extends React.Component{
     getMapExtent(){
         let t =this;
         let {gis} = t.state;
+        let northEast = (this.props.viewMode == '3D'?gis.getBounds().toBounds() : gis.getBounds()).getNorthEast(),
+            southWest = (this.props.viewMode == '3D'?gis.getBounds().toBounds() : gis.getBounds()).getSouthWest();
         let obj = {
             mapSize: gis.getSize(),
             nowCenter: t.getCurrentCenter(),
             northEast: {
-                lat: gis.getBounds().getNorthEast().lat,
-                lng: gis.getBounds().getNorthEast().lng
+                lat: northEast.lat,
+                lng: northEast.lng
             },
             southWest: {
-                lat: gis.getBounds().getSouthWest().lat,
-                lng: gis.getBounds().getSouthWest().lng
+                lat: southWest.lat,
+                lng: southWest.lng
             },
             zoom: t.getZoomLevel()
         }
         obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],[
-            gis.getBounds().getNorthEast().getLng(),gis.getBounds().getNorthEast().getLat()]);
+            northEast.getLng(),northEast.getLat()]);
         return obj;
     }
     //聚合地图图元(arg为空时聚合全部点)
