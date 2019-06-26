@@ -35,12 +35,52 @@ VtxMap对象中通过mapId储存了map对象.
 
 如果需要使用ref函数取得地图实例，请用getMapInstance函数代替。
 
-| 参数      | 描述                                     | 是否必填 | 取值范围，格式                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | 默认             |
-|-----------|------------------------------------------|----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
-| mapId     | 地图唯一标识符                           | 必填     | string                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | \--              |
-| wkid      | 坐标系编号 与mapServer的wkid             | 必填     | string/number                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | 4326             |
-| mapType   | 地图类型                                 | 必填     | string <br/>**bmap 百度地图 <br/>amap 高德地图 <br/>tmap 天地图 <br/>gmap arcgis地图**                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | bmap             |
-| mapServer | 只有arcgis需要 gis服务 现在支持wmts和gis | 必填     | Object <br/>**详见mapServer示例** | 浙江wmts地图服务 |
+| 参数      | 描述| 是否必填 | 取值范围，格式| 默认|
+|--|---|--|---|--|
+| mapId| 地图唯一标识符| 必填     | string| \--|
+| mapStyle| 地图样式| 非必填 | 各地图自定义样式参数见mapStyle示例 | \--|
+| wkid| 坐标系编号 与mapServer的wkid| 必填| string/number| 4326 |
+| mapType| 地图类型| 必填| string <br/>**bmap 百度地图 <br/>amap 高德地图 <br/>tmap 天地图 <br/>gmap arcgis地图**| bmap|
+| mapServer | 只有arcgis需要 gis服务 现在支持wmts和gis | 必填| Object <br/>**详见mapServer示例** | 浙江wmts地图服务 |
+>**mapStyle**
+
+```
+**百度地图自定义样式2种:**
+参考地址:http://lbsyun.baidu.com/index.php?title=jspopular/guide/custom
+1.百度提供的(String)
+mapStyle: ''
+参考参数: 
+默认地图样式(normal),清新蓝风格(light),自然绿风格(grassgreen)
+黑夜风格(dark),红色警戒风格(redalert),精简风格(googlelite)
+午夜蓝风格(midnight),浪漫粉风格(pink),青春绿风格(darkgreen)
+清新蓝绿风格(bluish),高端灰风格(grayscale),强边界风格(hardedge)
+2.自定义的(Array[Object])
+mapStyle: [{
+    'featureType': 'land',
+    'elementType': 'geometry',
+    'stylers': {
+        'visibility': 'on',
+        'color': '#ffffffff'
+    }
+}]
+
+**高德地图自定义样式2种:**
+参考地址:https://lbs.amap.com/api/javascript-api/guide/map/map-style/
+1.高德提供的(String)
+mapStyle: 'amap://styles/参数'
+参考参数: 
+标准(normal),马卡龙(macaron),涂鸦(graffiti)
+远山黛(whitesmoke),幻影黑(dark),草色青(fresh),
+极夜蓝(darkblue),靛青蓝(blue),月光银(light),雅士灰(grey)
+2.自定义的
+mapStyle: 'amap://styles/地图样式ID'
+
+**天地图**
+天地图提供
+mapStyle: ''
+参考参数: black,indigo
+```
+
 >**mapServer示例**
 ```
 { 

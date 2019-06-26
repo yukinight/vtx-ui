@@ -212,7 +212,7 @@ class VortexAMap extends React.Component{
     //地图方法
     createMap(divId){
         let t = this;
-        const {viewMode,mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {viewMode,mapStyle,mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         //缓存Map的对象,方便后期的功能操作
         //后期不会操作gis数据,直接通过state缓存.
         if(window.VtxMap){
@@ -229,6 +229,9 @@ class VortexAMap extends React.Component{
             center: mapCenter,
             zooms: [minZoom || 3, maxZoom || 18]
         });
+        if(mapStyle){
+            t.state.gis.setMapStyle(mapStyle)
+        }
         //聚合点类对象
         t.clusterObj = new AMap.MarkerClusterer(t.state.gis,[]);
         //比例尺控件对象
@@ -2197,10 +2200,14 @@ class VortexAMap extends React.Component{
             mapDraw,isDraw,isCloseDraw,
             editGraphicId,isDoEdit,isEndEdit,
             isClearAll,mapPointCollection,isclearAllPointCollection,
-            isSetAreaRestriction,areaRestriction,isClearAreaRestriction
+            isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
+            mapStyle
         } = nextProps;
         let props = t.props;
-
+        // 设置地图样式
+        if(mapStyle && !t.deepEqual(mapStyle,t.props.mapStyle)){
+            t.state.gis.setMapStyle(mapStyle);
+        }
         // 等待地图加载
         if(!t.state.mapCreated)return;
         if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){

@@ -218,7 +218,7 @@ class BaiduMap extends React.Component{
     //创建地图
     createMap () {
         let t = this;
-        const {mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {mapCenter,mapStyle,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         let options ={
             zoom: mapZoomLevel || 10,
             center: mapCenter || [116.404,39.915],
@@ -234,6 +234,14 @@ class BaiduMap extends React.Component{
             minZoom: options.minZoom,
             maxZoom: options.maxZoom
         });
+        if(mapStyle){
+            if(typeof(mapStyle) === 'string'){
+                t.state.gis.setMapStyle({style:mapStyle});
+            }
+            if(mapStyle instanceof Array){
+                t.state.gis.setMapStyle({styleJson:mapStyle});
+            }
+        }
         setTimeout(()=>{
             $('#myCanvasElement').parent().children('svg').css({'z-index':1});
         },500);
@@ -2304,9 +2312,19 @@ class BaiduMap extends React.Component{
             editGraphicId,isDoEdit,isEndEdit,
             mapPointCollection,isclearAllPointCollection,
             isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
-            isClearAll
+            isClearAll,mapStyle
         } = nextProps;
         let props = t.props;
+
+        // 设置地图地图样式
+        if(mapStyle && !t.deepEqual(mapStyle,props.mapStyle)){
+            if(typeof(mapStyle) === 'string'){
+                t.state.gis.setMapStyle({style:mapStyle});
+            }
+            if(mapStyle instanceof Array){
+                t.state.gis.setMapStyle({styleJson:mapStyle});
+            }
+        }
 
         // 等待地图加载
         if(!t.state.mapCreated)return;
