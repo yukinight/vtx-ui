@@ -226,7 +226,7 @@ class VortexAMap extends React.Component{
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
             //不传中心点,高德地图默认使用用户所在地的城市为中心点
-            center: mapCenter,
+            center: (mapCenter && mapCenter instanceof Array && mapCenter.length == 2)?mapCenter:[116.400433,39.906705],
             zooms: [minZoom || 3, maxZoom || 18]
         });
         if(mapStyle){
@@ -447,7 +447,7 @@ class VortexAMap extends React.Component{
     //设置地图中心位置 lng/经度  lat/纬度
     setCenter (gt) {
         let t =this;
-        if(gt){
+        if(gt && gt instanceof Array && gt.length == 2){
             t.state.gis.setCenter(gt);
             // t.setState({center:gt});
         }else{

@@ -54,7 +54,7 @@ class VtxModalList extends React.Component{
         }
         let ajaxPropmise = new Promise((resolve,reject)=>{
             $.ajax({
-                ...headers,
+                headers,
                 type: options.method || 'post',
                 url: options.url || '',
                 data: options.body || null,
