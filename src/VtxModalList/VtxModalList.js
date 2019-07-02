@@ -81,37 +81,34 @@ class VtxModalList extends React.Component{
             orl = {...t.repeteList};
         //清空缓存,避免缓存数据
         if(!!chil){
-            let dealChil = (item,key)=>{
-                if(!!item){
-                    let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
-                    // if(!modalListKey){
-                    //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
-                    // }
-                    if(typeof(item) === 'string'){
-                        // t.repeteList[`${key}${modalListKey || index}`] = {};
-                        return item;
+            //复制子节点处理数据
+            let clone = (ary,key)=>{
+                return ary.map((item,index)=>{
+                    if(!!item){
+                        let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
+                        // if(!modalListKey){
+                        //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
+                        // }
+                        if(typeof(item) === 'string'){
+                            // t.repeteList[`${key}${modalListKey || index}`] = {};
+                            return item;
+                        }
+                        if(item instanceof Array){
+                            return clone(item,`${key}${modalListKey || index}`);
+                        }
+                        newRepeteKeyList.push(`${key}${modalListKey || index}`);
+                        return t.cloneComponent(item, `${key}${modalListKey || index}`);
                     }
-                    if(item instanceof Array){
-                        return clone(item,`${key}${modalListKey || index}`);
-                    }
-                    newRepeteKeyList.push(`${key}${modalListKey || index}`);
-                    return t.cloneComponent(item, `${key}${modalListKey || index}`);
-                }
-                return null;
+                    return null;
+                })
             }
             if(typeof(chil) === 'object'){
-                return dealChil(chil,'root');
+                return clone([chil],'root');
             }
             if(chil instanceof Array){
                 if(!chil.length){
                     return null;
                     // t.cloneComponent(this.props.children);
-                }
-                //复制子节点处理数据
-                let clone = (ary,key)=>{
-                    return ary.map((item,index)=>{
-                        dealChil(item,key);
-                    })
                 }
                 let cC = clone(chil,'root');
                 //清空验证缓存
