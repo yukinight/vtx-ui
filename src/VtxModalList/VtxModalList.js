@@ -81,6 +81,7 @@ class VtxModalList extends React.Component{
             orl = {...t.repeteList};
         //清空缓存,避免缓存数据
         if(!!chil){
+            let cC = null;
             //复制子节点处理数据
             let clone = (ary,key)=>{
                 return ary.map((item,index)=>{
@@ -96,6 +97,15 @@ class VtxModalList extends React.Component{
                         if(item instanceof Array){
                             return clone(item,`${key}${modalListKey || index}`);
                         }
+                        if(typeof(item) === 'object'){
+                            if(!item.props){
+                                let vchil = [];
+                                for(let i in item){
+                                    vchil.push(item[i]);
+                                }
+                                return clone(vchil,`${key}${modalListKey || index}`);
+                            }
+                        }
                         newRepeteKeyList.push(`${key}${modalListKey || index}`);
                         return t.cloneComponent(item, `${key}${modalListKey || index}`);
                     }
@@ -103,14 +113,22 @@ class VtxModalList extends React.Component{
                 })
             }
             if(typeof(chil) === 'object'){
-                return clone([chil],'root');
+                if(chil.props){
+                    cC = clone([chil],'root');
+                }else{
+                    let vchil = [];
+                    for(let i in chil){
+                        vchil.push(chil[i]);
+                    }
+                    cC = clone(vchil,'root');
+                }
             }
             if(chil instanceof Array){
                 if(!chil.length){
                     return null;
                     // t.cloneComponent(this.props.children);
                 }
-                let cC = clone(chil,'root');
+                cC = clone(chil,'root');
                 //清空验证缓存
                 for (let i in orl){
                     if(!newRepeteKeyList.includes(i)){
