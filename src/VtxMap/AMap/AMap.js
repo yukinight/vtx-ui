@@ -28,6 +28,8 @@ class VortexAMap extends React.Component{
         this.circleEdit = null;//圆编辑对象
         this.editTimeout = null;//圆编辑时的延迟回调,避免重复调用
         this.heatmap = null;//热力图对象
+        this.satellite = null;//底图图层对象-卫星图
+        this.roadNet = null;//路网图层对象
         //为了样式相同,引用百度的鼠标样式
         this.csr = 
             /webkit/.test(navigator.userAgent.toLowerCase()) ?
@@ -122,8 +124,12 @@ class VortexAMap extends React.Component{
             mapCenter,mapZoomLevel,
             mapCluster,mapPointCollection,
             showControl,boundaryName,heatMapData,
-            areaRestriction
+            areaRestriction,coverageType
         } = t.props;
+        // 切换地图矢量图和卫星图背景
+        if(coverageType){
+            t.setMapType(coverageType);
+        }
         //创建地图
         t.createMap();
         //初始化中心点
@@ -396,6 +402,25 @@ class VortexAMap extends React.Component{
             }
         })
     }
+    /* 
+        切换地图矢量图和卫星图背景
+    */
+   setMapType(type){
+    if(!this.satellite){
+        this.satellite = new AMap.TileLayer.Satellite({map: this.state.gis});
+        this.roadNet = new AMap.TileLayer.RoadNet({map: this.state.gis})
+    }
+    switch (type) {
+        case 'sl':
+            this.satellite.hide();
+            this.roadNet.hide();
+        break;
+        case 'wx':
+            this.satellite.show();
+            this.roadNet.show();
+        break;
+    }
+}
     //增加图片图层
     imageUrlOverlay(imageAry){
         let t = this;
@@ -2201,12 +2226,16 @@ class VortexAMap extends React.Component{
             editGraphicId,isDoEdit,isEndEdit,
             isClearAll,mapPointCollection,isclearAllPointCollection,
             isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
-            mapStyle
+            mapStyle,coverageType
         } = nextProps;
         let props = t.props;
         // 设置地图样式
         if(mapStyle && !t.deepEqual(mapStyle,t.props.mapStyle)){
             t.state.gis.setMapStyle(mapStyle);
+        }
+        // 切换地图矢量图和卫星图背景
+        if(coverageType && !t.deepEqual(coverageType,t.props.coverageType)){
+            t.setMapType(coverageType);
         }
         // 等待地图加载
         if(!t.state.mapCreated)return;

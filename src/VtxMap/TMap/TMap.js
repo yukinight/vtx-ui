@@ -112,10 +112,14 @@ class TMap extends React.Component{
             mapCluster,mapPointCollection,
             showControl,boundaryName,
             areaRestriction,heatMapData,
-            imageOverlays
+            imageOverlays,coverageType
         } = t.props;
         //创建地图
         t.createMap();
+        // 切换地图矢量图和卫星图背景
+        if(coverageType){
+            t.setMapType(coverageType);
+        }
         //添加点
         if(mapPoints instanceof Array){
             t.addPoint(mapPoints);
@@ -216,6 +220,16 @@ class TMap extends React.Component{
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
         $(t.state.gis.getPanes().mapPane.children[0]).before(pointCollectionDiv);
+    }
+    setMapType(type){
+        switch (type) {
+            case 'sl':
+                this.state.gis.setMapType(TMAP_NORMAL_MAP);
+            break;
+            case 'wx':
+                this.state.gis.setMapType(TMAP_HYBRID_MAP);
+            break;
+        }
     }
     //增加图片图层
     imageUrlOverlay(imageAry){
@@ -2327,16 +2341,23 @@ class TMap extends React.Component{
                 editGraphicId,isDoEdit,isEndEdit,
                 mapPointCollection,isclearAllPointCollection,
                 isClearAll,mapStyle,
-                isSetAreaRestriction,areaRestriction,isClearAreaRestriction
+                isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
+                coverageType
             } = nextProps;
 
             // 等待地图加载
             if(!t.state.mapCreated)return;
             // 设置地图样式
-            if(mapStyle){
-                t.state.gis.setStyle(mapStyle);
-            }else{
-                t.state.gis.removeStyle();
+            if(!t.deepEqual(mapStyle,t.props.mapStyle)){
+                if(mapStyle){
+                    t.state.gis.setStyle(mapStyle);
+                }else{
+                    t.state.gis.removeStyle();
+                }
+            }
+            // 切换地图矢量图和卫星图背景
+            if(coverageType && !t.deepEqual(coverageType,t.props.coverageType)){
+                t.setMapType(coverageType);
             }
             /*添加海量点*/
             if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
@@ -2467,7 +2488,7 @@ class TMap extends React.Component{
                 t.heatMapOverlay(heatMapData);
             }
             //添加图片图层
-            if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+            if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,t.props.imageOverlays)){
                 t.imageUrlOverlay(imageOverlays);
             }
             //图元编辑调用

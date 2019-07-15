@@ -120,10 +120,15 @@ class BaiduMap extends React.Component{
         const {
             mapPoints,mapLines,mapPolygons,mapCircles,imageOverlays,
             mapVisiblePoints,mapCluster,mapZoomLevel,
-            isOpenTrafficInfo,mapPointCollection,areaRestriction
+            isOpenTrafficInfo,mapPointCollection,areaRestriction,
+            coverageType
         } = this.props;
         let {boundaryName,heatMapData,customizedBoundary} = this.props;
         let {boundaryInfo,pointIds,lineIds,polygonIds,circleIds} = this.state;
+        // 切换地图矢量图和卫星图背景
+        if(coverageType){
+            t.setMapType(coverageType);
+        }
         //添加点
         if(mapPoints instanceof Array){
             t.addPoint(mapPoints);
@@ -350,6 +355,23 @@ class BaiduMap extends React.Component{
                     t.props.drawEnd(backobj);
                 }
             });
+        }
+    }
+    /* 
+        切换地图矢量图和卫星图背景
+        type: 
+            BMAP_NORMAL_MAP  矢量图
+            BMAP_SATELLITE_MAP 单卫星图  (暂定不用)
+            BMAP_HYBRID_MAP 卫星路况图
+    */
+    setMapType(type){
+        switch (type) {
+            case 'sl':
+                this.state.gis.setMapType(BMAP_NORMAL_MAP);
+            break;
+            case 'wx':
+                this.state.gis.setMapType(BMAP_HYBRID_MAP);
+            break;
         }
     }
     //增加图片图层
@@ -2312,7 +2334,7 @@ class BaiduMap extends React.Component{
             editGraphicId,isDoEdit,isEndEdit,
             mapPointCollection,isclearAllPointCollection,
             isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
-            isClearAll,mapStyle
+            isClearAll,mapStyle,coverageType
         } = nextProps;
         let props = t.props;
 
@@ -2325,7 +2347,10 @@ class BaiduMap extends React.Component{
                 t.state.gis.setMapStyle({styleJson:mapStyle});
             }
         }
-
+        // 切换地图矢量图和卫星图背景
+        if(coverageType && !t.deepEqual(coverageType,props.coverageType)){
+            t.setMapType(coverageType);
+        }
         // 等待地图加载
         if(!t.state.mapCreated)return;
         

@@ -39,6 +39,7 @@ VtxMap对象中通过mapId储存了map对象.
 |--|---|--|---|--|
 | mapId| 地图唯一标识符| 必填     | string| \--|
 | mapStyle| 地图样式| 非必填 | 各地图自定义样式参数见mapStyle示例 | \--|
+| coverageType| 使用矢量图或卫星图| 非必填| string:'wx'/'sl'(默认不填就是矢量图)| -- |
 | wkid| 坐标系编号 与mapServer的wkid| 必填| string/number| 4326 |
 | mapType| 地图类型| 必填| string <br/>**bmap 百度地图 <br/>amap 高德地图 <br/>tmap 天地图 <br/>gmap arcgis地图**| bmap|
 | mapServer | 只有arcgis需要 gis服务 现在支持wmts和gis | 必填| Object <br/>**详见mapServer示例** | 浙江wmts地图服务 |
