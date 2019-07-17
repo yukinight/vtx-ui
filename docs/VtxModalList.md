@@ -203,6 +203,7 @@
 | style     | 整行的内连样式, width的样式属性会被width字段顶掉.                                                                                     | Object                               | \--       |
 | maxNum    | 只有input和textarea时有用. 使用后会在后面有输入总数提示                                                                               | Number                               | \--       |
 | className | 整行的className属性                                                                                                                   | \--                                  | \--       |
+| isFullLine | 是否占整行                                                                                                                   | bealoon                                 | false       |
 | comType   | 用于判断是否是input或textarea类型的输入框,用于配合maxNum                                                                              | String 只有一个类型 'input' 可以不填 |           |
 
 #### 验证参数 data-modalList. regexp
