@@ -546,13 +546,19 @@ function VerificationComponent(props){
     style 自定义内连样式
  */
 function LayoutComponent(props) {
-    let {children,name,require,width,className,type = 'default',style={}} = props;
+    let {children,name,require,width,isFullLine,className,type = 'default',style={}} = props;
     width = type == 'title'?100:width;
     let s = {};
     if(width){
         s = {...style,width:(width+'%')};
     }else{
         s = {...style}
+    }
+    if(isFullLine){
+        s = {
+            ...s,
+            display: 'block'
+        }
     }
     return (
         <div 
