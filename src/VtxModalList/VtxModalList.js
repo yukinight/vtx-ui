@@ -135,8 +135,8 @@ class VtxModalList extends React.Component{
                         t.repeteList[i] = {};
                     }
                 }
-                return cC;
             }
+            return cC;
         }
     }
     /*
