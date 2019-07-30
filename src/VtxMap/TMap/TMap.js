@@ -112,10 +112,14 @@ class TMap extends React.Component{
             mapCluster,mapPointCollection,
             showControl,boundaryName,
             areaRestriction,heatMapData,
-            imageOverlays
+            imageOverlays,coverageType
         } = t.props;
         //创建地图
         t.createMap();
+        // 切换地图矢量图和卫星图背景
+        if(coverageType){
+            t.setMapType(coverageType);
+        }
         //添加点
         if(mapPoints instanceof Array){
             t.addPoint(mapPoints);
@@ -193,7 +197,7 @@ class TMap extends React.Component{
     }
     createMap(){
         let t = this;
-        const {mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {mapStyle,mapCenter=[],mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         if(!window.VtxMap){
             window.VtxMap = {};
         }
@@ -206,6 +210,9 @@ class TMap extends React.Component{
             minZoom: minZoom || 1,
             maxZoom: maxZoom || 18
         });
+        if(mapStyle){
+            t.state.gis.setStyle(mapStyle);
+        }
         //海量点图元容器
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
         let pointCollectionDiv = document.createElement('div');
@@ -213,6 +220,16 @@ class TMap extends React.Component{
         pointCollectionDiv.class = 'vtx_gmap_html_pointCollection_t';
         pointCollectionDiv.className = 'vtx_gmap_html_pointCollection_t';
         $(t.state.gis.getPanes().mapPane.children[0]).before(pointCollectionDiv);
+    }
+    setMapType(type){
+        switch (type) {
+            case 'sl':
+                this.state.gis.setMapType(TMAP_NORMAL_MAP);
+            break;
+            case 'wx':
+                this.state.gis.setMapType(TMAP_HYBRID_MAP);
+            break;
+        }
     }
     //增加图片图层
     imageUrlOverlay(imageAry){
@@ -1941,7 +1958,9 @@ class TMap extends React.Component{
                 if(mapPane.style.top){
                     xylist = [mapPane.style.left,mapPane.style.top];
                 }else{
-                    let matchList = mapPane.style.transform.match(/translate\((-?\d*)+px,\s*(-?\d*)+px\)/) || [];
+                    let matchList = mapPane.style.transform.match(/translate\((-?\d*)+px,\s*(-?\d*)+px\)/) 
+                                    || mapPane.style.transform.match(/translate3d\((-?\d*)+px,\s*(-?\d*)+px,\s*(-?\d*)+px\)/)
+                                    || [];
                     xylist = [matchList[1],matchList[2]];
                 }
                 //重画海量点
@@ -2321,12 +2340,25 @@ class TMap extends React.Component{
                 mapDraw,isDraw,isCloseDraw,
                 editGraphicId,isDoEdit,isEndEdit,
                 mapPointCollection,isclearAllPointCollection,
-                isClearAll,
-                isSetAreaRestriction,areaRestriction,isClearAreaRestriction
+                isClearAll,mapStyle,
+                isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
+                coverageType
             } = nextProps;
 
             // 等待地图加载
             if(!t.state.mapCreated)return;
+            // 设置地图样式
+            if(!t.deepEqual(mapStyle,t.props.mapStyle)){
+                if(mapStyle){
+                    t.state.gis.setStyle(mapStyle);
+                }else{
+                    t.state.gis.removeStyle();
+                }
+            }
+            // 切换地图矢量图和卫星图背景
+            if(coverageType && !t.deepEqual(coverageType,t.props.coverageType)){
+                t.setMapType(coverageType);
+            }
             /*添加海量点*/
             if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
@@ -2456,7 +2488,7 @@ class TMap extends React.Component{
                 t.heatMapOverlay(heatMapData);
             }
             //添加图片图层
-            if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+            if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,t.props.imageOverlays)){
                 t.imageUrlOverlay(imageOverlays);
             }
             //图元编辑调用

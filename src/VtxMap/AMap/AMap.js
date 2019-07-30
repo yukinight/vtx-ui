@@ -28,6 +28,8 @@ class VortexAMap extends React.Component{
         this.circleEdit = null;//圆编辑对象
         this.editTimeout = null;//圆编辑时的延迟回调,避免重复调用
         this.heatmap = null;//热力图对象
+        this.satellite = null;//底图图层对象-卫星图
+        this.roadNet = null;//路网图层对象
         //为了样式相同,引用百度的鼠标样式
         this.csr = 
             /webkit/.test(navigator.userAgent.toLowerCase()) ?
@@ -63,7 +65,7 @@ class VortexAMap extends React.Component{
             }
             else{
                 $.getScript(`${configUrl.mapServerURL}/A_content.js`,()=>{
-                    $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.14&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
+                    $.getScript(`${configUrl.httpOrhttps}://webapi.amap.com/maps?v=1.4.14&key=e59ef9272e3788ac59d9a22f0f8cf9fe&plugin=AMap.Geolocation,AMap.MarkerClusterer,AMap.Scale,AMap.ToolBar,AMap.DistrictSearch,AMap.RangingTool,AMap.MouseTool,AMap.PolyEditor,AMap.CircleEditor,AMap.PlaceSearch,AMap.Heatmap`,()=>{
                         let PointCollection = new Promise((resolve,reject)=>{
                             $.getScript(`${configUrl.mapServerURL}/GPointCollection.js`,()=>{
                                 resolve();
@@ -122,8 +124,12 @@ class VortexAMap extends React.Component{
             mapCenter,mapZoomLevel,
             mapCluster,mapPointCollection,
             showControl,boundaryName,heatMapData,
-            areaRestriction
+            areaRestriction,coverageType
         } = t.props;
+        // 切换地图矢量图和卫星图背景
+        if(coverageType){
+            t.setMapType(coverageType);
+        }
         //创建地图
         t.createMap();
         //初始化中心点
@@ -212,7 +218,7 @@ class VortexAMap extends React.Component{
     //地图方法
     createMap(divId){
         let t = this;
-        const {mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
+        const {viewMode,mapStyle,mapCenter,mapId,mapZoomLevel,minZoom,maxZoom} = t.props;
         //缓存Map的对象,方便后期的功能操作
         //后期不会操作gis数据,直接通过state缓存.
         if(window.VtxMap){
@@ -221,19 +227,17 @@ class VortexAMap extends React.Component{
             window.VtxMap = {};
         }
         window.VtxMap[mapId] = t.state.gis = new AMap.Map(mapId.toString(),{
+            viewMode: viewMode?viewMode:'2D',
             resizeEnable: true,
             //zoom等级,和百度一样默认10
             zoom: mapZoomLevel || 10,
             //不传中心点,高德地图默认使用用户所在地的城市为中心点
-            center: mapCenter,
+            center: (mapCenter && mapCenter instanceof Array && mapCenter.length == 2)?mapCenter:[116.400433,39.906705],
             zooms: [minZoom || 3, maxZoom || 18]
         });
-        //创建海量点图层
-        //加上mapId 实现多地图
-        t.pointCollectionId = `${mapId}_${t.pointCollectionId}`
-        $($(`#${mapId} .amap-layers`)[0]).append(
-            `<div class='vtx_gmap_html_pointCollection_a' id='${t.pointCollectionId}' ></div>`
-        )
+        if(mapStyle){
+            t.state.gis.setMapStyle(mapStyle)
+        }
         //聚合点类对象
         t.clusterObj = new AMap.MarkerClusterer(t.state.gis,[]);
         //比例尺控件对象
@@ -398,6 +402,25 @@ class VortexAMap extends React.Component{
             }
         })
     }
+    /* 
+        切换地图矢量图和卫星图背景
+    */
+   setMapType(type){
+    if(!this.satellite){
+        this.satellite = new AMap.TileLayer.Satellite({map: this.state.gis});
+        this.roadNet = new AMap.TileLayer.RoadNet({map: this.state.gis})
+    }
+    switch (type) {
+        case 'sl':
+            this.satellite.hide();
+            this.roadNet.hide();
+        break;
+        case 'wx':
+            this.satellite.show();
+            this.roadNet.show();
+        break;
+    }
+}
     //增加图片图层
     imageUrlOverlay(imageAry){
         let t = this;
@@ -449,7 +472,7 @@ class VortexAMap extends React.Component{
     //设置地图中心位置 lng/经度  lat/纬度
     setCenter (gt) {
         let t =this;
-        if(gt){
+        if(gt && gt instanceof Array && gt.length == 2){
             t.state.gis.setCenter(gt);
             // t.setState({center:gt});
         }else{
@@ -547,21 +570,23 @@ class VortexAMap extends React.Component{
     getMapExtent(){
         let t =this;
         let {gis} = t.state;
+        let northEast = (this.props.viewMode == '3D'?gis.getBounds().toBounds() : gis.getBounds()).getNorthEast(),
+            southWest = (this.props.viewMode == '3D'?gis.getBounds().toBounds() : gis.getBounds()).getSouthWest();
         let obj = {
             mapSize: gis.getSize(),
             nowCenter: t.getCurrentCenter(),
             northEast: {
-                lat: gis.getBounds().getNorthEast().lat,
-                lng: gis.getBounds().getNorthEast().lng
+                lat: northEast.lat,
+                lng: northEast.lng
             },
             southWest: {
-                lat: gis.getBounds().getSouthWest().lat,
-                lng: gis.getBounds().getSouthWest().lng
+                lat: southWest.lat,
+                lng: southWest.lng
             },
             zoom: t.getZoomLevel()
         }
         obj.radius = t.calculatePointsDistance([obj.nowCenter.lng,obj.nowCenter.lat],[
-            gis.getBounds().getNorthEast().getLng(),gis.getBounds().getNorthEast().getLat()]);
+            northEast.getLng(),northEast.getLat()]);
         return obj;
     }
     //聚合地图图元(arg为空时聚合全部点)
@@ -773,28 +798,49 @@ class VortexAMap extends React.Component{
     //添加海量点
     addPointCollection(data = []){
         let t = this;
-        data.map((item,index)=>{
-            let d = item || {};
-            let points = (d.points || []).map((d,i)=>{
-                let p = new AMap.LngLat(d.lng,d.lat);
-                    p = t.state.gis.lngLatToContainer(p);
-                return [p.x,p.y];
-            });
-            let options = {
-                size: d.size,
-                shape: d.shape,
-                color: d.color,
-                width: t.state.gis.getSize().width,
-                height: t.state.gis.getSize().height,
-                mapId: t.props.mapId
-            };
-            let VotexpointCollection = new GMapLib.PointCollection(points,options);
-            t.morepoints.push({
-                id: d.id,
-                value: VotexpointCollection
-            });
-            VotexpointCollection.draw();
-        })
+        if(!$(`#${t.state.mapId} .amap-layers`).length){
+            if(t.pointCollectTimer){
+                clearTimeout(t.pointCollectTimer);
+            }
+            t.pointCollectTimer = setTimeout(() => {
+                t.addPointCollection(data);
+            }, 50);
+        }else{
+            if(!$(`#${t.pointCollectionId}`).length){
+                //创建海量点图层
+                //加上mapId 实现多地图
+                t.pointCollectionId = `${t.state.mapId}_${t.pointCollectionId}`
+                let pointCollectionHtml = document.createElement('div');
+                    pointCollectionHtml.id = t.pointCollectionId;
+                    pointCollectionHtml.class = 'vtx_gmap_html_pointCollection_a';
+                    pointCollectionHtml.className = 'vtx_gmap_html_pointCollection_a';
+                $($(`#${t.state.mapId} .amap-layers`)[0]).append(pointCollectionHtml);
+            }else{
+                
+            }
+            data.map((item,index)=>{
+                let d = item || {};
+                let points = (d.points || []).map((d,i)=>{
+                    let p = new AMap.LngLat(d.lng,d.lat);
+                        p = t.state.gis.lngLatToContainer(p);
+                    return [p.x,p.y];
+                });
+                let options = {
+                    size: d.size,
+                    shape: d.shape,
+                    color: d.color,
+                    width: t.state.gis.getSize().width,
+                    height: t.state.gis.getSize().height,
+                    mapId: t.props.mapId
+                };
+                let VotexpointCollection = new GMapLib.PointCollection(points,options);
+                t.morepoints.push({
+                    id: d.id,
+                    value: VotexpointCollection
+                });
+                VotexpointCollection.draw();
+            })
+        }
     }
     //更新海量点
     updatePointCollection(data = []){
@@ -2179,10 +2225,18 @@ class VortexAMap extends React.Component{
             mapDraw,isDraw,isCloseDraw,
             editGraphicId,isDoEdit,isEndEdit,
             isClearAll,mapPointCollection,isclearAllPointCollection,
-            isSetAreaRestriction,areaRestriction,isClearAreaRestriction
+            isSetAreaRestriction,areaRestriction,isClearAreaRestriction,
+            mapStyle,coverageType
         } = nextProps;
         let props = t.props;
-
+        // 设置地图样式
+        if(mapStyle && !t.deepEqual(mapStyle,t.props.mapStyle)){
+            t.state.gis.setMapStyle(mapStyle);
+        }
+        // 切换地图矢量图和卫星图背景
+        if(coverageType && !t.deepEqual(coverageType,t.props.coverageType)){
+            t.setMapType(coverageType);
+        }
         // 等待地图加载
         if(!t.state.mapCreated)return;
         if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
@@ -2391,6 +2445,9 @@ class VortexAMap extends React.Component{
                     t.GM.getGraphic[i].stopMove();
                 }
             }
+        }
+        if(t.pointCollectTimer){
+            clearTimeout(t.pointCollectTimer);
         }
         window.VtxMap[t.state.mapId]= null;
     }

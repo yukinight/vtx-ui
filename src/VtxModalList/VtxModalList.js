@@ -54,7 +54,7 @@ class VtxModalList extends React.Component{
         }
         let ajaxPropmise = new Promise((resolve,reject)=>{
             $.ajax({
-                ...headers,
+                headers,
                 type: options.method || 'post',
                 url: options.url || '',
                 data: options.body || null,
@@ -81,39 +81,62 @@ class VtxModalList extends React.Component{
             orl = {...t.repeteList};
         //清空缓存,避免缓存数据
         if(!!chil){
-            if(!chil.length){
-                return null;
-                // t.cloneComponent(this.props.children);
-            }else{
-                //复制子节点处理数据
-                let clone = (ary,key)=>{
-                    return ary.map((item,index)=>{
-                        if(!!item){
-                            let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
-                            // if(!modalListKey){
-                            //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
-                            // }
-                            if(typeof(item) === 'string'){
-                                // t.repeteList[`${key}${modalListKey || index}`] = {};
-                                return item;
-                            }
-                            if(item instanceof Array){
-                                return clone(item,`${key}${modalListKey || index}`);
-                            }
-                            newRepeteKeyList.push(`${key}${modalListKey || index}`);
-                            return t.cloneComponent(item, `${key}${modalListKey || index}`);
+            let cC = null;
+            //复制子节点处理数据
+            let clone = (ary,key)=>{
+                return ary.map((item,index)=>{
+                    if(!!item){
+                        let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
+                        // if(!modalListKey){
+                        //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
+                        // }
+                        if(typeof(item) === 'string'){
+                            // t.repeteList[`${key}${modalListKey || index}`] = {};
+                            return item;
                         }
-                    })
+                        if(item instanceof Array){
+                            return clone(item,`${key}${modalListKey || index}`);
+                        }
+                        if(typeof(item) === 'object'){
+                            if(!item.props){
+                                let vchil = [];
+                                for(let i in item){
+                                    vchil.push(item[i]);
+                                }
+                                return clone(vchil,`${key}${modalListKey || index}`);
+                            }
+                        }
+                        newRepeteKeyList.push(`${key}${modalListKey || index}`);
+                        return t.cloneComponent(item, `${key}${modalListKey || index}`);
+                    }
+                    return null;
+                })
+            }
+            if(typeof(chil) === 'object'){
+                if(chil.props){
+                    cC = clone([chil],'root');
+                }else{
+                    let vchil = [];
+                    for(let i in chil){
+                        vchil.push(chil[i]);
+                    }
+                    cC = clone(vchil,'root');
                 }
-                let cC = clone(chil,'root');
+            }
+            if(chil instanceof Array){
+                if(!chil.length){
+                    return null;
+                    // t.cloneComponent(this.props.children);
+                }
+                cC = clone(chil,'root');
                 //清空验证缓存
                 for (let i in orl){
                     if(!newRepeteKeyList.includes(i)){
                         t.repeteList[i] = {};
                     }
                 }
-                return cC;
             }
+            return cC;
         }
     }
     /*
@@ -523,13 +546,19 @@ function VerificationComponent(props){
     style 自定义内连样式
  */
 function LayoutComponent(props) {
-    let {children,name,require,width,className,type = 'default',style={}} = props;
+    let {children,name,require,width,isFullLine,className,type = 'default',style={}} = props;
     width = type == 'title'?100:width;
     let s = {};
     if(width){
         s = {...style,width:(width+'%')};
     }else{
         s = {...style}
+    }
+    if(isFullLine){
+        s = {
+            ...s,
+            display: 'block'
+        }
     }
     return (
         <div 

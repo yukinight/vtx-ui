@@ -16,6 +16,8 @@
 }
 .vtx_gmap_html_pointCollection_a {
   position: absolute;
+  top: 0px;
+  left: 0px;
 }
 .vtx_gmap_html_pointCollection_a canvas {
   z-index: 1;

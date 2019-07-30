@@ -155,7 +155,7 @@ class VtxGrid extends React.Component{
                                     // this.weightiness > 4 && !t.state.hiddenMoreButtion?
                                     this.weightiness > 4 && !t.props.hiddenMoreButtion?
                                     <span data-type={'bt'}>
-                                        <Button type="primary" shape="circle" icon="ellipsis" onClick={()=>t.isShowMore(this.weightiness)}/>
+                                        <Button style={{padding: '0px 0px'}} type="primary" shape="circle" icon="ellipsis" onClick={()=>t.isShowMore(this.weightiness)}/>
                                     </span>:
                                     ''
                                 }
