@@ -18,6 +18,7 @@ function VtxTimePicker(props) {
     } = props;
 
     let TimePickerProps = {
+        ...props,
         value: value?moment(value,(format ||'HH:mm:ss')):null,
 
         className: className,
