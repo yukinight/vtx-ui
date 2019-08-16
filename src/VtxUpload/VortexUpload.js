@@ -1,27 +1,31 @@
-import React from 'react';
 
+import React from 'react';
 import Upload from 'antd/lib/upload';
 import 'antd/lib/upload/style/css';
 import Button from 'antd/lib/button';
 import 'antd/lib/button/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
-import './VortexUpload.css';
-
-const styles = {
-    uploadCt: 'vtx-ui-upload-uploadct'
-}
+import 'viewerjs/dist/viewer.css';
+import Viewer from 'viewerjs';
 
 class VortexUpload extends React.Component{
     constructor(props){
         super(props); 
-        let t = this;
         // 初始化上传下载的地址
-        this.uploadURL = props.action;
-        this.downLoadURL = props.downLoadURL;
+        this.uploadURL = props.action||'';
+        this.downLoadURL = props.downLoadURL||'';
+        // 缩略图地址
+        this.thumbnailURL = props.thumbnailURL||'';
+        // 是否使用缩略图
+        this.useThumbnail = props.thumbnailURL && (props.listType=='picture' || props.listType=='picture-card');
+
         // 可在外部配置的属性，具体文档参考AntUI
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
         'disabled','withCredentials','beforeUpload'];
+
+        this.imageCt = null;
+        this.imageViewer = null;
 
         this.state = {
             fileList: this.getSynFileList()
@@ -32,8 +36,11 @@ class VortexUpload extends React.Component{
         let t = this;
         let props = this.props;
         // 重置上传下载的地址
-        t.uploadURL = props.action;
-        t.downLoadURL = props.downLoadURL;
+        t.uploadURL = props.action||'';
+        t.downLoadURL = props.downLoadURL||'';
+        t.thumbnailURL = props.thumbnailURL||'';
+        t.useThumbnail = props.thumbnailURL && (props.listType=='picture' || props.listType=='picture-card');
+
         let config = {
             action: t.uploadURL,
             fileList: t.state.fileList,
@@ -44,7 +51,8 @@ class VortexUpload extends React.Component{
                 let newFile = vtxId?{
                     ...info.file,
                     id: vtxId,
-                    url: t.downLoadURL+ vtxId
+                    url: t.downLoadURL + vtxId,
+                    thumbUrl: t.useThumbnail ? (t.thumbnailURL + vtxId): undefined,
                 }:{
                     ...info.file,
                 };
@@ -55,7 +63,8 @@ class VortexUpload extends React.Component{
                             return {
                                 ...item,
                                 id: vtxId,
-                                url: t.downLoadURL+ vtxId
+                                url: t.downLoadURL + vtxId,
+                                thumbUrl: t.useThumbnail ? (t.thumbnailURL + vtxId): undefined
                             }
                         }
                         return item
@@ -99,12 +108,7 @@ class VortexUpload extends React.Component{
             config.showUploadList = {showRemoveIcon: false};
         }
         if(props.listType =='picture-card'){
-            if(typeof(config.showUploadList)=='object'){
-                config.showUploadList.showPreviewIcon = false;
-            }
-            else{
-                config.showUploadList = { showPreviewIcon: false }
-            }
+            config.onPreview = t.handlePreview.bind(t);
         }
 
         return config;
@@ -123,13 +127,12 @@ class VortexUpload extends React.Component{
             if(item.name===undefined || item.id===undefined){
                 console.error('文件列表的name和id属性不能为空');
             }
-            let itemURL = item.url || t.downLoadURL+item.id;
             return {
                 ...item,
                 uid: -1-index,
                 status: 'done',
-                url:itemURL,
-                thumbUrl: itemURL,
+                url: item.url || (t.downLoadURL+ item.id),
+                thumbUrl: t.useThumbnail ? (item.thumbUrl || (t.thumbnailURL+item.id)): undefined,
             }
         })
         return processedFileList;
@@ -137,33 +140,53 @@ class VortexUpload extends React.Component{
 
     componentWillReceiveProps(nextProps){
         if(this.props.fileListVersion!=nextProps.fileListVersion){
-                this.setState({
+            this.setState({
                 fileList: this.getSynFileList(nextProps)
             });
         }
     }
-    
+    componentDidMount(){
+        this.imageViewer = new Viewer(this.imageCt,{})
+    }
+    componentWillUnmount(){
+        this.imageViewer.destroy();
+    }
+    handlePreview(file){
+        const imageIndex = this.props.fileList.map(item=>item.id).indexOf(file.id);
+        if(imageIndex==-1)return;
+        this.imageViewer.update();
+        this.imageViewer.view(imageIndex);
+    }
     render(){
         return (
-            <div className={styles.uploadCt}>
-            <Upload {...this.getConfig()}>
-                {
-                    this.props.viewMode ? null : 
-                    (this.props.customizedButton ||
-                        (this.props.listType =='picture-card' ? 
-                            <div>
-                                <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
-                                <div className="ant-upload-text">上传</div>
-                            </div>
-                            :
-                            <Button>
-                                <Icon type="upload" />上传
-                            </Button>
+            <div>
+                <Upload {...this.getConfig()}>
+                    {
+                        this.props.viewMode ? null : 
+                        (this.props.customizedButton ||
+                            (this.props.listType =='picture-card' ? 
+                                <div>
+                                    <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
+                                    <div className="ant-upload-text">上传</div>
+                                </div>
+                                :
+                                <Button>
+                                    <Icon type="upload" />上传
+                                </Button>
+                            )
                         )
-                    )
-                }
-                
-            </Upload>
+                    }
+                </Upload>
+
+                <div style={{display:'none'}}>
+                    <ul ref={(ins)=>{if(ins)this.imageCt = ins}}>
+                        {
+                            this.props.fileList.map((item,index)=><li key={item.id}>
+                                <img src={item.url||this.downLoadURL+item.id} alt={item.name||`picture-${index+1}`}/>
+                            </li>)
+                        }
+                    </ul>
+                </div>
             </div>
         )
     }
