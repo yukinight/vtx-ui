@@ -1,14 +1,16 @@
 ### VtxUpload 配置
 
 > 二次封装的上传组件  
-> VtxUpload2与VtxUpload配置项完全相同，唯一区别：  
-> VtxUpload点击图片附件，下载此图片；  
-> VtxUpload2点击图片附件，放大预览；
+> VtxUpload 统一交互：点击图片附件，放大预览（为了兼容老版本暂保留VtxUpload和VtxUpload2两种引用方式，后续开发建议直接使用VtxUpload）  
+> ~~VtxUpload2与VtxUpload配置项完全相同，唯一区别：~~  
+> ~~VtxUpload点击图片附件，下载此图片~~；  
+> ~~VtxUpload2点击图片附件，放大预览~~；
 
 | **参数**         | **说明**   | **类型** | **默认值**  |
 |-------|-----|--------|-------|
-| action  | 后台上传文件的接口地址 (强烈建议配置代理，否则IE9跨域上传会出现问题: /fileServer/uploadFile)  | string    |   |
-| downLoadURL      | 后台文件下载的接口地址 后面带参数?id=用来接收文件id （同建议配置代理:/fileServer/downloadFile?id=） | string ||
+| action  | 后台上传文件的接口地址 (建议配置代理，否则IE9跨域上传会出现问题: /fileServer/uploadFile)  | string    |   |
+| downLoadURL      | 后台文件下载的接口地址 后面带参数?id=用来接收文件id （建议配置代理:/fileServer/downloadFile?id=） | string ||
+| thumbnailURL      | 缩略图服务的接口地址 后面带参数?id=用来接收文件id （建议配置代理）<br> 需要在图片列表显示缩略图的必须配此参数 | string ||
 | mode             | 分为单文件模式(single):每次上传文件覆盖之前的文件, 多文件模式(multiple)：每次上传文件新增到文件列表里  | string   | ‘multiple’ |
 | data             | 上传所需参数或返回上传参数的方法| object\|function(file)                                             | 无                                                             |
 | showUploadList   | 是否展示 uploadList, 可设为一个对象，用于单独设定 showPreviewIcon 和 showRemoveIcon 设为false可配合fileList自定义文件列表 | Boolean or { showPreviewIcon?: boolean, showRemoveIcon?: boolean } | true|

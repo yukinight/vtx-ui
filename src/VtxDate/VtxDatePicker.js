@@ -19,6 +19,7 @@ function VtxDatePicker(props) {
     } = props;
 
     let DatePickerProps = {
+        ...props,
         allowClear: allowClear || false,
         showTime: showTime || false,
         disabled: disabled || false,

@@ -143,7 +143,7 @@ class VtxYearPicker extends React.Component{
             <div data-errorMsg='必填'
             className={props.required && !props.value ? `${styles.normal} ${styles.error}` : styles.normal}
             style={{...props.style,width:props.inherit?'inherit':''}}>
-                <div className={styles.calendarpicker} style={props.style}>
+                <div className={`${styles.calendarpicker} ${props.className}`} style={props.style}>
                     <input 
                         ref={'input'}
                         readOnly

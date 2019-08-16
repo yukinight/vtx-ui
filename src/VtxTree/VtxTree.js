@@ -425,11 +425,13 @@ class VtxTree extends React.Component {
 						)
 					)
 				);
-				_title = (
-					<Tooltip placement="right" title={name} overlay={name}>
-        				{_title}
-	      			</Tooltip>
-		      	);
+				if(!t.props.noTooltip){
+					_title = (
+						<Tooltip placement="right" title={name} overlay={name}>
+							{_title}
+						  </Tooltip>
+					  );
+				}
 		      	if(!(_tree.isShowSearchInput 
 					&& this.askeys.indexOf(item.key) === -1
 						&& t.state.inputValue.length > 0)){

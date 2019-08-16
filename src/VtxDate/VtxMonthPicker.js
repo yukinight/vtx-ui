@@ -20,6 +20,7 @@ function VtxMonthPicker(props) {
     } = props;
 
     let MonthPickerProps = {
+        ...props,
         allowClear: allowClear || false,
         disabled: disabled || false,
         style: style || {},
