@@ -108,6 +108,14 @@ class VtxModalList extends React.Component{
                                 return clone(vchil,`${key}${modalListKey || index}`);
                             }
                         }
+                        if(typeof(item) === 'function'){
+                            let vchil = item();
+                            if(Array.isArray(vchil)){
+                                return clone(vchil,`${key}${modalListKey || index}`);
+                            }else{
+                                return clone([vchil],`${key}${modalListKey || index}`);
+                            }
+                        }
                         newRepeteKeyList.push(`${key}${modalListKey || index}`);
                         return t.cloneComponent(item, `${key}${modalListKey || index}`);
                     }
@@ -125,6 +133,14 @@ class VtxModalList extends React.Component{
                         }
                     }
                     cC = clone(vchil,'root');
+                }
+            }
+            if(typeof(chil) === 'function'){
+                let vchil = chil();
+                if(Array.isArray(vchil)){
+                    cC = clone(vchil,'root');
+                }else{
+                    cC = clone([vchil],'root');
                 }
             }
             if(chil instanceof Array){
