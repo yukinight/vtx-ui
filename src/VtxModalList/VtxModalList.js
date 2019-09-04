@@ -90,7 +90,7 @@ class VtxModalList extends React.Component{
                         // if(!modalListKey){
                         //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
                         // }
-                        if(typeof(item) === 'string'){
+                        if(typeof(item) === 'string' || typeof(item) === 'number'){
                             // t.repeteList[`${key}${modalListKey || index}`] = {};
                             return item;
                         }
@@ -101,7 +101,9 @@ class VtxModalList extends React.Component{
                             if(!item.props){
                                 let vchil = [];
                                 for(let i in item){
-                                    vchil.push(item[i]);
+                                    if(typeof(item[i]) === 'object'){
+                                        vchil.push(item[i]);
+                                    }
                                 }
                                 return clone(vchil,`${key}${modalListKey || index}`);
                             }
@@ -112,13 +114,15 @@ class VtxModalList extends React.Component{
                     return null;
                 })
             }
-            if(typeof(chil) === 'object'){
+            if(typeof(chil) === 'object' && !(chil instanceof Array)){
                 if(chil.props){
                     cC = clone([chil],'root');
                 }else{
                     let vchil = [];
                     for(let i in chil){
-                        vchil.push(chil[i]);
+                        if(typeof(chil[i]) === 'object'){
+                            vchil.push(chil[i]);
+                        }
                     }
                     cC = clone(vchil,'root');
                 }
