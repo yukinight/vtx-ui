@@ -3,6 +3,7 @@ import {default as VtxUploadModal} from './VortexUploadModal';
 
 VtxUpload.VtxUploadModal = VtxUploadModal;
 VtxUpload.VtxUpload2 = VtxUpload;
+const VtxUpload2 = VtxUpload;
 
 export default VtxUpload;
-export {VtxUpload,VtxUploadModal};
+export {VtxUpload,VtxUploadModal,VtxUpload2};
