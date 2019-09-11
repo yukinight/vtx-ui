@@ -745,6 +745,16 @@ class ArcgisMap extends React.Component{
                             wmtsLayer.UrlTemplate.indexOf('&FORMAT'),
                             wmtsLayer.UrlTemplate.indexOf('&TILEMATRIXSET')
                         ),`&FORMAT=${services[im].format || 'format/png'}`);
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('SERVICE','service');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&VERSION','&version');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&REQUEST','&request');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&LAYER','&layer');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&STYLE','&format');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&FORMAT','&style');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&TILEMATRIXSET','&tileMatrixSet');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&TILEMATRIX','&tileMatrix');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&TILEROW','&tileRow');
+                        wmtsLayer.UrlTemplate = wmtsLayer.UrlTemplate.replace('&TILECOL','&tileCol');
                         servs.push(wmtsLayer);
                     }
                 break;
