@@ -1,5 +1,5 @@
 ### VtxRpsFrame参考文档
->1.报表组件：封装了前端报表的iframe元素和相关调用方法 
+>1.报表组件：封装了前端报表的iframe元素和相关调用方法  
 >2.使用组件时需要提供确定大小的父容器（组件大小自动撑满父容器）  
 >3.依赖jquery
 
@@ -8,11 +8,14 @@
 |**参数**| **说明**| **类**|**默认值**| **必填**|
 |------------------------------- |-------------------------------|-------------------------------|--------------------------------|-------------------------------
 |report_code      |报表的code           | String ||是
-|report_param     |以往的report_param参数，但是不再需要调接口（getByParamTypeCode）<br>来传递cityName等公共参数，只需要传递标题等定制参数|Object||是
-|data_param       |同以往的data_param一样                                              |Object||是|
+|report_param     |报表的report_param参数，但是不再需要调接口（getByParamTypeCode）<br>来传递cityName等公共参数，只需要传递标题等定制参数|Object||是
+|data_param       |报表的数据参数data_param                                              |Object||是|
 |tenantId         |租户Id用来调用获取公共参数的接口                                      |String||是|
 |flag             |用来控制报表的刷新，只有当flag改变时才会更新报表                    |Num或者String||是|
 |paramTypeCode    |获取公共参数接口所传的paramTypeCode参数，一般不需要传   |String|"param_report_constant"|否|
+|getTypeCodeUrl   |获取制表单位等公共参数的接口地址（不包含参数）|String|"/cloud/management/rest/np/param/getByParamTypeCode"|否|
+|getReportCodeUrl |获取报表code的接口地址（不包含参数）|String|"/cloud/rps/api/np/v101/report/getReportInfoByCode.smvc"|否|
+|ReportServerUrl  |根据报表code获取报表内容的接口地址（不包含参数）|String|"/ReportServer"  |否|
 
 ---
 ##### Nginx代理配置
@@ -51,4 +54,3 @@ location /ReportServer{
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 ```
-
