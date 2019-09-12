@@ -25,7 +25,10 @@ class VtxRpsFrame extends React.Component{
     }
     getReportInfoByCode(){
         const t = this;
-        const { report_code, report_param, data_param, paramTypeCode, tenantId } = this.props;
+        const { report_code, report_param, data_param, paramTypeCode, tenantId,
+            getTypeCodeUrl ='/cloud/management/rest/np/param/getByParamTypeCode',
+            getReportCodeUrl ='/cloud/rps/api/np/v101/report/getReportInfoByCode.smvc',
+            ReportServerUrl ='/ReportServer'} = this.props;
         let param = {
             report_code,
             timestamp: new Date().valueOf(),
@@ -36,7 +39,7 @@ class VtxRpsFrame extends React.Component{
         let commonParamPromise = new Promise((resolve,reject)=>{
             $.ajax({
                 type:'get',
-                url: `/cloud/management/rest/np/param/getByParamTypeCode?parameters={"paramTypeCode": "${paramCode}","tenantId":"${tenantId}"}`,
+                url: `${getTypeCodeUrl}?parameters={"paramTypeCode": "${paramCode}","tenantId":"${tenantId}"}`,
                 // data: postData,
                 dataType: 'json',
                 'content-type': "application/x-www-form-urlencoded",
@@ -53,7 +56,7 @@ class VtxRpsFrame extends React.Component{
         let getReportInfoByCodePromise = new Promise((resolve,reject)=>{
             $.ajax({
                 type: 'get',
-                url: `/cloud/rps/api/np/v101/report/getReportInfoByCode.smvc`,
+                url: getReportCodeUrl,
                 data: { parameters: JSON.stringify(param) },
                 dataType: 'json',
                 async: true,
@@ -85,7 +88,7 @@ class VtxRpsFrame extends React.Component{
                     ...obj,
                     reqMethod: 0
                 }
-                createForm(`/ReportServer?report_code=${report_code}&reportlet=${reportInfoByCodeData.reportlet}&fr_locale=zh_CN&timestamp=${new Date().valueOf()}`, param, `${t.iframeName}`);
+                createForm(`${ReportServerUrl}?report_code=${report_code}&reportlet=${reportInfoByCodeData.reportlet}&fr_locale=zh_CN&timestamp=${new Date().valueOf()}`, param, `${t.iframeName}`);
 
             }
             
