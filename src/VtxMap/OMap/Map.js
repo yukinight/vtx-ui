@@ -3145,7 +3145,7 @@ class Map extends React.Component {
         let {point,polyline,polygon,circle,rectangle} = drawIds;
         //点/线新数据
         let {
-            mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
+            mapPoints = [],mapLines = [],mapPolygons = [],mapCircles = [],customizedBoundary =[],
             isOpenTrafficInfo,boundaryName,heatMapData,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
