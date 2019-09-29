@@ -7,7 +7,7 @@ import Immutable from 'immutable';
 //公共地址配置
 import configUrl from '../../default';
 const {Set} = Immutable;
-class ArcgisMap extends React.Component{
+class ArcgisMap extends React.Component{ 
     constructor(props){
         super(props);
         this.grwkid = 4326;//wkid 坐标系对应,全局使用.
@@ -1699,7 +1699,7 @@ class ArcgisMap extends React.Component{
             radius: 20,
             max: 100,
             visible: true,
-            opacity: 1
+            opacity: 0.7
         };
         if(d.config){
             cg = {...cg,...d.config};
@@ -3509,39 +3509,6 @@ class ArcgisMap extends React.Component{
                 t.updatePoint([...upds,...otherupds]);
             }
             /*
-                线数据处理
-                先全删除,再新增
-            */
-            if(mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
-                let oldMapLines = t.props.mapLines;
-                let newMapLines = mapLines;
-                if(!!t.editId){
-                    oldMapLines = t.props.mapLines.filter((item)=>{return item.id !== editGraphicId});
-                    newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
-                }
-                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
-                let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
-                let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
-                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-                for(let id of deletedDataIDs){
-                    t.removeGraphic(id,'line');
-                }
-                //增加
-                t.addLine([...ads,...otherads]);
-                //更新
-                t.updateLine([...upds,...otherupds]);   
-            }
-            //画其他特例线专用
-            if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
-                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.customizedBoundary,customizedBoundary,'id');
-                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-                for(let id of deletedDataIDs){
-                    t.removeGraphic(id,'line');
-                }
-                t.addLine(addedData);
-                t.updateLine(updatedData);        
-            }
-            /*
                 面数据处理
                 先全删除,再新增
             */
@@ -3586,6 +3553,39 @@ class ArcgisMap extends React.Component{
                 t.addCircle([...ads,...otherads]);
                 //更新
                 t.updateCircle([...upds,...otherupds]);
+            }
+            /*
+                线数据处理
+                先全删除,再新增
+            */
+            if(mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
+                let oldMapLines = t.props.mapLines;
+                let newMapLines = mapLines;
+                if(!!t.editId){
+                    oldMapLines = t.props.mapLines.filter((item)=>{return item.id !== editGraphicId});
+                    newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
+                }
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+                let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+                let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'line');
+                }
+                //增加
+                t.addLine([...ads,...otherads]);
+                //更新
+                t.updateLine([...upds,...otherupds]);   
+            }
+            //画其他特例线专用
+            if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
+                let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.customizedBoundary,customizedBoundary,'id');
+                //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+                for(let id of deletedDataIDs){
+                    t.removeGraphic(id,'line');
+                }
+                t.addLine(addedData);
+                t.updateLine(updatedData);        
             }
             //绘制边界线
             // if(boundaryName instanceof Array && !t.deepEqual(boundaryName,t.props.boundaryName)){
