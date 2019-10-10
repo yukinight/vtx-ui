@@ -1515,7 +1515,7 @@ class Map extends React.Component {
             radius: 20,
             max: 100,
             visible: true,
-            opacity: 1
+            opacity: 0.7
         };
         if(d.config){
             cg = {...cg,...d.config};
@@ -3145,7 +3145,7 @@ class Map extends React.Component {
         let {point,polyline,polygon,circle,rectangle} = drawIds;
         //点/线新数据
         let {
-            mapPoints,mapLines,mapPolygons,mapCircles,customizedBoundary,
+            mapPoints = [],mapLines = [],mapPolygons = [],mapCircles = [],customizedBoundary =[],
             isOpenTrafficInfo,boundaryName,heatMapData,
             mapVisiblePoints,setVisiblePoints,
             setCenter,mapCenter,
@@ -3200,39 +3200,6 @@ class Map extends React.Component {
             t.updatePoint([...upds,...otherupds]);
         }
         /*
-            线数据处理
-            先全删除,再新增
-        */
-        if(mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
-            let oldMapLines = props.mapLines;
-            let newMapLines = mapLines;
-            if(!!t.state.editId){
-                oldMapLines = props.mapLines.filter((item)=>{return item.id !== editGraphicId});
-                newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
-            }
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
-            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
-            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'line');
-            }
-            //增加
-            t.addLine([...ads,...otherads]);
-            //更新
-            t.updateLine([...upds,...otherupds]);  
-        }
-        //画其他特例线专用
-        if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
-            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(props.customizedBoundary,customizedBoundary,'id');
-            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
-            for(let id of deletedDataIDs){
-                t.removeGraphic(id,'line');
-            }
-            t.addLine(addedData);
-            t.updateLine(updatedData);        
-        }
-        /*
             面数据处理
             先全删除,再新增
         */
@@ -3277,6 +3244,39 @@ class Map extends React.Component {
             t.addCircle([...ads,...otherads]);
             //更新
             t.updateCircle([...upds,...otherupds]);
+        }
+        /*
+            线数据处理
+            先全删除,再新增
+        */
+        if(mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
+            let oldMapLines = props.mapLines;
+            let newMapLines = mapLines;
+            if(!!t.state.editId){
+                oldMapLines = props.mapLines.filter((item)=>{return item.id !== editGraphicId});
+                newMapLines = mapLines.filter((item)=>{return item.id !== editGraphicId});
+            }
+            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(oldMapLines,newMapLines,'id');
+            let {ads,otherupds} = t.dealAdd(addedData,[...lineIds,...polyline]);
+            let {upds,otherads} = t.dealUpdate(updatedData,[...lineIds,...polyline]);
+            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+            for(let id of deletedDataIDs){
+                t.removeGraphic(id,'line');
+            }
+            //增加
+            t.addLine([...ads,...otherads]);
+            //更新
+            t.updateLine([...upds,...otherupds]);  
+        }
+        //画其他特例线专用
+        if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
+            let {deletedDataIDs,addedData,updatedData} = t.dataMatch(props.customizedBoundary,customizedBoundary,'id');
+            //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
+            for(let id of deletedDataIDs){
+                t.removeGraphic(id,'line');
+            }
+            t.addLine(addedData);
+            t.updateLine(updatedData);        
         }
         // 获取热力图
         if(heatMapData && !t.deepEqual(heatMapData,props.heatMapData)){
