@@ -23,6 +23,8 @@ function IndexPage() {
                 <li><Link to='/upload'>上传</Link></li>
                 <li><Link to='/import'>导入</Link></li>
                 <li><Link to='/export'>导出</Link></li>
+                <li><Link to='/image'>图片</Link></li>
+                <li><Link to='/imageviewer'>图片查看</Link></li>
             </ul>
         </div>
     );
