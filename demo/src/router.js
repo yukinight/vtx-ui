@@ -17,6 +17,8 @@ import ZTree from './routes/ztree';
 import ImportFile from './routes/importFile';
 import ExportFile from './routes/exportFile';
 import ModalList from './routes/modalList';
+import VtxImage from './routes/image';
+import VtxImageViewer from './routes/imageViewer';
 
 function RouterConfig({ history }) {
   return (
@@ -37,7 +39,9 @@ function RouterConfig({ history }) {
         <Route path="/upload" component={Upload} />  
         <Route path="/import" component={ImportFile} />  
         <Route path="/export" component={ExportFile} />  
-        <Route path="/modallist" component={ModalList} />  
+        <Route path="/modallist" component={ModalList} /> 
+        <Route path="/image" component={VtxImage} /> 
+        <Route path="/imageviewer" component={VtxImageViewer} />  
     </Router>
   );
 }
