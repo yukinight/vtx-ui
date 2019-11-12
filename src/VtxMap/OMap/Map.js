@@ -736,9 +736,10 @@ class Map extends React.Component {
             });
             if(type !== 'defined'){
                 //所有点缓存在state中
-                t.setState({
-                    pointIds: psids
-                });
+                t.state.pointIds = psids;
+                // t.setState({
+                //     pointIds: psids
+                // });
             }
         }
         //内部 不需要旋转图标的处理方式
@@ -1144,9 +1145,10 @@ class Map extends React.Component {
             });
         });
         if(type !== 'defined'){
-            t.setState({
-                lineIds: lsids
-            });
+            t.state.lineIds = lsids;
+            // t.setState({
+            //     lineIds: lsids
+            // });
         }
     }
     //更新线
@@ -1302,9 +1304,10 @@ class Map extends React.Component {
                 },
             });
         });
-        t.setState({
-            polygonIds: pgsids
-        });
+        t.state.polygonIds = pgsids;
+        // t.setState({
+        //     polygonIds: pgsids
+        // });
     }
     //更新面
     updatePolygon(mapPolygons){
@@ -1445,9 +1448,10 @@ class Map extends React.Component {
                 }
             });
         });
-        t.setState({
-            circleIds: ccsids
-        });
+        t.state.circleIds = ccsids;
+        // t.setState({
+        //     circleIds: ccsids
+        // });
     }
     //更新圆
     updateCircle(mapCircles){

@@ -8,7 +8,7 @@ import Immutable from 'immutable';
 import configUrl from '../../default';
 const {Set} = Immutable;
 class ArcgisMap extends React.Component{ 
-    constructor(props){
+    constructor(props){ 
         super(props);
         this.grwkid = 4326;//wkid 坐标系对应,全局使用.
         this.wkid = (isNaN(parseInt(props.wkid))?props.wkid:parseInt(props.wkid)) || 4326;//wkid 坐标系对应,全局使用.
@@ -680,6 +680,10 @@ class ArcgisMap extends React.Component{
             }),
             ...options
         });
+        window.onModalResize = ()=>{
+            map.resize(true);
+            map.reposition();
+        }
         t.addMapLayers(mapServer);
         t.htmlPointsId = `${mapId}_${t.htmlPointsId}`;
         t.pointCollectionId = `${mapId}_${t.pointCollectionId}`;
@@ -955,17 +959,22 @@ class ArcgisMap extends React.Component{
         if(type !== 'defined'){
             //添加绘制点
             if(type){
-                t.setState({
-                    drawIds:{
-                        ...t.state.drawIds,
+                t.state.drawIds = {
+                    ...t.state.drawIds,
                         [type]: psids
-                    }
-                });
+                };
+                // t.setState({
+                //     drawIds:{
+                //         ...t.state.drawIds,
+                //         [type]: psids
+                //     }
+                // });
             }else{
+                t.state.pointIds = psids;
                 //所有点缓存在state中
-                t.setState({
-                    pointIds: psids
-                });
+                // t.setState({
+                //     pointIds: psids
+                // });
             }
         }
     }
@@ -1192,16 +1201,21 @@ class ArcgisMap extends React.Component{
         if(type !== 'defined'){
             //添加绘制点
             if(type){
-                t.setState({
-                    drawIds:{
-                        ...t.state.drawIds,
+                t.state.drawIds = {
+                    ...t.state.drawIds,
                         [type]: lsids
-                    }
-                });
+                }
+                // t.setState({
+                //     drawIds:{
+                //         ...t.state.drawIds,
+                //         [type]: lsids
+                //     }
+                // });
             }else{
-                t.setState({
-                    lineIds: lsids
-                });
+                t.state.lineIds = lsids;
+                // t.setState({
+                //     lineIds: lsids
+                // });
             }
         }
     }
@@ -1370,16 +1384,21 @@ class ArcgisMap extends React.Component{
         });
         //添加绘制点
         if(type){
-            t.setState({
-                drawIds:{
-                    ...t.state.drawIds,
-                    [type]: pgsids
-                }
-            });
+            t.state.drawIds = {
+                ...t.state.drawIds,
+                [type]: pgsids
+            }
+            // t.setState({
+            //     drawIds:{
+            //         ...t.state.drawIds,
+            //         [type]: pgsids
+            //     }
+            // });
         }else{
-            t.setState({
-                polygonIds: pgsids
-            });
+            t.state.polygonIds = pgsids;
+            // t.setState({
+            //     polygonIds: pgsids
+            // });
         }
     }
     //更新面
@@ -1539,16 +1558,21 @@ class ArcgisMap extends React.Component{
         });
         //添加绘制点
         if(type){
-            t.setState({
-                drawIds:{
-                    ...t.state.drawIds,
-                    [type]: ccsids
-                }
-            });
+            t.state.drawIds = {
+                ...t.state.drawIds,
+                [type]: ccsids
+            }
+            // t.setState({
+            //     drawIds:{
+            //         ...t.state.drawIds,
+            //         [type]: ccsids
+            //     }
+            // });
         }else{
-            t.setState({
-                circleIds: ccsids
-            });
+            t.state.circleIds = ccsids;
+            // t.setState({
+            //     circleIds: ccsids
+            // });
         }
     }
     //更新圆

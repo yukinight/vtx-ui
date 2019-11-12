@@ -391,8 +391,12 @@ class VtxSearchMap extends React.Component {
             onPressEnter: this.searchList.bind(this),
             onKeyDown: this.changeValue.bind(this)
         };
-        let drawProps = this.state.graphicType=='point' || t.isinit?null:{
+        let drawProps = this.state.graphicType=='point' || t.isinit? {
+            isDraw: this.state.isDraw,
+            isCloseDraw: this.state.isCloseDraw
+        }:{
             isDraw:this.state.isDraw,
+            isCloseDraw: this.state.isCloseDraw,
             drawEnd:(obj)=>{
                 this.isDrawStatus = false;
                 this.isClickMap = false;
@@ -462,6 +466,7 @@ class VtxSearchMap extends React.Component {
               title={this.state.graphicType=='point'?"定位":"绘制"}
               style={{ top: 50 }}
               visible={modal1Visible}
+              maximize={true}
               wrapClassName={styles.searchModal}
               bodyStyle={{height:`${window.innerHeight*0.7}px`}}
               maskClosable={false}
@@ -605,6 +610,7 @@ class VtxSearchMap extends React.Component {
     }
     componentWillReceiveProps(nextProps){
         let t = this;
+        this.isClickMap = false;
         if(t.state.graphicType !== nextProps.graphicType && !!this.map){
             this.map.clearAll();
             t.mapLoaded = false;
@@ -615,17 +621,21 @@ class VtxSearchMap extends React.Component {
         }
         t.isDrawStatus = nextProps.graphicType!=='point' && !nextProps.editParam;
         this.setState({
-           modal1Visible: nextProps.modal1Visible,
-           maxZoom: nextProps.maxZoom,
-           minZoom: nextProps.minZoom,
-           wkid: nextProps.wkid,
-           mapCenter: nextProps.mapCenter || '',
-           mapType: nextProps.mapType || 'bmap',
-           mapServer: nextProps.mapServer,
-           graphicType: nextProps.graphicType ||'point',
-           isDraw: nextProps.graphicType!=='point' && !nextProps.editParam,
-           editGraphicId: ''
+            modal1Visible: nextProps.modal1Visible,
+            maxZoom: nextProps.maxZoom,
+            minZoom: nextProps.minZoom,
+            wkid: nextProps.wkid,
+            mapCenter: nextProps.mapCenter || '',
+            mapType: nextProps.mapType || 'bmap',
+            mapServer: nextProps.mapServer,
+            graphicType: nextProps.graphicType ||'point',
+            isDraw: nextProps.graphicType!=='point' && !nextProps.editParam,
+            isCloseDraw: !(nextProps.graphicType !== 'point' && !nextProps.editParam),
+            editGraphicId: ''
         },()=>{
+            t.setState({
+                isCloseDraw: false
+            })
             t.initSearchMap();
         });
         setTimeout(()=>{

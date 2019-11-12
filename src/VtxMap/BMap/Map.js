@@ -541,9 +541,10 @@ class BaiduMap extends React.Component{
         });
         if(type !== 'defined'){
             //所有点缓存在state中
-            t.setState({
-                pointIds: psids
-            });
+            // t.setState({
+            //     pointIds: psids
+            // });
+            t.state.pointIds = psids;
         }
     }
     //更新点位
@@ -773,9 +774,10 @@ class BaiduMap extends React.Component{
             });
         });
         if(type !== 'defined'){
-            t.setState({
-                lineIds: lsids
-            });
+            t.state.lineIds = lsids;
+            // t.setState({
+            //     lineIds: lsids
+            // });
         }
     }
     //更新线
@@ -915,9 +917,10 @@ class BaiduMap extends React.Component{
                 },
             });
         });
-        t.setState({
-            polygonIds: pgsids
-        });
+        t.state.polygonIds = pgsids;
+        // t.setState({
+        //     polygonIds: pgsids
+        // });
     }
     //更新面
     updatePolygon(mapPolygons){
@@ -1050,9 +1053,10 @@ class BaiduMap extends React.Component{
                 }
             });
         });
-        t.setState({
-            circleIds: ccsids
-        });
+        t.state.circleIds = ccsids;
+        // t.setState({
+        //     circleIds: ccsids
+        // });
     }
     //更新圆
     updateCircle(mapCircles){

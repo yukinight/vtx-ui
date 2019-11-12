@@ -991,9 +991,10 @@ class VortexAMap extends React.Component{
         //统一加点
         t.state.gis.add(ps);
         if(type !== 'defined'){
-            t.setState({
-                pointIds: psids
-            })
+            t.state.pointIds = psids;
+            // t.setState({
+            //     pointIds: psids
+            // })
         }
     }
     //更新点
@@ -1201,9 +1202,10 @@ class VortexAMap extends React.Component{
         });
         t.state.gis.add(ls);
         if(type !== 'defined'){
-            t.setState({
-                lineIds: lsids
-            });
+            t.state.lineIds = lsids;
+            // t.setState({
+            //     lineIds: lsids
+            // });
         }
     }
     //更新线
@@ -1355,9 +1357,10 @@ class VortexAMap extends React.Component{
 
         });
         t.state.gis.add(pgs);
-        t.setState({
-            polygonIds: pgsids
-        })
+        t.state.polygonIds = pgsids;
+        // t.setState({
+        //     polygonIds: pgsids
+        // })
     }
     //更新面
     updatePolygon(mapPolygons){
@@ -1505,9 +1508,10 @@ class VortexAMap extends React.Component{
             ccsids.push(item.id);
         });
         t.state.gis.add(ccs);
-        t.setState({
-            circleIds: ccsids
-        })
+        t.state.circleIds = ccsids;
+        // t.setState({
+        //     circleIds: ccsids
+        // })
     }
     //更新圆
     updateCircle(mapCircles){

@@ -760,9 +760,10 @@ class TMap extends React.Component{
             );
         });
         if(type !== 'defined'){
-            t.setState({
-                pointIds: psids
-            });
+            t.state.pointIds = psids;
+            // t.setState({
+            //     pointIds: psids
+            // });
         }
     }
     //更新点
@@ -959,9 +960,10 @@ class TMap extends React.Component{
             t.state.lineIds.push(item.id);
         });
         if(type !== 'defined'){
-            t.setState({
-                lineIds: lsids
-            });
+            t.state.lineIds = lsids;
+            // t.setState({
+            //     lineIds: lsids
+            // });
         }
     }
     //更新线
@@ -1103,9 +1105,10 @@ class TMap extends React.Component{
             pgsids.push(item.id);
 
         });
-        t.setState({
-            polygonIds: pgsids
-        })
+        t.state.polygonIds = pgsids;
+        // t.setState({
+        //     polygonIds: pgsids
+        // })
     }
     //更新面
     updatePolygon(mapPolygons){
@@ -1233,9 +1236,10 @@ class TMap extends React.Component{
             );
             ccsids.push(item.id);
         });
-        t.setState({
-            circleIds: ccsids
-        })
+        t.state.circleIds = ccsids;
+        // t.setState({
+        //     circleIds: ccsids
+        // })
     }
     //更新圆
     updateCircle(mapCircles){
