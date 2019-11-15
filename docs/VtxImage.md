@@ -4,7 +4,7 @@
 - 图片组件 - VtxImage
 - 图片放大组件 - VtxImageViewer
 
-### Image
+### VtxImage
 > 图片组件
 
 ##### 功能
