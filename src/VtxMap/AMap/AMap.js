@@ -1014,6 +1014,8 @@ class VortexAMap extends React.Component{
                 //获取原有的图元
                 let gc = this.GM.getGraphic(item.id),isuserUrlLeft = false;
                 let cg = {
+                    width : 30,
+                    height : 30,
                     labelContent: item.config.labelContent || gc.getLabel(),
                     markerContentX: item.config.markerContentX || gc.getOffset().getX(),
                     markerContentY: item.config.markerContentY || gc.getOffset().getY(),
