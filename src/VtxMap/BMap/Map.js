@@ -108,7 +108,7 @@ class BaiduMap extends React.Component{
                         resolve(window.BMap);
                     });
                 });
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: "http://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css"}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.httpOrhttps}://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css`}).appendTo("head");
             }
         });
     }
