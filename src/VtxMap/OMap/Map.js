@@ -1114,7 +1114,7 @@ class Map extends React.Component {
             //添加线至地图
             line.setMap(t.state.gis);
             //点击事件
-            line.addListener('click',(e)=>{
+            let mClick = line.addListener('click',(e)=>{
                 //避免鼠标在图元上 测距工具不起作用
                 if(t.rangingTool.isRanging){
                     t.rangingToolFun(e)
@@ -1123,11 +1123,11 @@ class Map extends React.Component {
                 }
             });
             //鼠标移入事件
-            line.addListener('mouseover',(e)=>{
+            let mMouseover = line.addListener('mouseover',(e)=>{
                 t.mouseOverGraphic(item.id,e);
             });
             //鼠标移出事件
-            line.addListener('mouseout',(e)=>{
+            let mMouseout = line.addListener('mouseout',(e)=>{
                 t.mouseOutGraphic(item.id,e);
             });
             t.GM.setGraphic(item.id,line)
@@ -1142,6 +1142,10 @@ class Map extends React.Component {
                     type: 'polyline',
                     paths: item.paths
                 }
+            }).setGraphicParam(`${item.id}_omap_event`,{
+                click: mClick,
+                mouseover: mMouseover,
+                mouseout: mMouseout
             });
         });
         if(type !== 'defined'){
@@ -1271,7 +1275,7 @@ class Map extends React.Component {
             //添加面至地图
             polygon.setMap(t.state.gis);
             //点击事件
-            polygon.addListener('click',(e)=>{
+            let mClick = polygon.addListener('click',(e)=>{
                 //避免鼠标在图元上 测距工具不起作用
                 if(t.rangingTool.isRanging){
                     t.rangingToolFun(e)
@@ -1280,11 +1284,11 @@ class Map extends React.Component {
                 }
             });
             //鼠标移入事件
-            polygon.addListener('mouseover',(e)=>{
+            let mMouseover = polygon.addListener('mouseover',(e)=>{
                 t.mouseOverGraphic(item.id,e);
             });
             //鼠标移出事件
-            polygon.addListener('mouseout',(e)=>{
+            let mMouseout = polygon.addListener('mouseout',(e)=>{
                 t.mouseOutGraphic(item.id,e);
             });
             //缓存面id
@@ -1302,6 +1306,10 @@ class Map extends React.Component {
                     type: 'polygon',
                     rings: item.rings
                 },
+            }).setGraphicParam(`${item.id}_omap_event`,{
+                click: mClick,
+                mouseover: mMouseover,
+                mouseout: mMouseout
             });
         });
         t.state.polygonIds = pgsids;
@@ -1418,7 +1426,7 @@ class Map extends React.Component {
             //添加圆至地图
             circle.setMap(t.state.gis);
             //点击事件
-            circle.addListener('click',(e)=>{
+            let mClick = circle.addListener('click',(e)=>{
                 //避免鼠标在图元上 测距工具不起作用
                 if(t.rangingTool.isRanging){
                     t.rangingToolFun(e)
@@ -1427,11 +1435,11 @@ class Map extends React.Component {
                 }
             });
             //鼠标移入事件
-            circle.addListener('mouseover',(e)=>{
+            let mMouseover = circle.addListener('mouseover',(e)=>{
                 t.mouseOverGraphic(item.id,e);
             });
             //鼠标移出事件
-            circle.addListener('mouseout',(e)=>{
+            let mMouseout = circle.addListener('mouseout',(e)=>{
                 t.mouseOutGraphic(item.id,e);
             });
             ccsids.push(item.id);
@@ -1446,6 +1454,10 @@ class Map extends React.Component {
                     y: item.latitude,
                     radius: item.radius
                 }
+            }).setGraphicParam(`${item.id}_omap_event`,{
+                click: mClick,
+                mouseover: mMouseover,
+                mouseout: mMouseout
             });
         });
         t.state.circleIds = ccsids;
@@ -1939,7 +1951,29 @@ class Map extends React.Component {
                         geometryType: 'point',
                         mapLayer: e
                     }
-                    t.GM.setGraphicParam(drawParam.data.id,backobj);
+                    //点击事件
+                    let mClick = e.addListener('click',(e)=>{
+                        //避免鼠标在图元上 测距工具不起作用
+                        if(t.rangingTool.isRanging){
+                            t.rangingToolFun(e)
+                        }else{
+                            t.clickGraphic(drawParam.data.id,e);
+                        }
+                    });
+                    //鼠标移入事件
+                    let mMouseover = e.addListener('mouseover',(e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    //鼠标移出事件
+                    let mMouseout = e.addListener('mouseout',(e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
+                    t.GM.setGraphicParam(drawParam.data.id,backobj)
+                    .setGraphicParam(`${drawParam.data.id}_omap_event`,{
+                        click: mClick,
+                        mouseover: mMouseover,
+                        mouseout: mMouseout
+                    });
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -1985,7 +2019,29 @@ class Map extends React.Component {
                         },
                         lnglatAry: lnglatAry 
                     }
-                    t.GM.setGraphicParam(drawParam.data.id,backobj);
+                    //点击事件
+                    let mClick = e.addListener('click',(e)=>{
+                        //避免鼠标在图元上 测距工具不起作用
+                        if(t.rangingTool.isRanging){
+                            t.rangingToolFun(e)
+                        }else{
+                            t.clickGraphic(drawParam.data.id,e);
+                        }
+                    });
+                    //鼠标移入事件
+                    let mMouseover = e.addListener('mouseover',(e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    //鼠标移出事件
+                    let mMouseout = e.addListener('mouseout',(e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
+                    t.GM.setGraphicParam(drawParam.data.id,backobj)
+                    .setGraphicParam(`${item.id}_omap_event`,{
+                        click: mClick,
+                        mouseover: mMouseover,
+                        mouseout: mMouseout
+                    });
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -2032,7 +2088,29 @@ class Map extends React.Component {
                         lnglatAry: lnglatAry,
                         area: area
                     };
-                    t.GM.setGraphicParam(drawParam.data.id,backobj);
+                    //点击事件
+                    let mClick = e.addListener('click',(e)=>{
+                        //避免鼠标在图元上 测距工具不起作用
+                        if(t.rangingTool.isRanging){
+                            t.rangingToolFun(e)
+                        }else{
+                            t.clickGraphic(drawParam.data.id,e);
+                        }
+                    });
+                    //鼠标移入事件
+                    let mMouseover = e.addListener('mouseover',(e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    //鼠标移出事件
+                    let mMouseout = e.addListener('mouseout',(e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
+                    t.GM.setGraphicParam(drawParam.data.id,backobj)
+                    .setGraphicParam(`${item.id}_omap_event`,{
+                        click: mClick,
+                        mouseover: mMouseover,
+                        mouseout: mMouseout
+                    });
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -2074,7 +2152,29 @@ class Map extends React.Component {
                         },
                         area: area
                     };
-                    t.GM.setGraphicParam(drawParam.data.id,backobj);
+                    //点击事件
+                    let mClick = e.addListener('click',(e)=>{
+                        //避免鼠标在图元上 测距工具不起作用
+                        if(t.rangingTool.isRanging){
+                            t.rangingToolFun(e)
+                        }else{
+                            t.clickGraphic(drawParam.data.id,e);
+                        }
+                    });
+                    //鼠标移入事件
+                    let mMouseover = e.addListener('mouseover',(e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    //鼠标移出事件
+                    let mMouseout = e.addListener('mouseout',(e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
+                    t.GM.setGraphicParam(drawParam.data.id,backobj)
+                    .setGraphicParam(`${item.id}_omap_event`,{
+                        click: mClick,
+                        mouseover: mMouseover,
+                        mouseout: mMouseout
+                    });
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }
@@ -2136,7 +2236,29 @@ class Map extends React.Component {
                         lnglatAry: lnglatAry,
                         area: area
                     };
-                    t.GM.setGraphicParam(drawParam.data.id,backobj);
+                    //点击事件
+                    let mClick = e.addListener('click',(e)=>{
+                        //避免鼠标在图元上 测距工具不起作用
+                        if(t.rangingTool.isRanging){
+                            t.rangingToolFun(e)
+                        }else{
+                            t.clickGraphic(drawParam.data.id,e);
+                        }
+                    });
+                    //鼠标移入事件
+                    let mMouseover = e.addListener('mouseover',(e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    //鼠标移出事件
+                    let mMouseout = e.addListener('mouseout',(e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
+                    t.GM.setGraphicParam(drawParam.data.id,backobj)
+                    .setGraphicParam(`${item.id}_omap_event`,{
+                        click: mClick,
+                        mouseover: mMouseover,
+                        mouseout: mMouseout
+                    });
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
                     }

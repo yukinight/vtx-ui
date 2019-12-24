@@ -292,12 +292,6 @@ class BaiduMap extends React.Component{
             t._drawmanager = new BMapLib.DrawingManager(map);
             //监听绘制结束事件
             t._drawmanager.addEventListener('overlaycomplete', (e)=>{
-                // console.log(e);
-                // console.log(e.drawingMode);
-                // console.log(e.overlay);
-                // console.log(e.calculate);
-                // console.log(e.label);
-                // console.log(e.extData);
                 if(e.label){
                     t.state.gis.removeOverlay(e.label);
                 }
@@ -307,12 +301,24 @@ class BaiduMap extends React.Component{
                 let backobj = {
                     id: drawExtData.id,
                     attributes: drawExtData.attributes,
-                    geometryType: drawExtData.type,
+                    geometryType: drawExtData.type == 'rectangle'?'polygon':drawExtData.type,
                     mapLayer: e.overlay,
                     geometry: {
-                        type: drawExtData.type
+                        type:  drawExtData.type == 'rectangle'?'polygon':drawExtData.type
                     }
                 };
+                //点击事件
+                e.overlay.addEventListener('click',(e)=>{
+                    t.clickGraphic(drawExtData.id,e);
+                });
+                //鼠标移入事件
+                e.overlay.addEventListener('mouseover',(e)=>{
+                    t.mouseOverGraphic(drawExtData.id,e);
+                });
+                //鼠标移出事件
+                e.overlay.addEventListener('mouseout',(e)=>{
+                    t.mouseOutGraphic(drawExtData.id,e);
+                });
                 //缓存绘制的图元信息
                 t.GM.setGraphic(drawExtData.id,e.overlay);
 

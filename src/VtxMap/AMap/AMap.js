@@ -341,15 +341,26 @@ class VortexAMap extends React.Component{
             let backobj = {
                 id: drawExtData.id,
                 attributes: drawExtData.attributes,
-                geometryType: drawExtData.type,
+                geometryType: drawExtData.type == 'rectangle'?'polygon':drawExtData.type,
                 mapLayer: obj,
                 geometry: {
-                    type: drawExtData.type
+                    type: drawExtData.type == 'rectangle'?'polygon':drawExtData.type
                 }
             };
             //缓存绘制的图元信息
             t.GM.setGraphic(drawExtData.id,obj);
             t.GM.setGraphicParam(drawExtData.id,backobj);
+            //添加点击事件
+            obj.on( 'click', (e)=>{
+                t.clickGraphic(drawExtData.id,e);
+            });
+            obj.on( 'mouseover', (e)=>{
+                t.mouseOverGraphic(drawExtData.id,e);
+            });
+            obj.on( 'mouseout', (e)=>{
+                t.mouseOutGraphic(drawExtData.id,e);
+            });
+
             //区别点和圆的经纬度数据处理
             let {lnglatAry,_extent,path} = t.dealData(obj);
             //处理返回数据

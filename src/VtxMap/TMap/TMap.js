@@ -1497,6 +1497,17 @@ class TMap extends React.Component{
                         geometryType: 'point',
                         mapLayer: currentMarker
                     };
+                    //添加点击事件
+                    currentMarker.on( 'click', (e)=>{
+                        t.isNotClickMap = true;
+                        t.clickGraphic(drawParam.data.id,e);
+                    });
+                    currentMarker.on( 'mouseover', (e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    currentMarker.on( 'mouseout', (e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
                     t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1536,6 +1547,17 @@ class TMap extends React.Component{
                         },
                         lnglatAry: lnglatAry
                     };
+                    //添加点击事件
+                    currentPolyline.on( 'click', (e)=>{
+                        t.isNotClickMap = true;
+                        t.clickGraphic(drawParam.data.id,e);
+                    });
+                    currentPolyline.on( 'mouseover', (e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    currentPolyline.on( 'mouseout', (e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
                     t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1576,6 +1598,17 @@ class TMap extends React.Component{
                         lnglatAry: lnglatAry,
                         area: currentArea
                     };
+                    //添加点击事件
+                    currentPolygon.on( 'click', (e)=>{
+                        t.isNotClickMap = true;
+                        t.clickGraphic(drawParam.data.id,e);
+                    });
+                    currentPolygon.on( 'mouseover', (e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    currentPolygon.on( 'mouseout', (e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
                     t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1613,6 +1646,17 @@ class TMap extends React.Component{
                         },
                         area: area
                     };
+                    //添加点击事件
+                    currentCircle.on( 'click', (e)=>{
+                        t.isNotClickMap = true;
+                        t.clickGraphic(drawParam.data.id,e);
+                    });
+                    currentCircle.on( 'mouseover', (e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    currentCircle.on( 'mouseout', (e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
                     t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
@@ -1643,7 +1687,7 @@ class TMap extends React.Component{
                                 currentBounds.getNorthEast().lat)
                         );
                     let backobj = {
-                        geometryType: 'rectangle',
+                        geometryType: 'polygon',
                         id: drawParam.data.id,
                         attributes: {
                             id: drawParam.data.id,
@@ -1657,7 +1701,7 @@ class TMap extends React.Component{
                         },
                         mapLayer: currentRectangle,
                         geometry: {
-                            type: 'rectangle',
+                            type: 'polygon',
                             lnglatAry: lnglatAry,
                             rings: getMaxMin(currentLnglats).path,
                             _extent: getMaxMin(currentLnglats)._extent,
@@ -1666,6 +1710,17 @@ class TMap extends React.Component{
                         lnglatAry: lnglatAry,
                         area: area
                     };
+                    //添加点击事件
+                    currentRectangle.on( 'click', (e)=>{
+                        t.isNotClickMap = true;
+                        t.clickGraphic(drawParam.data.id,e);
+                    });
+                    currentRectangle.on( 'mouseover', (e)=>{
+                        t.mouseOverGraphic(drawParam.data.id,e);
+                    });
+                    currentRectangle.on( 'mouseout', (e)=>{
+                        t.mouseOutGraphic(drawParam.data.id,e);
+                    });
                     t.GM.setGraphicParam(drawParam.data.id,backobj);
                     if('drawEnd' in t.props){
                         t.props.drawEnd(backobj);
