@@ -16,9 +16,52 @@ import 'antd/lib/icon/style/css';
 class VtxModal extends React.Component{
     constructor(props){
         super(props);
+        this.classId = new Date().getTime() + Math.random();
+        this.isInit = false;
         this.state = {
             maximizable: false,
-            maximizeClass: ''
+            maximizeClass: '',
+
+            init_x: 0,
+            init_y: 0,
+            x_move: 0,
+            y_move: 0,
+            documentMouseMove: null,
+            documentMouseUp:null,
+        }
+        this.startDrag = this.startDrag.bind(this);
+    }
+    componentDidUpdate(){
+        if(!this.props.isNotMoving){
+            if(!this.isInit){
+                this.isInit = true;
+                try {
+                    let modalHead = document.getElementsByClassName(this.classId)[0].getElementsByClassName('ant-modal-header')[0];
+                    modalHead.style.cursor = 'move';
+                    modalHead.onmousedown = this.startDrag;
+                } catch (error) {
+                    console.error('VtxModal拖动功能异常,未获取到头部dom对象!')
+                }
+            }
+        }
+    }
+    startDrag(e){  
+        e.preventDefault();
+        this.setState({
+            documentMouseUp: document.onmouseup,
+            documentMouseMove: document.onmousemove,
+            init_x: e.clientX - this.state.x_move,
+            init_y: e.clientY - this.state.y_move,
+        });
+        document.onmousemove = (e)=>{
+            this.setState({
+                x_move: e.clientX - this.state.init_x ,
+                y_move: e.clientY - this.state.init_y ,
+            })   
+        }
+        document.onmouseup = (e)=>{
+            document.onmousemove = this.state.documentMouseMove;
+            document.onmouseup = this.state.documentMouseUp;
         }
     }
     componentWillUnmount(){
@@ -28,13 +71,12 @@ class VtxModal extends React.Component{
     }
     render(){
         const t = this;
-        let {closable=true,maximize=false,wrapClassName='',title='',bodyStyle={},...ModalProps} = this.props;
+        let {closable=true,maximize=true,wrapClassName='',title=''} = this.props;
         const {maximizable,maximizeClass} = this.state;
-        wrapClassName = `${styles.normal} ${wrapClassName} ${maximizeClass}`;
-        bodyStyle = {
-            maxHeight:`${window.innerHeight*0.7}px`,
-            ...bodyStyle,
-        };
+        wrapClassName = `${styles.normal} ${wrapClassName} ${maximizeClass} ${this.classId}`;
+        const transformStyle = {
+            transform: `translate(${this.state.x_move}px,${this.state.y_move}px)`,        
+        }
         title = (function renderTitle() {
             return (
                 <div className={styles.title} style={{paddingRight: (closable?'32px':'0px')}}>
@@ -79,7 +121,7 @@ class VtxModal extends React.Component{
                     {
                         closable?
                         <div className={styles.close}>
-                            <p onClick={ModalProps.onCancel}>
+                            <p onClick={t.props.onCancel}>
                                 <Icon type="close" />
                             </p>
                         </div>:''
@@ -87,18 +129,27 @@ class VtxModal extends React.Component{
                 </div>
             );
         })();
+        const props = {
+            closable,
+            maskClosable:false,
+            width: 700,
+            ...this.props,
+            closable: false,
+            title: title,
+            wrapClassName: wrapClassName,
+            bodyStyle: {
+                maxHeight:`${window.innerHeight*0.7}px`,
+                ...this.props.bodyStyle,
+            },
+            style: {
+                ...this.props.style,
+                ...transformStyle
+            }
+        }
         return (
-            <Modal 
-                width={700}
-                maskClosable={false}
-                closable={false}
-                title={title}
-                wrapClassName={wrapClassName}
-                bodyStyle={bodyStyle}
-                {...ModalProps}
-            >
+            <Modal {...props}>
                 {
-                    ModalProps.children
+                    this.props.children
                 }
             </Modal>
         )
