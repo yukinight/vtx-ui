@@ -8,7 +8,7 @@ import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import 'viewerjs/dist/viewer.css';
 import Viewer from 'viewerjs';
-
+const Dragger = Upload.Dragger;
 class VortexUpload extends React.Component{
     constructor(props){
         super(props); 
@@ -160,24 +160,39 @@ class VortexUpload extends React.Component{
     render(){
         return (
             <div>
-                <Upload {...this.getConfig()}>
-                    {
-                        this.props.viewMode ? null : 
-                        (this.props.customizedButton ||
-                            (this.props.listType =='picture-card' ? 
-                                <div>
-                                    <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
-                                    <div className="ant-upload-text">上传</div>
-                                </div>
-                                :
-                                <Button>
-                                    <Icon type="upload" />上传
-                                </Button>
+                {
+                    this.props.isDragger?
+                    <Dragger  {...this.getConfig()}>
+                        {
+                            (this.props.draggerConfig || {}).img?
+                            <img src={this.props.draggerConfig.img} alt="" style={{maxWidth: 100,maxHeight: 100,marginTop: '3%',marginBottom: '5%'}}/>
+                            :
+                            <p className="ant-upload-drag-icon">
+                                <Icon type="inbox" />
+                            </p>
+                        }
+                        <p className="ant-upload-text">{(this.props.draggerConfig || {}).mainText || '点击或拖拽上传'}</p>
+                        <p className="ant-upload-hint">{(this.props.draggerConfig || {}).subText || '支持上传word,excel,png...'}</p>
+                    </Dragger>
+                    :
+                    <Upload {...this.getConfig()}>
+                        {
+                            this.props.viewMode ? null : 
+                            (this.props.customizedButton ||
+                                (this.props.listType =='picture-card' ? 
+                                    <div>
+                                        <Icon type="plus" style={{fontSize: '28px',color: '#999'}}/>
+                                        <div className="ant-upload-text">上传</div>
+                                    </div>
+                                    :
+                                    <Button>
+                                        <Icon type="upload" />上传
+                                    </Button>
+                                )
                             )
-                        )
-                    }
-                </Upload>
-
+                        }
+                    </Upload>
+                }
                 <div style={{display:'none'}}>
                     <ul ref={(ins)=>{if(ins)this.imageCt = ins}}>
                         {
