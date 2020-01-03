@@ -292,6 +292,7 @@ class VtxSearchMap extends React.Component {
     }
     //列表选中地址
     chooseAddress(id){
+        const t = this;
         let {listPoint,listMess} = this.state;
         let mapCenter = [];
         listPoint = listPoint.map((item,index)=>{
@@ -327,9 +328,12 @@ class VtxSearchMap extends React.Component {
             mapCenter,
             setCenter: true
         },()=>{
-            this.setState({
+            t.setState({
                 setCenter: false
             })
+            if(t.state.graphicType=='point'){
+                t.correction.bind(this)
+            }
         })
     }
     clickGraphic(obj){
