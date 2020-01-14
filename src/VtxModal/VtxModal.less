@@ -1,14 +1,9 @@
 .vtx-ui-modal-normal{
     .ant-modal{
-        /* top: 50%;
-        transform: translateY(-50%);
-        -ms-transform: translateY(-50%); */
-        /*height: 80%;*/
         .ant-modal-content{
             height: 100%;
             .ant-modal-body{
-                /*height: e('calc(100% - 96px)');*/
-                max-height: 70vh;
+                max-height: e('calc(100% - 98px)');
                 overflow: auto;
                 background-color: #fbfbfb;
             }
@@ -62,10 +57,9 @@
         width: 100% !important;
         height: 100% !important;
         padding-bottom: 0 !important;
-        min-width: 100% !important;
+        overflow: hidden;
     }
     .ant-modal-body{
-        max-height: e('calc(100% - 48px)') !important;
-        height: e('calc(100% - 48px)') !important;
+        height: e('calc(100% - 98px)') !important;
     }
 }
