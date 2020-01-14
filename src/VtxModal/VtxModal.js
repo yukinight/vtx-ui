@@ -18,6 +18,7 @@ class VtxModal extends React.Component{
         super(props);
         this.classId = new Date().getTime() + Math.random();
         this.isInit = false;
+        this.isCreate = props.visible;
         this.state = {
             maximizable: false,
             maximizeClass: '',
@@ -31,9 +32,14 @@ class VtxModal extends React.Component{
         }
         this.startDrag = this.startDrag.bind(this);
     }
+    componentWillReceiveProps(nextProps){
+        if(nextProps.visible && !this.isCreate){
+            this.isCreate = true;
+        }
+    }
     componentDidUpdate(){
         if(!this.props.isNotMoving){
-            if(!this.isInit){
+            if(this.isCreate && !this.isInit){
                 this.isInit = true;
                 try {
                     let modalHead = document.getElementsByClassName(this.classId)[0].getElementsByClassName('ant-modal-header')[0];

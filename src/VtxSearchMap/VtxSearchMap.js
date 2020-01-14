@@ -472,7 +472,11 @@ class VtxSearchMap extends React.Component {
               bodyStyle={{height:`${window.innerHeight*0.7}px`}}
               maskClosable={false}
               onCancel={this.closeModal.bind(this)} 
-              footer={null}
+              footer={<div className={styles.bottom}>
+                    {/*经纬度返回按钮*/}
+                    <Button type="primary" onClick={()=>{this.callback()}} icon={'check'}>确定</Button>
+                    <Button onClick={this.closeModal.bind(this)} icon={'close'}>关闭</Button>
+                </div>}
             >
                 <div className={styles.searchMap}>
                     {/*地图操作分类*/}
@@ -580,11 +584,6 @@ class VtxSearchMap extends React.Component {
                                 {...drawProps}
                             />
                         </div>
-                    </div>
-                    <div className={styles.bottom}>
-                        {/*经纬度返回按钮*/}
-                        <Button type="primary" onClick={()=>{this.callback()}} icon={'check'}>确定</Button>
-                        <Button onClick={this.closeModal.bind(this)} icon={'close'}>关闭</Button>
                     </div>
                 </div>
             </VtxModal>
