@@ -9,6 +9,8 @@
 | **参数**         | **说明**   | **类型** | **默认值**  |
 |-------|-----|--------|-------|
 | action  | 后台上传文件的接口地址 (建议配置代理，否则IE9跨域上传会出现问题: /fileServer/uploadFile)  | string    |   |
+| isDragger  | 是否使用拖拽上传方式(兼容IE10+)  | bealoon    | false  |
+| draggerConfig  | 拖拽上传文本和图片控制(见如下draggerConfig示例)  | object    | -  |
 | downLoadURL      | 后台文件下载的接口地址 后面带参数?id=用来接收文件id （建议配置代理:/fileServer/downloadFile?id=） | string ||
 | thumbnailURL      | 缩略图服务的接口地址 后面带参数?id=用来接收文件id （建议配置代理）<br> 需要在图片列表显示缩略图的必须配此参数 | string ||
 | mode             | 分为单文件模式(single):每次上传文件覆盖之前的文件, 多文件模式(multiple)：每次上传文件新增到文件列表里  | string   | ‘multiple’ |
@@ -29,6 +31,15 @@
 | disabled         | 是否禁用| boolean                                                            | false|
 | withCredentials  | 上传请求时是否携带 cookie| boolean| false|
 
+
+> draggerConfig示例
+```
+draggerConfig: {
+    img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+    mainText: '支持点击拖拽上传',
+    subText: '文件格式支持word,excel,png...'
+}
+```
 
 ---
 
