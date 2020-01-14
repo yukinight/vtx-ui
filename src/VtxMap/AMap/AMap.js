@@ -314,7 +314,7 @@ class VortexAMap extends React.Component{
         let opts = {
             subdistrict: 1,   //返回下一级行政区
             extensions: 'all',  //返回行政区边界坐标组等具体信息
-            level: 'country'  //查询行政级别为 市
+            level: 'district'  //查询行政级别为 市
         };
         //实例化DistrictSearch
         t.districeSearch = new AMap.DistrictSearch(opts);
@@ -756,7 +756,6 @@ class VortexAMap extends React.Component{
     //画出对应边界线 name区域名
     addBaiduBoundary(bdNames){
         let t = this;
-        this.districeSearch;
         bdNames.forEach(name=>{
             t.districeSearch.search(name,(status,result)=>{
                 if(status == 'complete'){

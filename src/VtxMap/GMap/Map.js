@@ -561,7 +561,7 @@ class ArcgisMap extends React.Component{
                 let gid = e.graphic.attributes.id;
                 //聚合点位不执行 图元事件
                 if(gid == 'vtx-clusterPoint'){
-                    t.setVisiblePoints(e.graphic.attributes.ids);
+                    t.setVisiblePoints({fitView: e.graphic.attributes.ids});
                     return false;
                 }
                 t.clickGraphic(gid,e);
@@ -1905,10 +1905,34 @@ class ArcgisMap extends React.Component{
         1.string   格式如:'1,a,2,3,4'
         2.数组 ['1','2']
     */
-    setVisiblePoints (arg,type) {
+    setVisiblePoints (mapVisiblePoints) {
         let t = this;
+        let arg = null;
+        let type = mapVisiblePoints.type;
         let ary = [];//图元id集合
         let obj = [];//经纬度集合
+        switch(mapVisiblePoints.fitView){
+            case 'point':
+                arg = this.state.pointIds;
+            break;
+            case 'line':
+                arg = this.state.lineIds;
+            break;
+            case 'polygon':
+                arg = this.state.polygonIds;
+            break;
+            case 'circle':
+                arg = this.state.circleIds;
+            break;
+            case 'all':
+                arg = this.state.pointIds.concat(this.state.lineIds).concat(this.state.polygonIds).concat(this.state.circleIds);
+            break;
+            default:
+                arg = mapVisiblePoints.fitView;
+            break;
+        }
+
+
         if(typeof(arg) === 'string'){
             ary = arg.split(',');
         }else if(arg instanceof Array){
@@ -3654,26 +3678,7 @@ class ArcgisMap extends React.Component{
             }
             //设置最优视野
             if((typeof(setVisiblePoints) == 'boolean' && setVisiblePoints) || (setVisiblePoints && setVisiblePoints !== t.props.setVisiblePoints)){
-                switch(mapVisiblePoints.fitView){
-                    case 'point':
-                        t.setVisiblePoints(pointIds,mapVisiblePoints.type);
-                    break;
-                    case 'line':
-                        t.setVisiblePoints(lineIds,mapVisiblePoints.type);
-                    break;
-                    case 'polygon':
-                        t.setVisiblePoints(polygonIds,mapVisiblePoints.type);
-                    break;
-                    case 'circle':
-                        t.setVisiblePoints(circleIds,mapVisiblePoints.type);
-                    break;
-                    case 'all':
-                        t.setVisiblePoints(pointIds.concat(lineIds).concat(polygonIds).concat(circleIds),mapVisiblePoints.type);
-                    break;
-                    default:
-                        t.setVisiblePoints(mapVisiblePoints.fitView,mapVisiblePoints.type);
-                    break;
-                }
+                t.setVisiblePoints(mapVisiblePoints);
             }
             //测距工具调用
             if((typeof(isRangingTool) == 'boolean' && isRangingTool) || (isRangingTool && isRangingTool !== t.props.isRangingTool)){
