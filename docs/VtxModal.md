@@ -21,6 +21,7 @@
 | afterClose     | Modal 完全关闭后的回调                                   | function                | 无                   |
 | getContainer   | 指定 Modal 挂载的 HTML 节点                              | (instance): HTMLElement | () =\> document.body |
 | isNotMoving   | 是否禁止拖拽功能                              | boolean | false |
+| maximize   | 是否开启全屏放大功能                              | boolean | true |
 
 ---
 > 以下为ant原生方法及配置参数
