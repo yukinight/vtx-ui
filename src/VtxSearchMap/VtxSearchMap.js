@@ -360,7 +360,7 @@ class VtxSearchMap extends React.Component {
     clearDrawnGraph(){
         this.isDrawStatus = true;
         this.setState({
-            isDraw:true,
+            isDraw: this.state.graphicType !== 'point',
             graphicValue:null,
             isEndEdit: this.state.graphicType !== 'point'
         },()=>{

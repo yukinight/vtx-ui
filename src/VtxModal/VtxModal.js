@@ -135,6 +135,15 @@ class VtxModal extends React.Component{
                 </div>
             );
         })();
+        let bodyStyle = {
+            ...this.props.bodyStyle,
+        }
+        if(!maximizable){
+            bodyStyle = {
+                maxHeight:`${window.innerHeight*0.7}px`,
+                ...bodyStyle
+            }
+        }
         const props = {
             closable,
             maskClosable:false,
@@ -143,10 +152,7 @@ class VtxModal extends React.Component{
             closable: false,
             title: title,
             wrapClassName: wrapClassName,
-            bodyStyle: {
-                maxHeight:`${window.innerHeight*0.7}px`,
-                ...this.props.bodyStyle,
-            },
+            bodyStyle: bodyStyle,
             style: {
                 ...this.props.style,
                 ...transformStyle
