@@ -111,11 +111,31 @@ class VtxGrid extends React.Component{
             );
         }
         let analyzeChildern = (data)=>{
-            if(!data)return '';
-            if(!data.length){
-                return render(data,0);
+            let cData = data;
+            if(!cData)return '';
+            if(typeof(data) == 'function'){
+                cData = data();
+            }
+            if(!cData.length){
+                return render(cData,0);
             }else{
-                return data.map((item,index)=>{
+                let chData = [];
+                cData.forEach((item,index)=>{
+                    if(typeof(item) == 'function'){
+                        let ite = item();
+                        if(Array.isArray(ite)){
+                            chData.push(...ite);
+                        }
+                        chData.push(ite);
+                        return;
+                    }
+                    if(Array.isArray(item)){
+                        chData.push(...item);
+                        return;
+                    }
+                    chData.push(item);
+                })
+                return chData.map((item,index)=>{
                     return render(item,index);
                 })
             }
