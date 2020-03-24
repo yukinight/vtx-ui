@@ -3522,7 +3522,7 @@ class ArcgisMap extends React.Component{
             // 等待地图加载
             if(!t.state.mapCreated)return;
             /*添加海量点*/
-            if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
+            if(mapPointCollection instanceof Array && t.props.mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
                 t.clearPointCollection(deletedDataIDs);
                 t.addPointCollection(addedData);
@@ -3536,7 +3536,7 @@ class ArcgisMap extends React.Component{
                 pointData[1]的数据在idsForGraphicId中不存在的,执行新增
                 pointData[0]数据中多余的id,执行删除
             */
-            if(mapPoints instanceof Array && !t.deepEqual(mapPoints,t.props.mapPoints)){
+            if(mapPoints instanceof Array && t.props.mapPoints instanceof Array && !t.deepEqual(mapPoints,t.props.mapPoints)){
                 let oldMapPoints = t.props.mapPoints;
                 let newMapPoints = mapPoints;
                 //过滤编辑的图元
@@ -3560,7 +3560,7 @@ class ArcgisMap extends React.Component{
                 面数据处理
                 先全删除,再新增
             */
-            if(mapPolygons instanceof Array && !t.deepEqual(mapPolygons,t.props.mapPolygons)){
+            if(mapPolygons instanceof Array && t.props.mapPolygons instanceof Array && !t.deepEqual(mapPolygons,t.props.mapPolygons)){
                 let oldMapPolygons = t.props.mapPolygons;
                 let newMapPolygons = mapPolygons;
                 if(!!t.editId){
@@ -3583,7 +3583,7 @@ class ArcgisMap extends React.Component{
                 圆数据处理
                 先全删除,再新增
             */
-            if(mapCircles instanceof Array && !t.deepEqual(mapCircles,t.props.mapCircles)){
+            if(mapCircles instanceof Array && t.props.mapCircles instanceof Array && !t.deepEqual(mapCircles,t.props.mapCircles)){
                 let oldMapCircles = t.props.mapCircles;
                 let newMapCircles = mapCircles;
                 if(!!t.editId){
@@ -3606,7 +3606,7 @@ class ArcgisMap extends React.Component{
                 线数据处理
                 先全删除,再新增
             */
-            if(mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
+            if(mapLines instanceof Array && t.props.mapLines instanceof Array && !t.deepEqual(mapLines,t.props.mapLines)){
                 let oldMapLines = t.props.mapLines;
                 let newMapLines = mapLines;
                 if(!!t.editId){
@@ -3626,7 +3626,7 @@ class ArcgisMap extends React.Component{
                 t.updateLine([...upds,...otherupds]);   
             }
             //画其他特例线专用
-            if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
+            if(customizedBoundary instanceof Array && t.props.customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,t.props.customizedBoundary)){
                 let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.customizedBoundary,customizedBoundary,'id');
                 //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
                 for(let id of deletedDataIDs){

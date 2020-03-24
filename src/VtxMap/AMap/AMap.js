@@ -2255,7 +2255,7 @@ class VortexAMap extends React.Component{
         }
         // 等待地图加载
         if(!t.state.mapCreated)return;
-        if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
+        if(mapPointCollection instanceof Array && props.mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,t.props.mapPointCollection)){
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(t.props.mapPointCollection,mapPointCollection,'id');
             t.clearPointCollection(deletedDataIDs);
             t.addPointCollection(addedData);
@@ -2269,7 +2269,7 @@ class VortexAMap extends React.Component{
             pointData[1]的数据在idsForGraphicId中不存在的,执行新增
             pointData[0]数据中多余的id,执行删除
         */
-        if(mapPoints instanceof Array && !t.deepEqual(mapPoints,props.mapPoints)){
+        if(mapPoints instanceof Array && props.mapPoints instanceof Array && !t.deepEqual(mapPoints,props.mapPoints)){
             let oldMapPoints = props.mapPoints;
             let newMapPoints = mapPoints;
             //过滤编辑的图元
@@ -2293,7 +2293,7 @@ class VortexAMap extends React.Component{
             面数据处理
             先全删除,再新增
         */
-        if(mapPolygons instanceof Array && !t.deepEqual(mapPolygons,props.mapPolygons)){
+        if(mapPolygons instanceof Array && props.mapPolygons instanceof Array && !t.deepEqual(mapPolygons,props.mapPolygons)){
             let oldMapPolygons = props.mapPolygons;
             let newMapPolygons = mapPolygons;
             if(!!t.state.editId){
@@ -2316,7 +2316,7 @@ class VortexAMap extends React.Component{
             面数据处理
             先全删除,再新增
         */
-        if(mapCircles instanceof Array && !t.deepEqual(mapCircles,props.mapCircles)){
+        if(mapCircles instanceof Array && props.mapCircles instanceof Array && !t.deepEqual(mapCircles,props.mapCircles)){
             let oldMapCircles = props.mapCircles;
             let newMapCircles = mapCircles;
             if(!!t.state.editId){
@@ -2339,7 +2339,7 @@ class VortexAMap extends React.Component{
             线数据处理
             先全删除,再新增
         */
-        if(mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
+        if(mapLines instanceof Array && props.mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
             let oldMapLines = props.mapLines;
             let newMapLines = mapLines;
             if(!!t.state.editId){
@@ -2359,7 +2359,7 @@ class VortexAMap extends React.Component{
             t.updateLine([...upds,...otherupds]);          
         }
         //画其他特例线专用
-        if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
+        if(customizedBoundary instanceof Array && props.customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(props.customizedBoundary,customizedBoundary,'id');
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
@@ -2369,7 +2369,7 @@ class VortexAMap extends React.Component{
             t.addLine(addedData);            
         }
         //绘制边界线
-        if(boundaryName instanceof Array && !t.deepEqual(boundaryName,props.boundaryName)){
+        if(boundaryName instanceof Array && props.boundaryName instanceof Array && !t.deepEqual(boundaryName,props.boundaryName)){
             let newBDName = Set(boundaryName);
             let oldBDName = Set(props.boundaryName);
             let removedBoundaryName = oldBDName.subtract(newBDName).toJS();
@@ -2382,7 +2382,7 @@ class VortexAMap extends React.Component{
             t.heatMapOverlay(heatMapData);
         }
         //添加图片图层
-        if(imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
+        if(imageOverlays instanceof Array && props.imageOverlays instanceof Array && !t.deepEqual(imageOverlays,props.imageOverlays)){
             t.imageUrlOverlay(imageOverlays);
         }
         //图元编辑调用
