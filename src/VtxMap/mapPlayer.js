@@ -216,7 +216,7 @@ export default class MapPlayer{
                     typeof this.onChange=='function' && this.onChange(this.path[this._currentIndex],this._currentIndex);
                     this._redraw();
                     this.play();
-                },runTime*1000);
+                },1000/this.playFrame);
             }
             // 需要补点
             else{
