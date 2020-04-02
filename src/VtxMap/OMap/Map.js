@@ -3291,7 +3291,7 @@ class Map extends React.Component {
         if(!t.state.mapCreated)return;
         
         /*添加海量点*/
-        if(mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,props.mapPointCollection)){
+        if(mapPointCollection instanceof Array && props.mapPointCollection instanceof Array && !t.deepEqual(mapPointCollection,props.mapPointCollection)){
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(props.mapPointCollection,mapPointCollection,'id');
             t.clearPointCollection(deletedDataIDs);
             t.addPointCollection(addedData);
@@ -3305,7 +3305,7 @@ class Map extends React.Component {
             pointData[1]的数据在idsForGraphicId中不存在的,执行新增
             pointData[0]数据中多余的id,执行删除
         */
-        if(mapPoints instanceof Array && !t.deepEqual(mapPoints,props.mapPoints)){
+        if(mapPoints instanceof Array && props.mapPoints instanceof Array && !t.deepEqual(mapPoints,props.mapPoints)){
             let oldMapPoints = props.mapPoints;
             let newMapPoints = mapPoints;
             //过滤编辑的图元
@@ -3329,7 +3329,7 @@ class Map extends React.Component {
             面数据处理
             先全删除,再新增
         */
-        if(mapPolygons instanceof Array && !t.deepEqual(mapPolygons,props.mapPolygons)){
+        if(mapPolygons instanceof Array && props.mapPolygons instanceof Array && !t.deepEqual(mapPolygons,props.mapPolygons)){
             let oldMapPolygons = props.mapPolygons;
             let newMapPolygons = mapPolygons;
             if(!!t.state.editId){
@@ -3352,7 +3352,7 @@ class Map extends React.Component {
             圆数据处理
             先全删除,再新增
         */
-        if(mapCircles instanceof Array && !t.deepEqual(mapCircles,props.mapCircles)){
+        if(mapCircles instanceof Array && props.mapCircles instanceof Array && !t.deepEqual(mapCircles,props.mapCircles)){
             let oldMapCircles = props.mapCircles;
             let newMapCircles = mapCircles;
             if(!!t.state.editId){
@@ -3375,7 +3375,7 @@ class Map extends React.Component {
             线数据处理
             先全删除,再新增
         */
-        if(mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
+        if(mapLines instanceof Array && props.mapLines instanceof Array && !t.deepEqual(mapLines,props.mapLines)){
             let oldMapLines = props.mapLines;
             let newMapLines = mapLines;
             if(!!t.state.editId){
@@ -3395,7 +3395,7 @@ class Map extends React.Component {
             t.updateLine([...upds,...otherupds]);  
         }
         //画其他特例线专用
-        if(customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
+        if(customizedBoundary instanceof Array && props.customizedBoundary instanceof Array && !t.deepEqual(customizedBoundary,props.customizedBoundary)){
             let {deletedDataIDs,addedData,updatedData} = t.dataMatch(props.customizedBoundary,customizedBoundary,'id');
             //删在增之前,(因为增加后会刷新pointIds的值,造成多删的问题)
             for(let id of deletedDataIDs){
