@@ -332,7 +332,7 @@ class VtxSearchMap extends React.Component {
                 setCenter: false
             })
             if(t.state.graphicType=='point'){
-                t.correction.bind(this)
+                t.correction();
             }
         })
     }
