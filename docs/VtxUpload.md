@@ -13,9 +13,11 @@
 | draggerConfig  | 拖拽上传文本和图片控制(见如下draggerConfig示例)  | object    | -  |
 | downLoadURL      | 后台文件下载的接口地址 后面带参数?id=用来接收文件id （建议配置代理:/fileServer/downloadFile?id=） | string ||
 | thumbnailURL      | 缩略图服务的接口地址 后面带参数?id=用来接收文件id （建议配置代理）<br> 需要在图片列表显示缩略图的必须配此参数 | string ||
+| onlinePreviewURL  | 上传文件在线预览地址(建议配置代理) | string |'/vortexOnlinePreview'|
 | mode             | 分为单文件模式(single):每次上传文件覆盖之前的文件, 多文件模式(multiple)：每次上传文件新增到文件列表里  | string   | ‘multiple’ |
 | data             | 上传所需参数或返回上传参数的方法| object\|function(file)                                             | 无                                                             |
 | showUploadList   | 是否展示 uploadList, 可设为一个对象，用于单独设定 showPreviewIcon 和 showRemoveIcon 设为false可配合fileList自定义文件列表 | Boolean or { showPreviewIcon?: boolean, showRemoveIcon?: boolean } | true|
+| showOnLinePreviewList |在showUploadList参数为false时生效,自定义列表展示的模板(为在线预览设计) | bealoon|false|
 | customizedButton | 自定义按钮组件及其样式| React组件 or DOM字符串| 无 |
 | fileList         | 已经上传的文件列表（受控） 例：对象中必须带name, id两个属性，用来显示文件名，文件id， url为非必填属性，表示文件下载路径，如果没有此属性默认用downLoadURL+id拼接| object[]| []|
 || [{name: 'testxxx.png', id:'1d0283efd9eb47dfa977b3d57d7de0ff', url: http://192.168.1.207:18084/cloudFile/common/downloadFile?id=1d0283efd9eb47dfa977b3d57d7de0ff', }]|

@@ -7,7 +7,19 @@ import 'antd/lib/button/style/css';
 import Icon from 'antd/lib/icon';
 import 'antd/lib/icon/style/css';
 import 'viewerjs/dist/viewer.css';
+import message from 'antd/lib/message';
+import 'antd/lib/message/style/css';
 import Viewer from 'viewerjs';
+import './VortexUpload.css';
+
+const styles = {
+    onlinepreview: 'vtx_ui_upload_onlinepreview',
+    previewLine: 'vtx_ui_upload_previewLine',
+    iconHint: 'vtx_ui_upload_iconHint',
+    action_box: 'vtx_ui_upload_action_box',
+    action_btn: 'vtx_ui_upload_action_btn'
+}
+
 const Dragger = Upload.Dragger;
 class VortexUpload extends React.Component{
     constructor(props){
@@ -19,6 +31,8 @@ class VortexUpload extends React.Component{
         this.thumbnailURL = props.thumbnailURL||'';
         // 是否使用缩略图
         this.useThumbnail = props.thumbnailURL && (props.listType=='picture' || props.listType=='picture-card');
+        // 在线预览地址
+        this.onlinePreviewURL = props.onlinePreviewURL || '';
 
         // 可在外部配置的属性，具体文档参考AntUI
         this.configurableProperty = ['data','showUploadList','multiple','accept','listType',
@@ -45,6 +59,13 @@ class VortexUpload extends React.Component{
             action: t.uploadURL,
             fileList: t.state.fileList,
             onChange(info){
+                if(info.file.response && info.file.response.result === 1){
+                    message.error(info.file.response.errMsg || '上传失败!');
+                    let flt = [...t.state.fileList];
+                    flt.pop();
+                    t.setState({fileList: flt});
+                    return;
+                }
                 // 此处根据后台返回的数据结构取得文件ID             
                 let vtxId =  (info.file.response && Array.isArray(info.file.response.data) && info.file.response.data.length>0) ? info.file.response.data[0].id : undefined;
                 let newFileList = info.fileList;
@@ -193,6 +214,15 @@ class VortexUpload extends React.Component{
                         }
                     </Upload>
                 }
+                {
+                    !this.props.showUploadList && this.props.showOnLinePreviewList?
+                    <OnlinePreview 
+                        list={this.state.fileList} onlinePreviewURL={this.onlinePreviewURL}
+                        onRemove={this.props.onRemove}
+                        downLoadURL={this.downLoadURL}
+                    />
+                    :null
+                }
                 <div style={{display:'none'}}>
                     <ul ref={(ins)=>{if(ins)this.imageCt = ins}}>
                         {
@@ -208,3 +238,46 @@ class VortexUpload extends React.Component{
 }
 
 export default VortexUpload;
+
+
+class OnlinePreview extends React.Component{
+    constructor(props){
+        super(props);
+    }
+    render(){
+        return(
+            <div className={styles.onlinepreview}>
+                {
+                    (this.props.list || []).map((item,index)=>{
+                        let vtxId =  (item.response && Array.isArray(item.response.data) && item.response.data.length>0) ? item.response.data[0].id : undefined;
+                        let fileName =  (item.response && Array.isArray(item.response.data) && item.response.data.length>0) ? item.response.data[0].fileName : undefined;
+                        return(
+                            <div key={index} className={styles.previewLine}>
+                                <Icon type="paper-clip" className={styles.iconHint}/>
+                                <a href={`${this.props.downLoadURL}${vtxId}`} target="_blank" rel="noopener noreferrer">{item.name}</a>
+                                <div className={styles.action_box}>
+                                    <Icon type="eye-o" className={styles.action_btn} onClick={(e)=>{
+                                        e.stopPropagation();
+                                        if(vtxId && fileName){
+                                            if(this.props.onlinePreviewURL){
+                                                window.open(`${this.props.onlinePreviewURL}?id=${vtxId}&fileName=${fileName}`);
+                                            }else{
+                                                window.open(`/vortexOnlinePreview?id=${vtxId}&fileName=${fileName}`);
+                                            }
+                                        }
+                                    }}/>
+                                    <Icon type="close" className={styles.action_btn} onClick={(e)=>{
+                                        e.stopPropagation();
+                                        if(typeof(this.props.onRemove)=="function"){
+                                            this.props.onRemove(item);
+                                        }
+                                    }}/>
+                                </div>
+                            </div>
+                        )
+                    })
+                }
+            </div>
+        )
+    }
+}
