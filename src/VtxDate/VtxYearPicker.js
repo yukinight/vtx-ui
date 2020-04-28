@@ -86,7 +86,7 @@ class VtxYearPicker extends React.Component{
     renderDOM(time,e) {
         let t = this;
         if(!t.props.disabled){
-            e.nativeEvent.stopImmediatePropagation();
+            // e.nativeEvent.stopImmediatePropagation();
             //input失去焦点
             e.target.parentNode.childNodes[0].blur();
             let tm = time || t.state.nowTime;

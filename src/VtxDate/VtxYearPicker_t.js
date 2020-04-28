@@ -32,7 +32,6 @@ class VtxYearPicker_t extends React.Component{
         this.state = {
             time: props.time,
             selectedtime: props.time,
-            cli: document.onclick,
             cn: props.style,
             top: props.top,
             left: props.left,
@@ -42,38 +41,35 @@ class VtxYearPicker_t extends React.Component{
     }
     clickItem(item,index,e) {
         let t = this;
+        e.nativeEvent.stopImmediatePropagation();
         if(index == 0 || index == 11){
-            e.nativeEvent.stopImmediatePropagation();
             t.setState({
                 time: item
             });
         }else{
-            t.setState({
-                cn: styles.hidden
-            },()=>{
-                setTimeout(()=>{
-                    t.setState({
-                        time: '',
-                    })
-                },190)
-            });
+            t.hideEvent();
             t.chooseYear(item);
         }
     }
+    hideEvent = (event)=>{
+        if(event){
+            event.stopImmediatePropagation();
+        }
+        const t = this;
+        t.setState({
+            cn: styles.hidden
+        },()=>{
+            // setTimeout(()=>{
+                t.setState({
+                    time: '',
+                })
+            // },190)
+        })
+        document.removeEventListener('click',t.hideEvent)
+    }
     attachEvent() {
         let t = this;
-        document.onclick = (event)=>{
-            t.setState({
-                cn: styles.hidden
-            },()=>{
-                setTimeout(()=>{
-                    t.setState({
-                        time: '',
-                    })
-                },190)
-            })
-            document.onclick = t.state.cli;
-        }
+        document.addEventListener('click',t.hideEvent);
     }
     chooseYear(date) {
         let props = this.props;
@@ -183,11 +179,11 @@ class VtxYearPicker_t extends React.Component{
                 t.setState({
                     ...newParam
                 },()=>{
-                    setTimeout(()=>{
+                    // setTimeout(()=>{
                         t.setState({
                             time: '',
                         })
-                    },190)
+                    // },190)
                 })
             }else{
                 t.setState({
