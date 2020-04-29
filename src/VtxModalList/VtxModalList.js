@@ -308,6 +308,18 @@ class VtxModalList extends React.Component{
                         })
                     }
                 }}:{}
+            ),
+            // 自动录入 placeholder - input
+            ...(
+                ((elem.props.prefixCls && elem.props.prefixCls == "ant-input") || 
+                    (mld.layout || {}).comType == 'input')?
+                {placeholder: elem.props.placeholder || '请录入'+ mld.layout.name}:{}
+            ),
+            // 自动录入 placeholder - select
+            ...(
+                ((elem.props.prefixCls && elem.props.prefixCls == "ant-select") || 
+                    (mld.layout || {}).comType == 'select' || elem.type.name === 'SelectZTree')?
+                {placeholder: elem.props.placeholder || '请选择'+ mld.layout.name}:{}
             )
         });
         t.repeteList[index] = {
