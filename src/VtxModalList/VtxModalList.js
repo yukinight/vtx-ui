@@ -377,6 +377,7 @@ class VtxModalList extends React.Component{
                 }else{
                     if(!!reg.exp && !isRequired && value){
                         if(reg.exp instanceof RegExp){
+                            reg.exp.lastIndex = 0;
                             required = reg.exp.test(value);
                             errorMsg = '数据不符合规范';
                             if(typeof(reg.errorMsg) == 'string'){
@@ -392,6 +393,7 @@ class VtxModalList extends React.Component{
                             errorMsg = '数据不符合规范';
                             for(let i = 0 ; i < reg.exp.length; i++){
                                 if(reg.exp[i] instanceof RegExp){
+                                    reg.exp[i].lastIndex = 0;
                                     required = reg.exp[i].test(value);
                                 }else if(reg.exp[i] instanceof Function){
                                     required = reg.exp[i](value);
@@ -450,12 +452,14 @@ class VtxModalList extends React.Component{
                         }
                         if(!!reg.exp){
                             if(reg.exp instanceof RegExp){
+                                reg.exp.lastIndex = 0;
                                 required = reg.exp.test(r.value);
                             }else if(reg.exp instanceof Function){
                                 required = reg.exp(r.value);
                             }else if(reg.exp instanceof Array){
                                 for(let i = 0 ; i < reg.exp.length; i++){
                                     if(reg.exp[i] instanceof RegExp){
+                                        reg.exp[i].lastIndex = 0;
                                         required = reg.exp[i].test(r.value);
                                     }else if(reg.exp[i] instanceof Function){
                                         required = reg.exp[i](r.value);
