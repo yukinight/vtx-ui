@@ -143,7 +143,15 @@ class VortexDatagrid extends React.Component{
                 className:styles.indexColumn
             });
         }
-
+        // 第一行 空出位置
+        if(props.reserveFirstList){
+            columnConfig.unshift({
+                title: ' ',
+                dataIndex: 'reserveFirstList',
+                key: 'reserveFirstList',
+                width: 32,
+            });
+        }
         return columnConfig;
     }
     // 隐藏/显示列
