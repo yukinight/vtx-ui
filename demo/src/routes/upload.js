@@ -68,7 +68,6 @@ function IndexPage(props) {
                 name:file.name,
                 id:file.id
               }
-              // file
             ]
           }})
         },
@@ -243,6 +242,49 @@ function IndexPage(props) {
     }
 
     let colorList = ["pink", "red", "orange", "green", "cyan", "blue","purple"];
+
+
+    const VtxDraggerUploadProps = {
+      action: '/cloudFile/check/uploadFile',
+	  downLoadURL:'/cloudFile/common/downloadFile?id=',
+      data:{userId:'11111111111111111111111111111111'},
+      fileList: fileList,   // 重要：保存在数据store的文件数组
+      multiple:true,
+      isDragger: true,
+      showOnLinePreviewList: true,
+      showUploadList: false,
+      fileListVersion,
+      draggerConfig: {
+        img: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
+        mainText: '1asdfasdf1',
+        subText: ''
+      },
+      onSuccess(file){
+        message.info(`${file.name} 上传成功`);
+        console.log('上传完毕返回结果：')
+        console.log(file)
+        dispatch({type:'upload/fetch',payload:{
+          fileList:[
+            ...fileList,
+            {
+            name:file.name,
+            id:file.id
+            }
+          ]
+          }})
+      },
+      onError(res){
+        message.info(`${res.name} 上传失败.`);
+      },
+      onRemove(file){
+        dispatch({type:'upload/removeFile',payload:{
+          fileId:file.id
+          }});
+        dispatch({type:'upload/updateVersion'});
+        return false;
+      }
+    };
+
     return (
       <div>
         <div className={styles.item}>
@@ -260,7 +302,9 @@ function IndexPage(props) {
         <div className={styles.item}>
           <VtxUpload {...vtxProps3} />
         </div>
-        
+        <div className={styles.item}>
+          <VtxUpload {...VtxDraggerUploadProps}/>
+        </div>
         <div className={styles.item}>
           <VtxUpload {...vtxProps4} />
           <br/>

@@ -10,6 +10,14 @@
       "target": "http://jsonplaceholder.typicode.com/",
       "changeOrigin": true,
       "pathRewrite": { "^/api" : "" }
+    },
+    "/cloudFile": {
+      "target": "http://10.10.10.56:50008",
+      "changeOrigin": true
+    },
+    "/vortexOnlinePreview": {
+      "target": "http://10.10.10.56:8012",
+      "changeOrigin": true
     }
   },
   "extraBabelPlugins": [
