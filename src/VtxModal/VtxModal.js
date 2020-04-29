@@ -38,17 +38,25 @@ class VtxModal extends React.Component{
         }
     }
     componentDidUpdate(){
+        const t = this;
         if(!this.props.isNotMoving){
             if(this.isCreate && !this.isInit){
                 this.isInit = true;
                 try {
-                    let modalHead = document.getElementsByClassName(this.classId)[0].getElementsByClassName('ant-modal-header')[0];
-                    modalHead.style.cursor = 'move';
-                    modalHead.onmousedown = this.startDrag;
+                    this.timer = setTimeout(()=>{
+                        let modalHead = document.getElementsByClassName(t.classId)[0].getElementsByClassName('ant-modal-header')[0];
+                        modalHead.style.cursor = 'move';
+                        modalHead.onmousedown = t.startDrag;
+                    },200)
                 } catch (error) {
                     console.error('VtxModal拖动功能异常,未获取到头部dom对象!')
                 }
             }
+        }
+    }
+    componentWillUnmount(){
+        if(this.timer){
+            clearTimeout(this.timer);
         }
     }
     startDrag(e){  
