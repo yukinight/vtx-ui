@@ -6,3 +6,36 @@
         }
     }
 }
+.vtx_ui_upload_onlinepreview{
+    width: 100%;
+    .vtx_ui_upload_previewLine{
+        line-height: 25px;
+        padding: 0px 8px;
+        color: #108ee9;
+        cursor: pointer;
+        position: relative;
+        .vtx_ui_upload_iconHint{
+            color: #666;
+            margin-right: 5px;
+        }
+        .vtx_ui_upload_action_box{
+            display: none;
+            position: absolute;
+            top: 2px;
+            right: 8px;
+            .vtx_ui_upload_action_btn{
+                color: #aaa;
+                margin-left: 5px;
+                &:hover{
+                    color: #333;
+                }
+            }
+        }
+        &:hover{
+            background-color: #ecf6fd;
+            .vtx_ui_upload_action_box{
+                display: inline-block;
+            }
+        }
+    }
+}
