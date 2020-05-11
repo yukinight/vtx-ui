@@ -81,82 +81,87 @@ class VtxModalList extends React.Component{
             orl = {...t.repeteList};
         //清空缓存,避免缓存数据
         if(!!chil){
-            let cC = null;
+            let classify = (c)=>{
+                if(typeof(c) === 'object' && !(c instanceof Array)){
+                    if(c.props){
+                        return clone([c],'root');
+                    }else{
+                        let vchil = [];
+                        for(let i in c){
+                            if(typeof(c[i]) === 'object'){
+                                vchil.push(c[i]);
+                            }
+                        }
+                        return clone(vchil,'root');
+                    }
+                }
+                if(typeof(c) === 'function'){
+                    let vchil = c();
+                    if(Array.isArray(vchil)){
+                        return clone(vchil,'root');
+                    }else{
+                        return clone([vchil],'root');
+                    }
+                }
+                if(c instanceof Array){
+                    if(!c.length){
+                        return null;
+                        // t.cloneComponent(this.props.children);
+                    }
+                    return clone(c,'root');
+                }
+            }
             //复制子节点处理数据
             let clone = (ary,key)=>{
                 return ary.map((item,index)=>{
                     if(!!item){
-                        let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
-                        // if(!modalListKey){
-                        //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
-                        // }
-                        if(typeof(item) === 'string' || typeof(item) === 'number'){
-                            // t.repeteList[`${key}${modalListKey || index}`] = {};
-                            return item;
-                        }
-                        if(item instanceof Array){
-                            return clone(item,`${key}${modalListKey || index}`);
-                        }
-                        if(typeof(item) === 'object'){
-                            if(!item.props){
-                                let vchil = [];
-                                for(let i in item){
-                                    if(typeof(item[i]) === 'object'){
-                                        vchil.push(item[i]);
+                        if(item.type && item.type.toString().indexOf('fragment') > -1){
+                            return classify(item.props.children);
+                        }else{
+                            let modalListKey = (((item.props || {})["data-modallist"] || {}).layout || {}).key;
+                            // if(!modalListKey){
+                            //     console.warn('warning:: data-modallist.layout需要key判断缓存问题');
+                            // }
+                            if(typeof(item) === 'string' || typeof(item) === 'number'){
+                                // t.repeteList[`${key}${modalListKey || index}`] = {};
+                                return item;
+                            }
+                            if(item instanceof Array){
+                                return clone(item,`${key}${modalListKey || index}`);
+                            }
+                            if(typeof(item) === 'object'){
+                                if(!item.props){
+                                    let vchil = [];
+                                    for(let i in item){
+                                        if(typeof(item[i]) === 'object'){
+                                            vchil.push(item[i]);
+                                        }
                                     }
+                                    return clone(vchil,`${key}${modalListKey || index}`);
                                 }
-                                return clone(vchil,`${key}${modalListKey || index}`);
                             }
-                        }
-                        if(typeof(item) === 'function'){
-                            let vchil = item();
-                            if(Array.isArray(vchil)){
-                                return clone(vchil,`${key}${modalListKey || index}`);
-                            }else{
-                                return clone([vchil],`${key}${modalListKey || index}`);
+                            if(typeof(item) === 'function'){
+                                let vchil = item();
+                                if(Array.isArray(vchil)){
+                                    return clone(vchil,`${key}${modalListKey || index}`);
+                                }else{
+                                    return clone([vchil],`${key}${modalListKey || index}`);
+                                }
                             }
+                            newRepeteKeyList.push(`${key}${modalListKey || index}`);
+                            return t.cloneComponent(item, `${key}${modalListKey || index}`);
                         }
-                        newRepeteKeyList.push(`${key}${modalListKey || index}`);
-                        return t.cloneComponent(item, `${key}${modalListKey || index}`);
                     }
                     return null;
                 })
             }
-            if(typeof(chil) === 'object' && !(chil instanceof Array)){
-                if(chil.props){
-                    cC = clone([chil],'root');
-                }else{
-                    let vchil = [];
-                    for(let i in chil){
-                        if(typeof(chil[i]) === 'object'){
-                            vchil.push(chil[i]);
-                        }
-                    }
-                    cC = clone(vchil,'root');
+            //清空验证缓存
+            for (let i in orl){
+                if(!newRepeteKeyList.includes(i)){
+                    t.repeteList[i] = {};
                 }
             }
-            if(typeof(chil) === 'function'){
-                let vchil = chil();
-                if(Array.isArray(vchil)){
-                    cC = clone(vchil,'root');
-                }else{
-                    cC = clone([vchil],'root');
-                }
-            }
-            if(chil instanceof Array){
-                if(!chil.length){
-                    return null;
-                    // t.cloneComponent(this.props.children);
-                }
-                cC = clone(chil,'root');
-                //清空验证缓存
-                for (let i in orl){
-                    if(!newRepeteKeyList.includes(i)){
-                        t.repeteList[i] = {};
-                    }
-                }
-            }
-            return cC;
+            return classify(chil);
         }
     }
     /*
