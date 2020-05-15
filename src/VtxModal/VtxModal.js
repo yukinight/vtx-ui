@@ -61,21 +61,23 @@ class VtxModal extends React.Component{
     }
     startDrag(e){  
         e.preventDefault();
-        this.setState({
-            documentMouseUp: document.onmouseup,
-            documentMouseMove: document.onmousemove,
-            init_x: e.clientX - this.state.x_move,
-            init_y: e.clientY - this.state.y_move,
-        });
-        document.onmousemove = (e)=>{
+        if(!this.state.maximizable){
             this.setState({
-                x_move: e.clientX - this.state.init_x ,
-                y_move: e.clientY - this.state.init_y ,
-            })   
-        }
-        document.onmouseup = (e)=>{
-            document.onmousemove = this.state.documentMouseMove;
-            document.onmouseup = this.state.documentMouseUp;
+                documentMouseUp: document.onmouseup,
+                documentMouseMove: document.onmousemove,
+                init_x: e.clientX - this.state.x_move,
+                init_y: e.clientY - this.state.y_move,
+            });
+            document.onmousemove = (e)=>{
+                this.setState({
+                    x_move: e.clientX - this.state.init_x ,
+                    y_move: e.clientY - this.state.init_y ,
+                })   
+            }
+            document.onmouseup = (e)=>{
+                document.onmousemove = this.state.documentMouseMove;
+                document.onmouseup = this.state.documentMouseUp;
+            }
         }
     }
     componentWillUnmount(){
@@ -163,7 +165,7 @@ class VtxModal extends React.Component{
             bodyStyle: bodyStyle,
             style: {
                 ...this.props.style,
-                ...transformStyle
+                ...(maximizable?{}:transformStyle)
             }
         }
         return (
