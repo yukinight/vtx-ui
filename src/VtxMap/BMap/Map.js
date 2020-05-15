@@ -57,56 +57,81 @@ class BaiduMap extends React.Component{
         };
         this.loadMapJs();
     }
+    loadPlugin(){
+        let loadList = [];
+        if(!window.BMapLib || !window.BMapLib.DistanceTool){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/DistanceTool_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.TrafficControl){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/TrafficControl_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.MarkerClusterer){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/MarkerClusterer_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.AreaRestriction){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/AreaRestriction_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.DrawingManager){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/DrawingManager_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.HeatmapOverlay){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/Heatmap_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.GeoUtils){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/GeoUtils_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        if(!window.BMapLib || !window.BMapLib.TextIconOverlay){
+            loadList.push(new Promise((resolve,reject)=>{
+                $.getScript(`${configUrl.mapServerURL}/TextIconOverlay_min.js`,()=>{
+                    resolve();
+                });
+            }))
+        }
+        loadList.push(new Promise((resolve,reject)=>{
+            $.getScript(`${configUrl.mapServerURL}/TextIconOverlay_min.js`,()=>{
+                resolve();
+            });
+        }))
+        return Promise.all(loadList).then(()=>{
+            return window.BMap;
+        });
+    }
     loadMapJs(){
         this.loadMapComplete = new Promise((resolve,reject)=>{
             if(window.BMap){
-                resolve(window.BMap);
+                resolve(this.loadPlugin());
             }
             else{
                 $.getScript(`${configUrl.httpOrhttps}://api.map.baidu.com/getscript?v=3.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ`,()=>{
-                    let DistanceTool = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/DistanceTool_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let TrafficControl = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/TrafficControl_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let MarkerClusterer = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/MarkerClusterer_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let AreaRestriction = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/AreaRestriction_min.js`,()=>{
-                            resolve();
-                        })
-                    });
-                    let DrawingManager = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/DrawingManager_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let Heatmap = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/Heatmap_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let GeoUtils = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/GeoUtils_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    let TextIconOverlay = new Promise((resolve,reject)=>{
-                        $.getScript(`${configUrl.mapServerURL}/TextIconOverlay_min.js`,()=>{
-                            resolve();
-                        });
-                    });
-                    Promise.all([DistanceTool,TrafficControl,MarkerClusterer,AreaRestriction,DrawingManager,Heatmap,GeoUtils,TextIconOverlay]).then(()=>{
-                        resolve(window.BMap);
-                    });
+                    resolve(this.loadPlugin());
                 });
                 $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.httpOrhttps}://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css`}).appendTo("head");
             }
