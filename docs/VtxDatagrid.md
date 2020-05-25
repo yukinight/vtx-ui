@@ -32,7 +32,7 @@ Design官方文档**
 | footer                              | 表格尾部                                                                                                     | Function(currentPageData)             |                                                                                                                                                      |
 | title                               | 表格标题                                                                                                     | Function(currentPageData)             |                                                                                                                                                      |
 | scroll                              | 横向或纵向支持滚动，也可用于指定滚动区域的宽高度：{{ x: true, y: 300 }}                                      | object                                | \-                                                                                                                                                   |
-
+| needHints                               | 2次提示按钮名 ['删除','注销']删除一直存在                                                                                                    | Array [String]            |                                                                                                                                                    -  |
 ---
 
 #### 分页配置项pagination
