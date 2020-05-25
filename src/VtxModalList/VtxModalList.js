@@ -155,13 +155,15 @@ class VtxModalList extends React.Component{
                     return null;
                 })
             }
-            //清空验证缓存
+            
+            let chilDom = classify(chil);
+            //清空验证缓存 - 必须在渲染完 elem之后,清空缓存
             for (let i in orl){
                 if(!newRepeteKeyList.includes(i)){
                     t.repeteList[i] = {};
                 }
             }
-            return classify(chil);
+            return chilDom;
         }
     }
     /*
