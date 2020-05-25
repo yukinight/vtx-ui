@@ -180,8 +180,22 @@ class VortexDatagrid extends React.Component{
             <span>
                 {
 	                btnList.map((bt,bt_index)=>{
-                        switch(bt.name){
-                            /*case '编辑': return (
+
+                        if([...(this.props.needHints || []),'删除'].indexOf(bt.name) > -1){
+                            return (
+                                <span key={bt_index}>
+                                    {bt_index==0?null: <span className="ant-divider" />}
+                                    <Popconfirm title={`确定${bt.name}吗？`} okText="确定" cancelText="取消" onConfirm={()=>{
+                                        if(typeof(bt.onClick)=='function'){
+                                            bt.onClick(rowData);
+                                        }
+                                    }} >
+                                    <a>{bt.name}</a>
+                                    </Popconfirm>
+                                </span>
+                            );
+                        }else{
+                            return (
                                 <span key={bt_index}>
                                     {bt_index==0?null: <span className="ant-divider" />}
                                     <a onClick={()=>{
@@ -190,7 +204,20 @@ class VortexDatagrid extends React.Component{
                                         }
                                     }}>{bt.name}</a>
                                 </span>
-                            );*/
+                            )
+                        }
+
+                        {/* switch(bt.name){
+                            case '编辑': return (
+                                <span key={bt_index}>
+                                    {bt_index==0?null: <span className="ant-divider" />}
+                                    <a onClick={()=>{
+                                        if(typeof(bt.onClick)=='function'){
+                                            bt.onClick(rowData);
+                                        }
+                                    }}>{bt.name}</a>
+                                </span>
+                            );
                             case '删除': return (
                                 <span key={bt_index}>
                                     {bt_index==0?null: <span className="ant-divider" />}
@@ -213,7 +240,7 @@ class VortexDatagrid extends React.Component{
                                     }}>{bt.name}</a>
                                 </span>
                             )
-                        }
+                        } */}
                     })
                 }
             </span>
