@@ -1951,7 +1951,9 @@ class TMap extends React.Component{
             }
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.containerPoint.y + t.mapTop,//当前点所在的位置(屏幕)
+                left: e.containerPoint.x + t.mapLeft,
             }
             t.props.mouseOverGraphic(obj);
         }
@@ -1965,7 +1967,9 @@ class TMap extends React.Component{
             }
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.containerPoint.y + t.mapTop,//当前点所在的位置(屏幕)
+                left: e.containerPoint.x + t.mapLeft,
             }
             t.props.mouseOutGraphic(obj);
         }

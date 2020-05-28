@@ -2325,7 +2325,9 @@ class Map extends React.Component {
             }
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.va.y - t.mapTop,//当前点所在的位置(屏幕)
+                left: e.va.x - t.mapLeft,
             }
             t.props.mouseOverGraphic(obj);
         }
@@ -2341,7 +2343,9 @@ class Map extends React.Component {
             }
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.va.y - t.mapTop,//当前点所在的位置(屏幕)
+                left: e.va.x - t.mapLeft,
             }
             t.props.mouseOutGraphic(obj);
         }
