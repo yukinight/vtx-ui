@@ -91,7 +91,7 @@ class ImageViewer extends React.Component {
 			imgElem.src = newPhoto.id;
 			imgElem.alt = newPhoto.name;
 
-			this.container.append(imgElem);
+			this.container.appendChild(imgElem);
 		}
 
 		// 多张
@@ -106,11 +106,11 @@ class ImageViewer extends React.Component {
 				const imgElem = document.createElement('img');
 				imgElem.src = item.id;
 				imgElem.alt = item.name;
-				liElem.append(imgElem);
-				ulElem.append(liElem);
+				liElem.appendChild(imgElem);
+				ulElem.appendChild(liElem);
 			})
 
-			this.container.append(ulElem);
+			this.container.appendChild(ulElem);
 		}
 		
 		this.viewer.update();
