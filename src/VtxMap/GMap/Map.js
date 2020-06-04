@@ -1783,7 +1783,9 @@ class ArcgisMap extends React.Component{
         if(typeof(t.props.mouseOverGraphic) === 'function'){
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.clientY,//当前点所在的位置(屏幕)
+                left: e.clientX,
             }
             t.props.mouseOverGraphic(obj);
         }
@@ -1796,7 +1798,9 @@ class ArcgisMap extends React.Component{
         if(typeof(t.props.mouseOutGraphic) ==="function"){
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.clientY,//当前点所在的位置(屏幕)
+                left: e.clientX,
             }
             t.props.mouseOutGraphic(obj);
         }

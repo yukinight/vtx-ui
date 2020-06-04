@@ -1819,7 +1819,9 @@ class VortexAMap extends React.Component{
         if(typeof(t.props.mouseOverGraphic) === 'function'){
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.pixel.y + t.mapTop,//当前点所在的位置(屏幕)
+                left: e.pixel.x + t.mapLeft,
             }
             t.props.mouseOverGraphic(obj);
         }
@@ -1830,7 +1832,9 @@ class VortexAMap extends React.Component{
         if(typeof(t.props.mouseOutGraphic) ==="function"){
             let obj = {
                 e,id,
-                param: t.getGraphic(id)
+                param: t.getGraphic(id),
+                top: e.pixel.y + t.mapTop,//当前点所在的位置(屏幕)
+                left: e.pixel.x + t.mapLeft,
             }
             t.props.mouseOutGraphic(obj);
         }
