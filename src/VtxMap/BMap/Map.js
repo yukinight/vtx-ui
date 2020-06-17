@@ -130,7 +130,8 @@ class BaiduMap extends React.Component{
                 resolve(this.loadPlugin());
             }
             else{
-                $.getScript(`${configUrl.httpOrhttps}://api.map.baidu.com/getscript?v=3.0&ak=EVlFc6DZzAzU5avIjoxNcFgQ`,()=>{
+                // EVlFc6DZzAzU5avIjoxNcFgQ
+                $.getScript(`${configUrl.httpOrhttps}://api.map.baidu.com/getscript?v=3.0&ak=42IughV5lDxAt0wI8AhDVuGR`,()=>{
                     resolve(this.loadPlugin());
                 });
                 $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.httpOrhttps}://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css`}).appendTo("head");
