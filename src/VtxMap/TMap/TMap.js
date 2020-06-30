@@ -25,6 +25,7 @@ class TMap extends React.Component{
         this.circleTool = null;//绘制圆对象
         this.isEditId = null;//记录当前编辑的id,过滤移入移出事件
         this.moveToTimer = null;//moveTo时间对象
+        this.timer = 10; //动画播放频率
         this.movePoints = [];//move点的对象集合
         this.morepoints = [];//海量点集合
         this.heatmap = null;//热力图对象
@@ -2147,21 +2148,21 @@ class TMap extends React.Component{
         }
         t.moveToTimer = setInterval(()=>{
             for(let i = 0;i < t.movePoints.length; i++){
-                t.movePoints[i].waitTime += 10;
-                t.movePoints[i].deleteTime -= 10;
+                t.movePoints[i].waitTime += this.timer;
+                t.movePoints[i].deleteTime -= this.timer;
             }
             t.movePoints.sort((x,y)=>{
                 return y.waitTime -x.waitTime;
             });
             let nowMovePoints = t.movePoints.slice(0,10),deleteIndex=[];
             for(let i = 0;i < nowMovePoints.length; i++){
-                let {id,rx,ry,waitTime,deleteTime,ddeg} = nowMovePoints[i];
+                let {id,oleLng,oldLat,rx,ry,deleteTime,totalTime,ddeg} = nowMovePoints[i];
                 let gc = t.GM.getGraphic(id);
                 if(!gc){
                     clearInterval(t.moveToTimer[id]);
                 }else{
-                    let gg = gc.getLngLat();
-                    let tx = gg.lng + rx,ty = gg.lat + ry;
+                    let tx = oleLng + rx * ((totalTime-deleteTime) / this.timer),
+                        ty = oldLat + ry* ((totalTime-deleteTime) / this.timer);
                     let lglt = new T.LngLat(tx,ty);
                     if(t.movePoints[i].url){
                         gc.getIcon().setIconUrl(t.movePoints[i].url);
@@ -2174,6 +2175,7 @@ class TMap extends React.Component{
                     if(gc.label){
                         gc.showLabel();
                     }
+                    // 移动过的 放后面再动
                     t.movePoints[i].waitTime = 0;
                     if(deleteTime <= 0){
                         deleteIndex.push(i);
@@ -2192,9 +2194,9 @@ class TMap extends React.Component{
     /*公共方法*/
     moveTo(id,lnglat,delay,autoRotation,urlright,urlleft){
         delay = delay || 3;
-        let t = this,timer = 10;
+        let t = this;
         delay = eval(delay)*1000;
-        let count = delay/timer,
+        let count = delay/this.timer,
             gc = this.GM.getGraphic(id);
         let s = gc.getLngLat(),e = new T.LngLat(lnglat[0],lnglat[1]);
         if(s.equals(e)){
@@ -2218,8 +2220,11 @@ class TMap extends React.Component{
             for(let i = 0 ; i < t.movePoints.length ;i++){
                 if(t.movePoints[i].id == id){
                     t.movePoints.splice(i,1,{
+                        oleLng: s.lng,
+                        oldLat: s.lat,
                         id,rx,ry,ddeg,url,
                         waitTime: 0,
+                        totalTime: delay,
                         deleteTime: delay
                     });
                     isHave = true;
@@ -2227,8 +2232,11 @@ class TMap extends React.Component{
             }
             if(!isHave){
                 t.movePoints.push({
+                    oleLng: s.lng,
+                    oldLat: s.lat,
                     id,rx,ry,ddeg,url,
                     waitTime: 0,
+                    totalTime: delay,
                     deleteTime: delay
                 });
             }
