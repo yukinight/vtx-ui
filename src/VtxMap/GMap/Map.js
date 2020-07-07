@@ -1083,8 +1083,9 @@ class ArcgisMap extends React.Component{
                 }else{
                     //gometry 位置信息修改
                     if(gc.geometry){
-                        gc.geometry.setLatitude(item.latitude);
-                        gc.geometry.setLongitude(item.longitude);
+                        // gc.geometry.setLatitude(item.latitude);
+                        // gc.geometry.setLongitude(item.longitude);
+                        gc.setGeometry(position);
                         //设置完点位后  需要刷新下点位的显示范围
                         gc._extent.update(item.longitude,item.latitude,item.longitude,item.latitude,new esri.SpatialReference({ wkid: t.grwkid }));
                         if(gc._extent._parts && gc._extent._parts[0]){

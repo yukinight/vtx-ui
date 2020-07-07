@@ -202,7 +202,7 @@ class VtxSearchMap extends React.Component {
                         t.setState({
                             isDoEdit: false
                         })
-                    },100)
+                    },500)
                 })
             })
         }else{
