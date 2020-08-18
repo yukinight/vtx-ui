@@ -1,6 +1,6 @@
 {
   "name": "vtx-ui",
-  "version": "0.4.43",
+  "version": "0.4.44",
   "description": "vtx-ui",
   "main": "lib/index.js",
   "scripts": {

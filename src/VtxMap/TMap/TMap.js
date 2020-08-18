@@ -238,7 +238,7 @@ class TMap extends React.Component{
         imageAry.map((item,index)=>{
             let {sw,ne,url,opacity,displayOnMinLevel,displayOnMaxLevel} = item;
             if(!url){
-                console.error(`图片图层url数据错误`);
+                console.warn(`图片图层url数据错误`);
                 return false;
             }
             if(sw && ne && Array.isArray(sw) && Array.isArray(ne) && sw[0] && sw[1] && ne[0] && ne[1]){
@@ -256,7 +256,7 @@ class TMap extends React.Component{
                         );
                     t.state.gis.addOverLay(imageUrlOverlay);
             }else{
-                console.error(`区域经纬度sw/ne数据错误`);
+                console.warn(`区域经纬度sw/ne数据错误`);
                 return false;
             }
         })
@@ -658,12 +658,12 @@ class TMap extends React.Component{
             }
             //如果id重复,直接跳过不执行.
             if (this.GM.isRepetition(item.id)) {
-                console.error(`加点id: ${item.id} 重复`);
+                console.warn(`加点id: ${item.id} 重复`);
                 return false;
             }
             //点位数据不符合,直接跳过
             if(!item.longitude || !item.latitude){
-                console.error(`点 经纬度 数据错误`);
+                console.warn(`点 经纬度 数据错误`);
                 return false;
             }
             if(item.markerContent){
@@ -775,7 +775,7 @@ class TMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //点位数据不符合,直接跳过
                 if(!item.longitude || !item.latitude){
-                    console.error(`点 经纬度 数据错误`);
+                    console.warn(`点 经纬度 数据错误`);
                     return false;
                 }
                 //获取原有的图元
@@ -878,7 +878,7 @@ class TMap extends React.Component{
                     }
                 );
             }else{
-                console.error(`更新的点id不存在!`);
+                console.warn(`更新的点id不存在!`);
                 return false;
             }
         });
@@ -899,12 +899,12 @@ class TMap extends React.Component{
             }
             //如果id重复,直接跳过不执行.
             if (this.GM.isRepetition(item.id)) {
-                console.error(`多折线id: ${item.id} 重复`);
+                console.warn(`多折线id: ${item.id} 重复`);
                 return false;
             }
             //多折线点位数据不符合,直接跳过
             if(!(item.paths && item.paths.length >= 2)){
-                console.error(`多折线paths数据错误`);
+                console.warn(`多折线paths数据错误`);
                 return false;
             }
             if(item.config){
@@ -976,7 +976,7 @@ class TMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //多折线点位数据不符合,直接跳过
                 if(!(item.paths && item.paths.length >= 2)){
-                    console.error(`多折线paths数据错误`);
+                    console.warn(`多折线paths数据错误`);
                     return false;
                 }
                 //获取原有的图元
@@ -1026,7 +1026,7 @@ class TMap extends React.Component{
                     }
                 );
             }else{
-                console.error(`更新的多折线id不存在!`);
+                console.warn(`更新的多折线id不存在!`);
                 return false;
             }
         });
@@ -1048,12 +1048,12 @@ class TMap extends React.Component{
             }
             //如果id重复,直接跳过不执行.
             if (this.GM.isRepetition(item.id)) {
-                console.error(`多边形id: ${item.id} 重复`);
+                console.warn(`多边形id: ${item.id} 重复`);
                 return false;
             }
             //多边形点位数据不符合,直接跳过
             if(!(item.rings && item.rings.length >= 3)){
-                console.error(`多边形rings数据错误`);
+                console.warn(`多边形rings数据错误`);
                 return false;
             }
             if(item.config){
@@ -1119,7 +1119,7 @@ class TMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //多边形点位数据不符合,直接跳过
                 if(!(item.rings && item.rings.length >= 3)){
-                    console.error(`多边形rings数据错误`);
+                    console.warn(`多边形rings数据错误`);
                     return false;
                 }
                 //获取原有的图元
@@ -1166,7 +1166,7 @@ class TMap extends React.Component{
                     }
                 );
             }else{
-                console.error(`更新的多边形id不存在!`);
+                console.warn(`更新的多边形id不存在!`);
                 return false;
             }
         });
@@ -1187,12 +1187,12 @@ class TMap extends React.Component{
             }
             //如果id重复,直接跳过不执行.
             if (this.GM.isRepetition(item.id)) {
-                console.error(`圆id: ${item.id} 重复`);
+                console.warn(`圆id: ${item.id} 重复`);
                 return false;
             }
             //圆 点位数据不符合,直接跳过
             if(!item.longitude || !item.latitude){
-                console.error(`圆 经纬度 数据错误`);
+                console.warn(`圆 经纬度 数据错误`);
                 return false;
             }
             if(item.config){
@@ -1250,7 +1250,7 @@ class TMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //圆 点位数据不符合,直接跳过
                 if(!item.longitude || !item.latitude){
-                    console.error(`圆 经纬度 数据错误`);
+                    console.warn(`圆 经纬度 数据错误`);
                     return false;
                 }
                 //获取原有的图元
@@ -1292,7 +1292,7 @@ class TMap extends React.Component{
                     }
                 );
             }else{
-                console.error(`更新的圆id不存在!`);
+                console.warn(`更新的圆id不存在!`);
                 return false;
             }
         });

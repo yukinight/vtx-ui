@@ -842,12 +842,12 @@ class ArcgisMap extends React.Component{
         mapPoints.map((item,index)=>{
             //如果id重复,直接跳过不执行.
             if (this.GM.isRepetition(item.id)) {
-                console.error(`加点id: ${item.id} 重复`);
+                console.warn(`加点id: ${item.id} 重复`);
                 return false;
             }
             //点位数据不符合,直接跳过
             if(!item.longitude || !item.latitude){
-                console.error(`点 经纬度 数据错误`);
+                console.warn(`点 经纬度 数据错误`);
                 return false;
             }
             let cg = {
@@ -987,7 +987,7 @@ class ArcgisMap extends React.Component{
             if (this.GM.isRepetition(item.id)) {
                 //点位数据不符合,直接跳过
                 if(!item.longitude || !item.latitude){
-                    console.error(`点 经纬度 数据错误`);
+                    console.warn(`点 经纬度 数据错误`);
                     return false;
                 }
                 //获取原有的图元
@@ -1115,7 +1115,7 @@ class ArcgisMap extends React.Component{
                     }
                 );
             }else{
-                console.error(`更新的点位id不存在!`);
+                console.warn(`更新的点位id不存在!`);
                 return false;
             }
         });
@@ -1133,12 +1133,12 @@ class ArcgisMap extends React.Component{
         mapLines.map((item,index)=>{
             //如果id重复,直接跳过不执行.
             if (t.GM.isRepetition(item.id)) {
-                console.error(`多折线id: ${item.id} 重复`);
+                console.warn(`多折线id: ${item.id} 重复`);
                 return false;
             }
             //多折线点位数据不符合,直接跳过
             if(!(item.paths && item.paths.length >= 2)){
-                console.error(`多折线paths数据错误`);
+                console.warn(`多折线paths数据错误`);
                 return false;
             }
             //初始化默认参数
@@ -1229,11 +1229,11 @@ class ArcgisMap extends React.Component{
             if (t.GM.isRepetition(item.id)) {
                 //多折线点位数据不符合,直接跳过
                 if(!(item.paths && item.paths.length >= 2)){
-                    console.error(`多折线paths数据错误`);
+                    console.warn(`多折线paths数据错误`);
                     return false;
                 }
             }else{
-                console.error(`更新的多折线id不存在!`);
+                console.warn(`更新的多折线id不存在!`);
                 return false;
             }
             let gc = t.GM.getGraphic(item.id);
@@ -1308,12 +1308,12 @@ class ArcgisMap extends React.Component{
         mapPolygons.map((item,index)=>{
             //如果id重复,直接跳过不执行.
             if (t.GM.isRepetition(item.id)) {
-                console.error(`多边形id: ${item.id} 重复`);
+                console.warn(`多边形id: ${item.id} 重复`);
                 return false;
             }
             //多边形点位数据不符合,直接跳过
             if(!(item.rings && item.rings.length >= 3)){
-                console.error(`多边形rings数据错误`);
+                console.warn(`多边形rings数据错误`);
                 return false;
             }
             //初始化参数
@@ -1410,11 +1410,11 @@ class ArcgisMap extends React.Component{
             if (t.GM.isRepetition(item.id)) {
                 //多边形点位数据不符合,直接跳过
                 if(!(item.rings && item.rings.length >= 3)){
-                    console.error(`多边形rings数据错误`);
+                    console.warn(`多边形rings数据错误`);
                     return false;
                 }
             }else{
-                console.error(`更新的多边形id不存在!`);
+                console.warn(`更新的多边形id不存在!`);
                 return false;
             }
             //获取原有的图元
@@ -1493,12 +1493,12 @@ class ArcgisMap extends React.Component{
         mapCircles.map((item,index)=>{
             //如果id重复,直接跳过不执行.
             if (t.GM.isRepetition(item.id)) {
-                console.error(`圆id: ${item.id} 重复`);
+                console.warn(`圆id: ${item.id} 重复`);
                 return false;
             }
             //圆 点位数据不符合,直接跳过
             if(!item.longitude || !item.latitude){
-                console.error(`圆 经纬度 数据错误`);
+                console.warn(`圆 经纬度 数据错误`);
                 return false;
             }
             let cg = {
@@ -1584,11 +1584,11 @@ class ArcgisMap extends React.Component{
             if (t.GM.isRepetition(item.id)) {
                 //圆 点位数据不符合,直接跳过
                 if(!item.longitude || !item.latitude){
-                    console.error(`圆 经纬度 数据错误`);
+                    console.warn(`圆 经纬度 数据错误`);
                     return false;
                 }
             }else{
-                console.error(`更新的圆id不存在!`);
+                console.warn(`更新的圆id不存在!`);
                 return false;
             }
             //获取原有的图元
