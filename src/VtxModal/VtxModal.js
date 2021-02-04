@@ -36,6 +36,12 @@ class VtxModal extends React.Component{
         if(nextProps.visible && !this.isCreate){
             this.isCreate = true;
         }
+        if(!this.props.visible && nextProps.visible){
+            this.setState({
+                x_move: 0,
+                y_move: 0
+            })
+        }
     }
     componentDidUpdate(){
         const t = this;

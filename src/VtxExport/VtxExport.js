@@ -18,11 +18,11 @@ class VtxExport extends React.Component{
     exportButtonClick(param){
         let pass_val = typeof(this.props.getExportParams)=='function'? this.props.getExportParams(param.key):null;
         if(!this.props.downloadURL){
-            console.error('未配置下载地址');
+            // console.error('未配置下载地址');
             return;
         }
         if(!pass_val){
-            console.error('未配置导出参数');
+            // console.error('未配置导出参数');
             return;
         }
         this.downLoadFile(this.props.downloadURL,this.props.mode=='simple'?pass_val:{parameters:JSON.stringify(pass_val)});
