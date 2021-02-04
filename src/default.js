@@ -19,6 +19,19 @@ export default {
             'https://vortexplugin.cloudhw.cn/ztree' : 'http://120.26.217.62:25048/ztree',
 }
 
+export function getTMapTK() {
+    if (window.TMapTK) {
+        return window.TMapTK;
+    } else {
+        const tks = [
+            'b95ec6e55998a6408862ab2ac36c4950',
+            '0e3608ea5e57ac901f1e14e653818910',
+            '55bbbfecae274ce7de92579f15a5fbad'
+        ];
+        return tks[Math.floor(Math.random() * 3)]
+    }
+} 
+
 
 // export default {
 //     httpOrhttps: globalCfg.httpOrhttps || 'http',

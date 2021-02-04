@@ -4,7 +4,7 @@ import {graphicManage,getMaxMin,getPolygonArea} from '../MapToolFunction';
 import Immutable from 'immutable';
 const {Set} = Immutable;
 //公共地址配置
-import configUrl from '../../default';
+import configUrl, { getTMapTK } from '../../default';
 class TMap extends React.Component{
     constructor(props){
         super(props);
@@ -59,14 +59,14 @@ class TMap extends React.Component{
         this.loadMapJs();
     }
     loadMapJs(){
-        let t = this;
+        let t = this; 
         this.loadMapComplete = new Promise((resolve,reject)=>{
             if(window.T){
                 resolve(window.T);
             }
             else{
                 $.getScript(`${configUrl.mapServerURL}/T_content.js`,()=>{
-                    $.getScript(`${configUrl.httpOrhttps}://api.tianditu.gov.cn/api?v=4.0&tk=e781ae595c43649431fb7270328e0669`,()=>{
+                    $.getScript(`${configUrl.httpOrhttps}://api.tianditu.gov.cn/api?v=4.0&tk=${getTMapTK()}`,()=>{
                         let Heatmap = new Promise((resolve,reject)=>{
                             //对象问题  和arcgis使用不同的热力图
                             $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{
