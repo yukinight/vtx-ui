@@ -66,7 +66,7 @@ class TMap extends React.Component{
             }
             else{
                 $.getScript(`${configUrl.mapServerURL}/T_content.js`,()=>{
-                    $.getScript(`${configUrl.httpOrhttps}://api.tianditu.gov.cn/api?v=4.0&tk=${getTMapTK()}`,()=>{
+                    $.getScript(`//api.tianditu.gov.cn/api?v=4.0&tk=${getTMapTK()}`,()=>{
                         let Heatmap = new Promise((resolve,reject)=>{
                             //对象问题  和arcgis使用不同的热力图
                             $.getScript(`${configUrl.mapServerURL}/Theatmap.js`,()=>{

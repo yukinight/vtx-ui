@@ -5,6 +5,14 @@ import Immutable from 'immutable';
 const {Set} = Immutable;
 //公共地址配置
 import configUrl from '../../default';
+
+// 百度地图js文件内做了一些额外的http or https判断
+// 如果协议为Https，我们需要改动全局变量BMAP_PROTOCOL和BMap_loadScriptTime
+if (window.location.protocol === 'https:') {
+    window.BMAP_PROTOCOL = "https";
+    window.BMap_loadScriptTime = (new Date).getTime();
+}
+
 const gisMapConstant = {
     circle: 'BMAP_POINT_SHAPE_CIRCLE',//圆形
     star: 1,//星形
@@ -131,10 +139,10 @@ class BaiduMap extends React.Component{
             }
             else{
                 // EVlFc6DZzAzU5avIjoxNcFgQ
-                $.getScript(`${configUrl.httpOrhttps}://api.map.baidu.com/getscript?v=3.0&ak=42IughV5lDxAt0wI8AhDVuGR`,()=>{
+                $.getScript('//api.map.baidu.com/getscript?v=3.0&ak=42IughV5lDxAt0wI8AhDVuGR',()=>{
                     resolve(this.loadPlugin());
                 });
-                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: `${configUrl.httpOrhttps}://api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css`}).appendTo("head");
+                $("<link>").attr({ rel: "stylesheet",type: "text/css",href: '//api.map.baidu.com/library/TrafficControl/1.4/src/TrafficControl_min.css'}).appendTo("head");
             }
         });
     }
