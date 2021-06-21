@@ -12,6 +12,21 @@ import 'antd/lib/message/style/css';
 import Viewer from 'viewerjs';
 import './VortexUpload.css';
 
+function getUrlParam(key) {
+    let paramObj = {};
+    let matchList = window.location.href.match(/([^\?&]+)=([^&]+)/g) || [];
+    for (let i = 0, len = matchList.length; i < len; i++) {
+        let r = matchList[i].match(/([^\?&]+)=([^&]+)/);
+        paramObj[r[1]] = r[2];
+    }
+    if (key) {
+        return paramObj[key];
+    } else {
+        return paramObj;
+    }
+}
+const TOKEN = getUrlParam('token') || '';
+
 const styles = {
     onlinepreview: 'vtx_ui_upload_onlinepreview',
     previewLine: 'vtx_ui_upload_previewLine',
@@ -58,6 +73,9 @@ class VortexUpload extends React.Component{
         let config = {
             action: t.uploadURL,
             fileList: t.state.fileList,
+            headers: {
+                Authorization: TOKEN ? `Bearer ${TOKEN}` : '',
+            },
             onChange(info){
                 if(info.file.response && info.file.response.result === 1){
                     message.error(info.file.response.errMsg || '上传失败!');
