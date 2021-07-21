@@ -59,7 +59,7 @@ class VtxExport extends React.Component{
             <span>
                 <Dropdown overlay={exportMenu} trigger={["click"]}>
                     <Button icon="export">
-                        导出 <Icon type="down" />
+                        {this.props.text ? this.props.text: '导出'} <Icon type="down" />
                     </Button>
                 </Dropdown>  
                 <iframe name={this.iframeName} style={{display:'none'}}
